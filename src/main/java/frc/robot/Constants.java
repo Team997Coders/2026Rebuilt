@@ -23,6 +23,10 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static final int gyroID = 46;
 
+  public static class ShooterConstants {
+    public static final int flywheelID = 0;
+  }
+
   public static final class DriveConstants {
     public static final double deadband = 0.02;
     public static final int currentLimit = 40;
