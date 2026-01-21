@@ -146,5 +146,12 @@ public final class Constants {
    public static final class IntakeConstants {
     public static final int spinMotorID = 0;
     public static final int extendMotorID = 0;
+
+    public static final double spinVoltage = 0;
+
+    public static final int p = 0;
+    public static final int i = 0;
+    public static final int d = 0;
+    public static final double goal = 0;
   }
 }
