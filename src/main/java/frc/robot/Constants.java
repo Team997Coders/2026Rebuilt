@@ -25,6 +25,12 @@ public final class Constants {
 
   public static class ShooterConstants {
     public static final int flywheelID = 0;
+    public static final int flywheel2ID = 1;
+    public static final int hoodMotor = 1;
+    public static final int rollerMotor = 0;
+
+    public static final int beamBreak = 0;
+    public static final int absoluteEncoder = 1;
   }
 
   public static final class DriveConstants {
