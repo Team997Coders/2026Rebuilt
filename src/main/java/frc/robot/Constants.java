@@ -23,6 +23,18 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static final int gyroID = 46;
 
+  public static final class ClimberConstants {
+    public static final int leftClimberID = 0;
+    public static final int rightClimberID = 0;
+
+    public static final int tiltID = 0;
+
+    public static final boolean leftInverted = false;
+    public static final boolean rightInverted = false;
+
+    public static final boolean tiltInverted = false;
+  }
+
   public static final class DriveConstants {
     public static final double deadband = 0.02;
     public static final int currentLimit = 40;
