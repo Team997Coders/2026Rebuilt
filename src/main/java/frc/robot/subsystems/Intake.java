@@ -31,9 +31,6 @@ public class Intake extends SubsystemBase {
             
         spinMotor.configure(spinConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         extendMotor.configure(extendConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-            
-        pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
-        error = 0;
                     
                 }
             
