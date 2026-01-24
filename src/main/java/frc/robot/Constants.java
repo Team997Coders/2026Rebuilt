@@ -31,6 +31,10 @@ public final class Constants {
 
     public static final int beamBreak = 0;
     public static final int absoluteEncoder = 1;
+
+    public static final double kp = 0.00;
+    public static final double ki = 0.00;
+    public static final double kd = 0.00;
   }
 
   public static final class DriveConstants {
@@ -41,7 +45,6 @@ public final class Constants {
     public static final class SwervePID {
       public static final double p = 0.005;
       public static final double i = 0;
-
       public static final double d = 0;
     }
 
