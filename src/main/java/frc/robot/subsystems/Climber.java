@@ -8,15 +8,20 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
-\
 
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
+
+    String level;
+    int indexlevel;
+    int speedReduction = 12;
+    double levelDifferences = 18; // modify level differences, based of inch's betweens climb levels
 
     private final SparkMax leftClimber = new SparkMax(Constants.ClimberConstants.leftClimberID, MotorType.kBrushless);
     private final SparkMax rightClimber = new SparkMax(Constants.ClimberConstants.rightClimberID, MotorType.kBrushless);
@@ -68,11 +73,14 @@ public class Climber extends SubsystemBase {
             this.index = index;
 
         }
+
+        
     }
 
 
     public void setClimberVolts(double volts) {
         leftClimber.setVoltage(volts);
+        rightClimber.setVoltage(volts);
     }
 
     public void setTiltVolts(double volts){
@@ -87,8 +95,32 @@ public class Climber extends SubsystemBase {
         return leftEncoder.getPosition();
     }
 
+    public void climberlevel(Double encoderPos, double levelDifferences){
+        double heightOfRobot = climbPid.calculate(getPosition(),encoderPos);
+        this.indexlevel = (int) Math.floor(heightOfRobot / levelDifferences);
+        this.level = String.valueOf(this.indexlevel);
+    }
+
     public void goToPos(double encoderPos) {
-        setClimberVolts(climbPid.calculate(getPosition(), encoderPos));
+
+         if (limit.get()) {  // physical issues
+        setClimberVolts(0);
+        return;
+        }
+
+        if (encoderPos - getPosition() > 0 && this.indexlevel == 3){ // stops climber from grabbing air, with level 4(which doesn't exist)
+            setClimberVolts(0);
+            return;
+        }
+        // stops climber going into ground
+        if ((encoderPos - getPosition() < 0) && !limit.get()) { 
+            setClimberVolts(0);
+            return;
+        }
+
+        // check if setClimberVolts is to slow, because speedReduction is in place, is it goes to fast
+        setClimberVolts((climbPid.calculate(getPosition(), encoderPos))/speedReduction);
+        
     }
 
 
