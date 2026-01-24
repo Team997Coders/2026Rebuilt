@@ -6,7 +6,9 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
 
@@ -64,6 +66,9 @@ public class RobotContainer {
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
 
+  public final Intake m_intake;
+  public final IntakeCommand IntakeCommandExtend;
+  public final IntakeCommand IntakeCommandRetract;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -79,6 +84,10 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
+
+    m_intake = new Intake();
+    IntakeCommandExtend = new IntakeCommand(m_intake, true);
+    IntakeCommandRetract = new IntakeCommand(m_intake, false);
 
     configureBindings();
   }
@@ -178,6 +187,11 @@ public class RobotContainer {
     
     //When holding x robot goes to closest location in potential locations
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
+    c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
+    c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
+    c_driveStick.a().whileTrue(m_intake.intakeFuel());
+    c_driveStick.b().whileTrue(m_intake.stopIntake());
+
   }
 
   /**
