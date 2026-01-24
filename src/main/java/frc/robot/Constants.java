@@ -29,10 +29,25 @@ public final class Constants {
 
     public static final int tiltID = 0;
 
+     public static final int limitChannel = 0;
+
     public static final boolean leftInverted = false;
     public static final boolean rightInverted = false;
 
     public static final boolean tiltInverted = false;
+
+
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
+
+    public static final class Heights{
+      public static final double DOWN = 0;
+      public static final double GRAB = 0;
+      public static final double RAISE = 0;
+
+    }
   }
 
   public static final class DriveConstants {
