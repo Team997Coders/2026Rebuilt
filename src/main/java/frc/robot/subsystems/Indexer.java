@@ -26,4 +26,9 @@ public class Indexer extends SubsystemBase{
       return this.run(() -> spinIndexerMotor(1));
    }
 
+   public double getIndexVoltage(){
+      return indexMotor.getAppliedOutput() * indexMotor.getBusVoltage();
+   }
+
+
 }
