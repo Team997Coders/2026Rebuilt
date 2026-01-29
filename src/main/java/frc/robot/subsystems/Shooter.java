@@ -21,6 +21,7 @@ import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -43,9 +44,15 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         //could be wrong, both should be spinning the same way 
-        flywheel2.setControl(new Follower( flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); //motor alignment could be different
+        flywheel2.setControl(new Follower(flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); //motor alignment could be different
         flywheelConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; //change later
         flywheelConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+    }
+
+    double angle;
+    @Override
+    public void periodic() {
+        moveHood(angle);
     }
 
     public void setFlywheelVoltage(double volts) {
@@ -65,17 +72,36 @@ public class Shooter extends SubsystemBase {
         return hoodRelativeEncoder.getPosition();
     }
 
-    public void moveHood (double position) {
+    public void moveHood(double position) {
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodPos(), position));
     }
 
-    public double getFlywheel1Velocity () {
+    public void moveHoodUpManual() {
+        moveHood(getHoodPos() + 1);
+    }
+
+    public void moveHoodDownManual() {
+        moveHood(getHoodPos() - 1);
+    }
+
+    public double getFlywheelVelocity () {
         return flywheel1.getVelocity().getValueAsDouble();
     }
 
-    public void moveFlywheel (double velocity) {
-        setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheel1Velocity(), velocity));
+    public void setFlywheelVelocity (double velocity) {
+        setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelVelocity(), velocity));
     }
 
-    
+    public Command setVelocity(double velocity) {
+        return this.run(() -> setFlywheelVelocity(velocity));
+    }
+
+    public Command hoodUp() {
+        return this.runOnce(() -> moveHoodUpManual());
+    }
+
+    public Command hoodDown() {
+        return this.runOnce(() -> moveHoodDownManual());
+    }
+
 }
