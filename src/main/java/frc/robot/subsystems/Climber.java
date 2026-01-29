@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
+
 public class Climber extends SubsystemBase {
 
     String level;
@@ -83,8 +85,19 @@ public class Climber extends SubsystemBase {
         rightClimber.setVoltage(volts);
     }
 
+    public String getClimberVolts(){
+        double outputVoltsLeft = leftClimber.getBusVoltage() * leftClimber.getAppliedOutput();
+        double outputVoltsRight = rightClimber.getBusVoltage() * rightClimber.getAppliedOutput();
+        return "Left output: " + outputVoltsLeft + " Right output: " + outputVoltsRight;
+    }
+
     public void setTiltVolts(double volts){
         tilt.setVoltage(volts);
+    }
+
+    public String getTiltVolts(){
+        double tiltOutput = tilt.getAppliedOutput() * tilt.getBusVoltage();
+        return " tilt output: " + tiltOutput;
     }
 
     public void resetEncoder() {
@@ -95,10 +108,14 @@ public class Climber extends SubsystemBase {
         return leftEncoder.getPosition();
     }
 
-    public void climberlevel(Double encoderPos, double levelDifferences){
+    public void climberLevel(Double encoderPos, double levelDifferences){
         double heightOfRobot = climbPid.calculate(getPosition(),encoderPos);
         this.indexlevel = (int) Math.floor(heightOfRobot / levelDifferences);
         this.level = String.valueOf(this.indexlevel);
+    }
+
+    public String getClimberLevel(){
+        return "Index Level: " + indexlevel + " Level: " + level;
     }
 
     public void goToPos(double encoderPos) {
