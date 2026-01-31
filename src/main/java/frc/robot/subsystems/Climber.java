@@ -22,17 +22,12 @@ public class Climber extends SubsystemBase {
 
     String level;
     int indexlevel;
-    int speedReduction = 12;
     double groundToLevel1 = 12; 
     double otherLevelDifferences = 18; // modify level differences, based of inch's betweens climb levels
 
     private final SparkMax leftClimber = new SparkMax(Constants.ClimberConstants.leftClimberID, MotorType.kBrushless);
 
-    private final SparkMax tilt = new SparkMax(Constants.ClimberConstants.tiltID, MotorType.kBrushless);
-
     private final SparkMaxConfig leftConfig =  new SparkMaxConfig();
-
-    private final SparkMaxConfig tiltConfig = new SparkMaxConfig();
 
     private final RelativeEncoder leftEncoder = leftClimber.getEncoder();
 
@@ -43,96 +38,74 @@ public class Climber extends SubsystemBase {
     public Climber () {
         leftConfig.inverted(Constants.ClimberConstants.leftInverted);
 
-        tiltConfig.inverted(Constants.ClimberConstants.tiltInverted);
-
-
-        leftClimber.configure(leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters)
-
-        tilt.configure(tiltConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        leftClimber.configure(leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
-
+    @Override
     public void periodic() {
-
+        limitSwitchReset();
     }
 
-
-    public enum ClimberHeight {
-        DOWN("DOWN", Constants.ClimberConstants.Heights.DOWN, 0),
-        GRAB("LOWER GRAB", Constants.ClimberConstants.Heights.GRAB, 1),
-        RAISE("LOWER RAISE", Constants.ClimberConstants.Heights.RAISE, 2);
-
-        String name;
-        double encoderPos;
-        int index;
-    
-        ClimberHeight(String name, double encoderPos, int index) {
-            this.name = name;
-            this.encoderPos = encoderPos;
-            this.index = index;
-
-        }
-
-        
-    }
-
+       private boolean hasReset = false; 
+    private boolean stopClimberVolts = false;
 
     public void setClimberVolts(double volts) {
+        if (stopClimberVolts) {
+            leftClimber.setVoltage(0);
+            return;
+        }
         leftClimber.setVoltage(volts);
     }
 
-    public String getClimberVolts(){
-        double outputVoltsLeft = leftClimber.getBusVoltage() * leftClimber.getAppliedOutput();
-        return "Left output: " + outputVoltsLeft;
+    public void goToPos(double encoderPos) {
+        double output = climbPid.calculate(getPosition(), encoderPos);
+
+    
+        if (limit.get() && output < 0) {
+            setClimberVolts(0);
+            return;
+        }
+
+        if (encoderPos > getPosition() && this.indexlevel >= 1) {
+            setClimberVolts(0);
+            return;
+        }
+
+        setClimberVolts(output);
     }
 
-    public void setTiltVolts(double volts){
-        tilt.setVoltage(volts);
+    public void limitSwitchReset() {
+        if (limit.get() && !hasReset) {
+            resetEncoder();
+            hasReset = true;
+        }
+        if (!limit.get()) {
+            hasReset = false; 
+        }
     }
 
-    public String getTiltVolts(){
-        double tiltOutput = tilt.getAppliedOutput() * tilt.getBusVoltage();
-        return " tilt output: " + tiltOutput;
+    public void stopClimber() {
+        stopClimberVolts = true;
+        leftClimber.setVoltage(0);
     }
 
-    public void resetEncoder() {
-        leftEncoder.setPosition(0);
+    public void resetStopClimber() {
+        stopClimberVolts = false;
     }
 
     public double getPosition() {
         return leftEncoder.getPosition();
     }
 
-    public void climberLevel(Double encoderPos, double groundToLevel1){
-        double heightOfRobot = climbPid.calculate(getPosition(),encoderPos);
-        this.indexlevel = (int) Math.ceil(heightOfRobot / groundToLevel1);
+    public void resetEncoder() {
+        leftEncoder.setPosition(0);
+    }
+
+    public void climberLevel(double groundToLevel1) {
+        this.indexlevel = (int) Math.ceil(getPosition() / groundToLevel1);
         this.level = String.valueOf(this.indexlevel);
     }
 
-    public String getClimberLevel(){
-        return "Index Level: " + indexlevel + " Level: " + level;
+    public String getLevel() {
+        return this.level;
     }
-
-    public void goToPos(double encoderPos) {
-
-         if (limit.get()) {  // physical issues
-        setClimberVolts(0);
-        return;
-        }
-
-        if (encoderPos - getPosition() > 0 && this.indexlevel > 1){ // stops climber from going to level 2, since were not doing it
-            return;
-        }
-        // stops climber going into ground
-        if ((encoderPos - getPosition() < 0) && !limit.get()) { 
-            setClimberVolts(0);
-            return;
-        }
-
-        // check if setClimberVolts is to slow, because speedReduction is in place, is it goes to fast
-        setClimberVolts((climbPid.calculate(getPosition(), encoderPos))/speedReduction);
-
-        
-    }
-
-
-}
+}    
