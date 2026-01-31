@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.Bump;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.vision.Camera;
@@ -41,13 +42,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+ 
   // The robot's subsystems and commands are defined here...
   private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
 
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
   private static XboxController driveStick = new XboxController(0);
   private static CommandXboxController c_driveStick = new CommandXboxController(0);
-
   //Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
@@ -58,8 +59,10 @@ public class RobotContainer {
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
   private static final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(frontCamera));
   private static final CameraBlock cameraBlock = new CameraBlock(cameraList);
-
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
+
+  // needs a Supplier<double[]>d and a DoubleSupplier (in that order)
+  private final Bump bump = new Bump(null, null, drivebase);
 
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
@@ -178,6 +181,12 @@ public class RobotContainer {
     
     //When holding x robot goes to closest location in potential locations
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
+     Trigger gyroPitchTrigger = new Trigger(() -> Math.abs(gyro.getPitch()) >= 20);
+     Trigger gyroRollTrigger = new Trigger(() -> Math.abs(gyro.getRoll()) >= 20);
+
+     gyroPitchTrigger.onTrue(bump);
+     gyroRollTrigger.onTrue(bump);
+     c_driveStick.b().onTrue(bump);
   }
 
   /**

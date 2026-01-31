@@ -7,29 +7,31 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivebase;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 
-public class Drive extends Command {
+public class Bump extends Command {
 
-  private final Drivebase drivebase;
+  private final Drivebase m_drivebase;
   private final Supplier<double[]> speedXY;
   private final DoubleSupplier rot;
-  private final ProfiledPIDController thetaController = new ProfiledPIDController(1.0, 0.0, 0.0, TrapezoidProfile.Constraints(10, 10));
+  private final ProfiledPIDController thetaController = new ProfiledPIDController(1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(60, 60));
 
-  /** Creates a new Drive. */
-  public Drive(Drivebase drivebase, Supplier<double[]> speedXY, DoubleSupplier rot) {
-    this.drivebase = drivebase;
+  public Bump(Supplier<double[]> speedXY, DoubleSupplier rot, Drivebase drivebase) {
     this.speedXY = speedXY;
     this.rot = rot;
-
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.m_drivebase = drivebase;
     thetaController.setTolerance(Math.toRadians(2));
 
-    addRequirements(this.drivebase);
+   // Use addRequirements() here to declare subsystem dependencies
+    addRequirements(this.m_drivebase);
+    
   }
 
   // Called when the command is initially scheduled.
@@ -41,26 +43,35 @@ public class Drive extends Command {
   @Override
   public void execute() {
     var xy = speedXY.get();
+    Canandgyro gyro = m_drivebase.gyro;
+
     double output;
     boolean isLocking = false;
-    boolean isAtAngleThreshold = false;
+    double AnglePitch = gyro.getPitch();
+    double AngleRoll = gyro.getRoll();
 
-    if (isAtAngleThreshold == true) {
+    //detect if robot is at an angle greater than 20 degrees
+    if (AnglePitch > 20 || AngleRoll > 20) {
+
       isLocking = true;
     } else {
+      
       isLocking = false;
     }
 
-    if (isLocking) {
-        double currentAngle = drivebase.getPose().getRotation().getRadians();
-        double goalAngle = Math.toRadians(45);
-        output = thetaController.calculate(currentAngle, goalAngle);
+    //use isLocking boolean to switch to 45 degree angle  if true and switch to normal drive if false
+    if (isLocking == true) {
+
+      double currentAngle = m_drivebase.getPose().getRotation().getRadians();
+      double goalAngle = Math.toRadians(45);
+      output = thetaController.calculate(currentAngle, goalAngle);
     } else {
-        
-        output = rot.getAsDouble
+  
+        output = rot.getAsDouble();
     }
 
-    drivebase.defaultDrive(-xy[1], -xy[0], output);
+    //set defaultDrive to output
+    m_drivebase.defaultDrive(-xy[1], -xy[0], output);
   }
 
   // Called once the command ends or is interrupted.
@@ -74,3 +85,4 @@ public class Drive extends Command {
     return false;
   }
 }
+// :)
