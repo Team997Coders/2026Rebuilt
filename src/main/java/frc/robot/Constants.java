@@ -41,6 +41,8 @@ public final class Constants {
       public static final double d = 0;
     }
 
+ 
+
     public static final class SwerveModules {
 
       // Front Left Module
@@ -145,6 +147,18 @@ public final class Constants {
   public static final class CANdleConstants {
     public static final int id = 50;
     public static final int ledCount = 50;
+  }
+
+   public static final class IntakeConstants {
+    public static final int spinMotorID = 0;
+    public static final int extendMotorID = 0;
+
+    public static final double spinVoltage = 0;
+
+    public static final int p = 0;
+    public static final int i = 0;
+    public static final int d = 0;
+    public static final double goal = 0;
   }
 
 
