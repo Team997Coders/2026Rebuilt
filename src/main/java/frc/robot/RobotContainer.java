@@ -62,7 +62,7 @@ public class RobotContainer {
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
 
   // needs a Supplier<double[]>d and a DoubleSupplier (in that order)
-  private final Bump bump = new Bump(null, null, drivebase);
+  private final Bump bump = new Bump(() -> getScaledXY(), () -> scaleRotationAxis(driveStick.getRawAxis(4)), drivebase);
 
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
