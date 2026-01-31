@@ -26,12 +26,10 @@ public class Climber extends SubsystemBase {
     double levelDifferences = 18; // modify level differences, based of inch's betweens climb levels
 
     private final SparkMax leftClimber = new SparkMax(Constants.ClimberConstants.leftClimberID, MotorType.kBrushless);
-    private final SparkMax rightClimber = new SparkMax(Constants.ClimberConstants.rightClimberID, MotorType.kBrushless);
 
     private final SparkMax tilt = new SparkMax(Constants.ClimberConstants.tiltID, MotorType.kBrushless);
 
     private final SparkMaxConfig leftConfig =  new SparkMaxConfig();
-    private final SparkMaxConfig rightConfig = new SparkMaxConfig();
 
     private final SparkMaxConfig tiltConfig = new SparkMaxConfig();
 
@@ -43,14 +41,11 @@ public class Climber extends SubsystemBase {
 
     public Climber () {
         leftConfig.inverted(Constants.ClimberConstants.leftInverted);
-        rightConfig.inverted(Constants.ClimberConstants.rightInverted);
 
         tiltConfig.inverted(Constants.ClimberConstants.tiltInverted);
 
-        rightConfig.follow(Constants.ClimberConstants.leftClimberID);
 
-        leftClimber.configure(leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        rightClimber.configure(rightConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        leftClimber.configure(leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters)
 
         tilt.configure(tiltConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -82,13 +77,11 @@ public class Climber extends SubsystemBase {
 
     public void setClimberVolts(double volts) {
         leftClimber.setVoltage(volts);
-        rightClimber.setVoltage(volts);
     }
 
     public String getClimberVolts(){
         double outputVoltsLeft = leftClimber.getBusVoltage() * leftClimber.getAppliedOutput();
-        double outputVoltsRight = rightClimber.getBusVoltage() * rightClimber.getAppliedOutput();
-        return "Left output: " + outputVoltsLeft + " Right output: " + outputVoltsRight;
+        return "Left output: " + outputVoltsLeft;
     }
 
     public void setTiltVolts(double volts){
@@ -125,8 +118,7 @@ public class Climber extends SubsystemBase {
         return;
         }
 
-        if (encoderPos - getPosition() > 0 && this.indexlevel == 3){ // stops climber from grabbing air, with level 4(which doesn't exist)
-            setClimberVolts(0);
+        if (encoderPos - getPosition() > 0 && this.indexlevel == 1){ // stops climber from going to level 2, since were not doing it
             return;
         }
         // stops climber going into ground
