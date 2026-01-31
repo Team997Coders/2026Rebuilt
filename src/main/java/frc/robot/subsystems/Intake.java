@@ -18,8 +18,7 @@ public class Intake extends SubsystemBase {
     private final SparkMaxConfig spinConfig;
     private final SparkMaxConfig extendConfig;
                     
-    private double error;
-    private PIDController pid;
+
                          
                     
     public Intake(){
@@ -38,11 +37,8 @@ public class Intake extends SubsystemBase {
             
     public void spin(double voltage) {
         spinMotor.setVoltage(voltage);
-                }
+              }
             
-    public void stopSpin(){
-         spinMotor.setVoltage(0);
-                }
             
     public void runExtendMotor(double voltage) {
         extendMotor.setVoltage(voltage);
@@ -56,8 +52,5 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> spin(Constants.IntakeConstants.spinVoltage));
     }
 
-    public Command stopIntake(){
-        return this.runOnce(() -> stopSpin());
-    }
 
 }

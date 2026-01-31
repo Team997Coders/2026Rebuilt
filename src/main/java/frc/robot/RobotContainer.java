@@ -190,8 +190,7 @@ public class RobotContainer {
     c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
     c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
     c_driveStick.a().whileTrue(m_intake.intakeFuel());
-    c_driveStick.b().whileTrue(m_intake.stopIntake());
-
+    
   }
 
   /**
