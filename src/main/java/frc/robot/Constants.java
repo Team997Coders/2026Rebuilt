@@ -32,6 +32,9 @@ public final class Constants {
     public static final double rollerVoltage = 3;
     public static final double flywheelVelocity = 0;
 
+    public static final double hoodTopLimit = 0; //degrees probs
+    public static final double hoodBottomLimit = 0; 
+
     public static final int beamBreak = 0;
     public static final int absoluteEncoder = 1;
 

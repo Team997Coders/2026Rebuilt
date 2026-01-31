@@ -34,7 +34,7 @@ public class Shooter extends SubsystemBase {
     public SparkMax roller = new SparkMax(Constants.ShooterConstants.rollerMotor, MotorType.kBrushless);
 
     public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
-    public TalonFXConfiguration flywheelConfig = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
     public DigitalInput beamBreak = new DigitalInput(Constants.ShooterConstants.beamBreak);
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
@@ -45,14 +45,14 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         //could be wrong, both should be spinning the same way 
         flywheel2.setControl(new Follower(flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); //motor alignment could be different
-        flywheelConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; //change later
-        flywheelConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+        flywheel1Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; //change later
+        flywheel1Config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
     }
 
-    double goalAngle;
+    double goalAngle = Constants.ShooterConstants.hoodTopLimit;
     @Override
     public void periodic() {
-        moveHood(goalAngle);
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodPos(), goalAngle));
     }
 
     
@@ -72,8 +72,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveHood(double angle) {
-        goalAngle = angle;
-        setHoodMotorVoltage(PIDHoodController.calculate(getHoodPos(), goalAngle));
+        if(angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
+            goalAngle = angle;
+        }
+        
+
     }
 
     public void moveHoodUpManual() {
