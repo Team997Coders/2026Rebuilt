@@ -23,7 +23,8 @@ public class Climber extends SubsystemBase {
     String level;
     int indexlevel;
     int speedReduction = 12;
-    double levelDifferences = 18; // modify level differences, based of inch's betweens climb levels
+    double groundToLevel1 = 12; 
+    double otherLevelDifferences = 18; // modify level differences, based of inch's betweens climb levels
 
     private final SparkMax leftClimber = new SparkMax(Constants.ClimberConstants.leftClimberID, MotorType.kBrushless);
 
@@ -101,9 +102,9 @@ public class Climber extends SubsystemBase {
         return leftEncoder.getPosition();
     }
 
-    public void climberLevel(Double encoderPos, double levelDifferences){
+    public void climberLevel(Double encoderPos, double groundToLevel1){
         double heightOfRobot = climbPid.calculate(getPosition(),encoderPos);
-        this.indexlevel = (int) Math.floor(heightOfRobot / levelDifferences);
+        this.indexlevel = (int) Math.ceil(heightOfRobot / groundToLevel1);
         this.level = String.valueOf(this.indexlevel);
     }
 
@@ -118,7 +119,7 @@ public class Climber extends SubsystemBase {
         return;
         }
 
-        if (encoderPos - getPosition() > 0 && this.indexlevel == 1){ // stops climber from going to level 2, since were not doing it
+        if (encoderPos - getPosition() > 0 && this.indexlevel > 1){ // stops climber from going to level 2, since were not doing it
             return;
         }
         // stops climber going into ground
@@ -129,6 +130,7 @@ public class Climber extends SubsystemBase {
 
         // check if setClimberVolts is to slow, because speedReduction is in place, is it goes to fast
         setClimberVolts((climbPid.calculate(getPosition(), encoderPos))/speedReduction);
+
         
     }
 
