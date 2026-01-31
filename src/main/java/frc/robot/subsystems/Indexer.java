@@ -30,5 +30,9 @@ public class Indexer extends SubsystemBase{
       return indexMotor.getAppliedOutput() * indexMotor.getBusVoltage();
    }
 
-
+   public void unstickFuel(){
+      if (indexMotor.getOutputCurrent() > Constants.typicalIndexOutputCurrent) {
+         spinIndexerMotor(Constants.speedToUnstick);
+      }
+   }
 }

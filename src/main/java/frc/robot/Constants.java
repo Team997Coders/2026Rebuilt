@@ -22,7 +22,11 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
   public static final int gyroID = 46;
+
+
   public static final int indexerMotorID = 0;
+  public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
+  public static final double speedToUnstick = -1; 
 
   public static final class DriveConstants {
     public static final double deadband = 0.02;
