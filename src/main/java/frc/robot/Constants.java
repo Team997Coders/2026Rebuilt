@@ -29,6 +29,9 @@ public final class Constants {
     public static final int hoodMotor = 1;
     public static final int rollerMotor = 0;
 
+    public static final double rollerVoltage = 3;
+    public static final double flywheelVelocity = 0;
+
     public static final int beamBreak = 0;
     public static final int absoluteEncoder = 1;
 

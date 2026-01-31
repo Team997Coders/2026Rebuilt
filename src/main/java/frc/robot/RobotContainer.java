@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
 
@@ -47,6 +48,8 @@ public class RobotContainer {
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
   private static XboxController driveStick = new XboxController(0);
   private static CommandXboxController c_driveStick = new CommandXboxController(0);
+
+  private static Shooter shooter = new Shooter();
 
   //Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
@@ -173,6 +176,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    c_driveStick.rightTrigger().onTrue(shooter.moveRoller().alongWith(shooter.runFlywheel()));
+    c_driveStick.rightTrigger().onFalse((shooter.stopRoller().alongWith(shooter.stopRoller())));
+
+    c_driveStick.povUp().onTrue(shooter.hoodUp());
+    c_driveStick.povDown().onTrue((shooter.hoodDown()));
+
     // Gyro Reset
     //c_driveStick.povUp().onTrue(Commands.runOnce(gyro::reset));
     

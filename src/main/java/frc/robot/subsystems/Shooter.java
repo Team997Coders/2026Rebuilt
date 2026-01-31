@@ -49,39 +49,46 @@ public class Shooter extends SubsystemBase {
         flywheelConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
     }
 
-    double angle;
+    double goalAngle;
     @Override
     public void periodic() {
-        moveHood(angle);
+        moveHood(goalAngle);
     }
 
-    public void setFlywheelVoltage(double volts) {
-        flywheel1.setVoltage(volts);
-        flywheel2.setVoltage(volts);
+    
+    //Roller
+    public void setRollerVoltage (double volts) {
+        roller.setVoltage(volts);
+    }
+
+
+    //Hood
+    public double getHoodPos () {
+        return hoodRelativeEncoder.getPosition();
     }
 
     public void setHoodMotorVoltage(double volts) {
         hood.setVoltage(volts);
     }
 
-    public void setRollerMotorVoltage (double volts) {
-        roller.setVoltage(volts);
-    }
-
-    public double getHoodPos () {
-        return hoodRelativeEncoder.getPosition();
-    }
-
-    public void moveHood(double position) {
-        setHoodMotorVoltage(PIDHoodController.calculate(getHoodPos(), position));
+    public void moveHood(double angle) {
+        goalAngle = angle;
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodPos(), goalAngle));
     }
 
     public void moveHoodUpManual() {
-        moveHood(getHoodPos() + 1);
+        goalAngle = getHoodPos() + 1;
     }
 
     public void moveHoodDownManual() {
-        moveHood(getHoodPos() - 1);
+        goalAngle = getHoodPos() - 1;
+    }
+
+
+    //Flywheel
+      public void setFlywheelVoltage(double volts) {
+        flywheel1.setVoltage(volts);
+        flywheel2.setVoltage(volts);
     }
 
     public double getFlywheelVelocity () {
@@ -92,16 +99,30 @@ public class Shooter extends SubsystemBase {
         setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelVelocity(), velocity));
     }
 
-    public Command setVelocity(double velocity) {
-        return this.run(() -> setFlywheelVelocity(velocity));
-    }
 
+    //lil commands
     public Command hoodUp() {
         return this.runOnce(() -> moveHoodUpManual());
     }
 
     public Command hoodDown() {
         return this.runOnce(() -> moveHoodDownManual());
+    }
+
+    public Command moveRoller() {
+        return this.run(() -> setRollerVoltage(Constants.ShooterConstants.rollerVoltage));
+    }
+
+    public Command stopRoller() {
+        return this.runOnce(() -> setRollerVoltage(0));
+    }
+
+    public Command runFlywheel() {
+        return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelVelocity));
+    }
+
+    public Command stopFlywheel() {
+        return this.runOnce(() -> setFlywheelVelocity(0));
     }
 
 }
