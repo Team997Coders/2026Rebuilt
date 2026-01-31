@@ -12,81 +12,71 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
 
-    private final SparkMax leftClimber = new SparkMax(Constants.ClimberConstants.leftClimberID, MotorType.kBrushless);
-    private final SparkMax rightClimber = new SparkMax(Constants.ClimberConstants.rightClimberID, MotorType.kBrushless);
+    private final SparkMax climber = new SparkMax(Constants.ClimberConstants.climberID, MotorType.kBrushless);
 
-    private final SparkMax tilt = new SparkMax(Constants.ClimberConstants.tiltID, MotorType.kBrushless);
+    private final SparkMaxConfig config = new SparkMaxConfig();
 
-    private final SparkMaxConfig leftConfig =  new SparkMaxConfig();
-    private final SparkMaxConfig rightConfig = new SparkMaxConfig();
-
-    private final SparkMaxConfig tiltConfig = new SparkMaxConfig();
-
-    private final RelativeEncoder leftEncoder = leftClimber.getEncoder();
+    private final RelativeEncoder encoder = climber.getEncoder();
 
     private final DigitalInput limit = new DigitalInput(Constants.ClimberConstants.limitChannel);
 
     private final PIDController climbPid = new PIDController(Constants.ClimberConstants.kP, Constants.ClimberConstants.kI, Constants.ClimberConstants.kD);
 
     public Climber () {
-        leftConfig.inverted(Constants.ClimberConstants.leftInverted);
-        rightConfig.inverted(Constants.ClimberConstants.rightInverted);
+        config.inverted(Constants.ClimberConstants.inverted);
 
-        tiltConfig.inverted(Constants.ClimberConstants.tiltInverted);
-
-        rightConfig.follow(Constants.ClimberConstants.leftClimberID);
-
-        leftClimber.configure(leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        rightClimber.configure(rightConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
-        tilt.configure(tiltConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        climber.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
+    double goalPos;
+    @Override
     public void periodic() {
-
-    }
-
-
-    public enum ClimberHeight {
-        DOWN("DOWN", Constants.ClimberConstants.Heights.DOWN, 0),
-        GRAB("LOWER GRAB", Constants.ClimberConstants.Heights.GRAB, 1),
-        RAISE("LOWER RAISE", Constants.ClimberConstants.Heights.RAISE, 2);
-
-        String name;
-        double encoderPos;
-        int index;
-    
-        ClimberHeight(String name, double encoderPos, int index) {
-            this.name = name;
-            this.encoderPos = encoderPos;
-            this.index = index;
-
+        if(limit.get()) {
+            resetEncoder();
         }
+    
+        setClimberVolts(climbPid.calculate(getPosition(), goalPos));
+
     }
+
 
 
     public void setClimberVolts(double volts) {
-        leftClimber.setVoltage(volts);
-    }
-
-    public void setTiltVolts(double volts){
-        tilt.setVoltage(volts);
+        climber.setVoltage(volts);
     }
 
     public void resetEncoder() {
-        leftEncoder.setPosition(0);
+        encoder.setPosition(0);
     }
 
     public double getPosition() {
-        return leftEncoder.getPosition();
+        return encoder.getPosition();
     }
 
     public void goToPos(double encoderPos) {
-        setClimberVolts(climbPid.calculate(getPosition(), encoderPos));
+        goalPos = encoderPos;
+    }
+
+    public void manualUp() {
+        goalPos+=1;
+    }
+
+    public void manualDown() {
+        goalPos-=1;
+    }
+
+
+    public Command raise() {
+        return this.runOnce(() -> goToPos(Constants.ClimberConstants.raisedPos));
+    }
+
+    public Command lower() {
+        return this.runOnce(() -> goToPos(Constants.ClimberConstants.loweredPos));
     }
 
 
