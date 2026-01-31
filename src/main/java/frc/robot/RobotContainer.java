@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.Unstick;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.vision.Camera;
@@ -62,7 +63,10 @@ public class RobotContainer {
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
   
-  private final Indexer indexer;
+  private final Indexer indexer = new Indexer();
+  private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
+
+  private final Unstick unstick = new Unstick(indexer);
 
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
@@ -80,8 +84,6 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
     SmartDashboard.putData("Auto Choser", autoChooser);
-
-    indexer = new Indexer();
 
     CanandEventLoop.getInstance();
 
@@ -185,6 +187,10 @@ public class RobotContainer {
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
 
     c_driveStick.rightTrigger().whileTrue(indexer.startIdexCommand());
+
+    unstickTrigger.whileTrue(unstick);
+
+
   }
 
   /**
