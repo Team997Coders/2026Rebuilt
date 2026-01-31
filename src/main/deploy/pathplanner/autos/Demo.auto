@@ -1,0 +1,79 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot-aim@Hub"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot-goToMid-Trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SwipeMid"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Return(Bump)-from(mid)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot-goToMid-Trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SwipeMid"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Return(Bump)-from(mid)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot-climb"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
