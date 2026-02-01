@@ -43,6 +43,13 @@ public final class Constants {
     public static final double kd = 0.00;
   }
 
+  public static final class IndexerConstants {
+  public static final int indexerMotorID = 0; 
+  public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
+  public static final double speedToUnstick = -1; 
+  public static final int disiredUnstickTime = 500;
+  }
+
   public static final class DriveConstants {
     public static final double deadband = 0.02;
     public static final int currentLimit = 40;
@@ -53,6 +60,8 @@ public final class Constants {
       public static final double i = 0;
       public static final double d = 0;
     }
+
+ 
 
     public static final class SwerveModules {
 
@@ -159,4 +168,18 @@ public final class Constants {
     public static final int id = 50;
     public static final int ledCount = 50;
   }
+
+   public static final class IntakeConstants {
+    public static final int spinMotorID = 0;
+    public static final int extendMotorID = 0;
+
+    public static final double spinVoltage = 0;
+
+    public static final int p = 0;
+    public static final int i = 0;
+    public static final int d = 0;
+    public static final double goal = 0;
+  }
+
+
 }
