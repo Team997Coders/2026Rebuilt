@@ -19,7 +19,7 @@ public class Unstick extends Command {
 
     @Override
     public void initialize() {
-
+        
         
     }
 
@@ -39,6 +39,6 @@ public class Unstick extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_indexer.spinIndexerMotor(0);
+        m_indexer.startIdexCommand();
     }
 }
