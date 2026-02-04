@@ -41,6 +41,12 @@ public final class Constants {
     public static final double kp = 0.00;
     public static final double ki = 0.00;
     public static final double kd = 0.00;
+
+    public static final double flywheelGearRatio = 54/32; //54 is motor 32 is flywheel
+    public static final double flywheelRadius = 0; //in meters
+
+    public static final double flywheelBottomAngle = 0; //rad; counterclockwise from horizontal
+    public static final double flywheelTopAngle = 1.22;
   }
 
   public static final class IndexerConstants {

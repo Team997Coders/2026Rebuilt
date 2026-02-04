@@ -23,6 +23,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase {
     
@@ -37,6 +38,8 @@ public class Shooter extends SubsystemBase {
     public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
     public DigitalInput beamBreak = new DigitalInput(Constants.ShooterConstants.beamBreak);
+    public Trigger beamBreakTrigger = new Trigger(() -> beamBreak.get());
+
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
     public PIDController PIDFlywheelController = new PIDController(Constants.ShooterConstants.kp, Constants.ShooterConstants.ki, Constants.ShooterConstants.kd);
@@ -52,7 +55,7 @@ public class Shooter extends SubsystemBase {
     double goalAngle = Constants.ShooterConstants.hoodTopLimit;
     @Override
     public void periodic() {
-        setHoodMotorVoltage(PIDHoodController.calculate(getHoodPos(), goalAngle));
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
     }
 
     
@@ -63,8 +66,8 @@ public class Shooter extends SubsystemBase {
 
 
     //Hood
-    public double getHoodPos () {
-        return hoodRelativeEncoder.getPosition();
+    public double getHoodAngle () { //rad
+        return hoodRelativeEncoder.getPosition()*2*Math.PI;
     }
 
     public void setHoodMotorVoltage(double volts) {
@@ -80,11 +83,15 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveHoodUpManual() {
-        goalAngle = getHoodPos() + 1;
+        if(goalAngle + 1 < Constants.ShooterConstants.hoodTopLimit) {
+        goalAngle = getHoodAngle() + ((5/180) * Math.PI);
+        }
     }
 
     public void moveHoodDownManual() {
-        goalAngle = getHoodPos() - 1;
+        if(goalAngle - 1 > Constants.ShooterConstants.hoodBottomLimit) {
+        goalAngle = getHoodAngle() - 1;
+    } 
     }
 
 
@@ -94,12 +101,16 @@ public class Shooter extends SubsystemBase {
         flywheel2.setVoltage(volts);
     }
 
-    public double getFlywheelVelocity () {
-        return flywheel1.getVelocity().getValueAsDouble();
+    public double getFlywheelRotationalVelocity () { //rad/sec
+        return flywheel1.getVelocity().getValueAsDouble()*(2*Math.PI)*(Constants.ShooterConstants.flywheelGearRatio); 
+    }
+
+    public double flywheelTangentialVelocity() { //meter/sec
+        return getFlywheelRotationalVelocity()*Constants.ShooterConstants.flywheelRadius; 
     }
 
     public void setFlywheelVelocity (double velocity) {
-        setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelVelocity(), velocity));
+        setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelRotationalVelocity(), velocity));
     }
 
 
