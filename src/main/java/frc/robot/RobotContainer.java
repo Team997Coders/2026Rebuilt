@@ -6,8 +6,10 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.vision.Camera;
+import frc.robot.subsystems.vision.ObjectCamera;
 import frc.robot.subsystems.vision.CameraBlock;
 
 import java.util.ArrayList;
@@ -52,7 +54,7 @@ public class RobotContainer {
   private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
-  private static final Camera frontCamera = new Camera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
+  private static final ObjectCamera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
   //private static final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
@@ -178,6 +180,7 @@ public class RobotContainer {
     
     //When holding x robot goes to closest location in potential locations
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
+    c_driveStick.b().whileTrue(new objectLock(drivebase, () -> getScaledXY(), frontCamera));
   }
 
   /**
