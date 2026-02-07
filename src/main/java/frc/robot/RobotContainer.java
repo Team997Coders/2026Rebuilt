@@ -201,7 +201,7 @@ public class RobotContainer {
 
     c_driveStick.rightTrigger().whileTrue(indexer.startIdexCommand());
 
-    unstickTrigger.whileTrue(unstick);
+    unstickTrigger.onTrue(unstick);
 
 
   }

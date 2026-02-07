@@ -27,7 +27,7 @@ public class Unstick extends Command {
     public void execute() {
         counter++;
         if (counter == Constants.disiredUnstickTime){ 
-            
+            end(true);
         }
     }
 
