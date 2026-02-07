@@ -14,6 +14,7 @@ import frc.robot.subsystems.Drivebase;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Bump extends Command {
@@ -21,8 +22,8 @@ public class Bump extends Command {
   private final Drivebase m_drivebase;
   private final Supplier<double[]> speedXY;
   private final DoubleSupplier rot;
-  private final ProfiledPIDController thetaController = new ProfiledPIDController(1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(60, 60));
-
+  private final ProfiledPIDController thetaController = new ProfiledPIDController(3.0, 0.0, 0.0, new TrapezoidProfile.Constraints(60, 60));
+  
   public Bump(Supplier<double[]> speedXY, DoubleSupplier rot, Drivebase drivebase) {
     this.speedXY = speedXY;
     this.rot = rot;
@@ -45,13 +46,14 @@ public class Bump extends Command {
     var xy = speedXY.get();
     Canandgyro gyro = m_drivebase.gyro;
 
-    double output;
+    double Routput;
+    double angleThreshold = 10;
     boolean isLocking = false;
     double AnglePitch = gyro.getPitch();
     double AngleRoll = gyro.getRoll();
 
     //detect if robot is at an angle greater than 20 degrees
-    if (AnglePitch > 20 || AngleRoll > 20) {
+    if (AnglePitch > angleThreshold || AngleRoll > angleThreshold) {
 
       isLocking = true;
     } else {
@@ -59,19 +61,22 @@ public class Bump extends Command {
       isLocking = false;
     }
 
-    //use isLocking boolean to switch to 45 degree angle  if true and switch to normal drive if false
+    //use isLocking boolean to turn 45 degrees if true and switch to normal drive if false
     if (isLocking == true) {
 
       double currentAngle = m_drivebase.getPose().getRotation().getRadians();
       double goalAngle = Math.toRadians(45);
-      output = thetaController.calculate(currentAngle, goalAngle);
+      Routput = thetaController.calculate(currentAngle, goalAngle);
     } else {
   
-        output = rot.getAsDouble();
+        Routput = rot.getAsDouble();
     }
 
     //set defaultDrive to output
-    m_drivebase.defaultDrive(-xy[1], -xy[0], output);
+    m_drivebase.defaultDrive(-xy[1], -xy[0], Routput);
+
+    SmartDashboard.putNumber("Pitch Angle", AnglePitch);
+    SmartDashboard.putNumber("Roll angle", AngleRoll);
   }
 
   // Called once the command ends or is interrupted.
