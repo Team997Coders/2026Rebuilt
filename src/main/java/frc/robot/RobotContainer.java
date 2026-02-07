@@ -205,6 +205,9 @@ public class RobotContainer {
     c_driveStick.povUp().whileTrue(shooter.hoodUp());
     c_driveStick.povDown().whileTrue((shooter.hoodDown()));
 
+    c_driveStick.a().whileTrue(shooter.runFlywheelBangBang(1));
+    c_driveStick.a().whileFalse(shooter.runFlywheelBangBang(0));
+
    // c_driveStick.a().onTrue(shooter.runFlywheelVolt(5));
 
   

@@ -67,7 +67,6 @@ public class Shooter extends SubsystemBase {
     }
 
      private double goalAngle;
-     private double flywheelVoltageGoal;
     @Override
     public void periodic() {
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
@@ -79,8 +78,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("hood motor applied output", hood.getAppliedOutput());
 
         SmartDashboard.putNumber("shooter output", flywheel1.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotationalVelocity());
-        SmartDashboard.putNumber("shooter velocity tangential", flywheelTangentialVelocity());
+        SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotVel());
+        SmartDashboard.putNumber("shooter velocity tangential", getflywheelTanVel());
     }
 
     
@@ -126,23 +125,27 @@ public class Shooter extends SubsystemBase {
 
 
     //Flywheel
-      public void setFlywheelVoltage(double volts) {
+    public void setFlywheelVoltage(double volts) {
         flywheel1.setVoltage(-volts);
         flywheel2.setVoltage(-volts);
 
     }
 
-    public void setFlywheelVoltageGoal(double voltGoal) {
-        flywheelVoltageGoal = voltGoal;
+    public void flywheelBangBang(double goalRotVelocity) {
+        if (getFlywheelRotVel() < goalRotVelocity) {
+            setFlywheelVoltage(Constants.ShooterConstants.flywheelVoltage);
+        } else if (getFlywheelRotVel() >= goalRotVelocity) {
+            setFlywheelVoltage(0);
+        }
+
+    }   
+    
+    public double getFlywheelRotVel () { //rad/sec
+        return flywheel1.getVelocity().getValueAsDouble()*(2*Math.PI)/(Constants.ShooterConstants.flywheelGearRatio); 
     }
 
-
-    public double getFlywheelRotationalVelocity () { //rad/sec
-        return flywheel1.getVelocity().getValueAsDouble()*(2*Math.PI)*(Constants.ShooterConstants.flywheelGearRatio); 
-    }
-
-    public double flywheelTangentialVelocity() { //meter/sec
-        return getFlywheelRotationalVelocity()*Constants.ShooterConstants.flywheelRadius; 
+    public double getflywheelTanVel() { //meter/sec
+        return getFlywheelRotVel()*Constants.ShooterConstants.flywheelRadius; 
     }
 
     // public void setFlywheelVelocity (double velocity) {
@@ -153,6 +156,7 @@ public class Shooter extends SubsystemBase {
 
 
     //lil commands
+    //hood
     public Command hoodUp() {
         return this.run(() -> moveHoodUpManual());
     }
@@ -161,6 +165,7 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> moveHoodDownManual());
     }
 
+    //roller
     public Command moveRoller() {
         return this.run(() -> setRollerVoltage(Constants.ShooterConstants.rollerVoltage));
     }
@@ -173,6 +178,8 @@ public class Shooter extends SubsystemBase {
         return this.runOnce(() -> setRollerVoltage(0));
     }
 
+
+    //flywheel
     // public Command runFlywheel() {
     //     return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelRotationalVelocity));
     // }
@@ -180,6 +187,10 @@ public class Shooter extends SubsystemBase {
 
     public Command runFlywheelVolt(double volts) {
         return this.run(() -> setFlywheelVoltage(volts));
+    }
+
+    public Command runFlywheelBangBang(double rotVelGoal) {
+        return this.run(() -> flywheelBangBang(rotVelGoal));
     }
 
     // public Command reverseFlywheel() {
@@ -202,8 +213,8 @@ public class Shooter extends SubsystemBase {
 
     //Logging
     public void loggers() {
-        SmartDashboard.putNumber("flywheel tangential Velocity", flywheelTangentialVelocity());
-        SmartDashboard.putNumber("flywheel rotational velocity", getFlywheelRotationalVelocity());
+        SmartDashboard.putNumber("flywheel tangential Velocity", getFlywheelRotVel());
+        SmartDashboard.putNumber("flywheel rotational velocity", getflywheelTanVel());
 
         SmartDashboard.putNumber("hood angle", getHoodAngle());
         SmartDashboard.putNumber("hood goal angle", goalAngle);
