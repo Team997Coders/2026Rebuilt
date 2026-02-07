@@ -14,7 +14,7 @@ public class Indexer extends SubsystemBase{
 
 
    public Indexer() {
-   indexMotor = new SparkMax(Constants.indexerMotorID, MotorType.kBrushless);
+   indexMotor = new SparkMax(Constants.IndexerConstants.indexerMotorID, MotorType.kBrushless);
 
    }
 
@@ -31,8 +31,8 @@ public class Indexer extends SubsystemBase{
    }
 
    public boolean unstickFuel(){
-      if (indexMotor.getOutputCurrent() > Constants.typicalIndexOutputCurrent) {
-         spinIndexerMotor(Constants.speedToUnstick);
+      if (indexMotor.getOutputCurrent() > Constants.IndexerConstants.typicalIndexOutputCurrent) {
+         spinIndexerMotor(Constants.IndexerConstants.speedToUnstick);
          return true;
       } else {
          return false;

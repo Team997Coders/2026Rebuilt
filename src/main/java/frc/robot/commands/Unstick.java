@@ -26,11 +26,11 @@ public class Unstick extends Command {
     @Override
     public void execute() {
         counter++;
-        if (counter == Constants.disiredUnstickTime){ 
+        if (counter == Constants.IndexerConstants.disiredUnstickTime){ 
             end(true);
         }
     }
-
+    
     @Override
     public boolean isFinished() {
         return false;
