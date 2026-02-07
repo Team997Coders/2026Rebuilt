@@ -48,7 +48,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
+ // private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
 
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
   private static XboxController driveStick = new XboxController(0);
@@ -56,10 +56,10 @@ public class RobotContainer {
 
   private static Shooter shooter = new Shooter();
 
-  private static Shoot shootCommand;
+ // private static Shoot shootCommand;
 
   //Pathplanner autoChooser
-  private SendableChooser<Command> autoChooser;
+  //private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
   private static final Camera frontCamera = new Camera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
@@ -69,40 +69,40 @@ public class RobotContainer {
   private static final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(frontCamera));
   private static final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
-  private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
+ // private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
   
-  private static final Indexer indexer = new Indexer();
-  private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
+ // private static final Indexer indexer = new Indexer();
+ // private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
 
-  private final Unstick unstick = new Unstick(indexer);
+ // private final Unstick unstick = new Unstick(indexer);
 
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
 
-  public final Intake m_intake;
-  public final IntakeCommand IntakeCommandExtend;
-  public final IntakeCommand IntakeCommandRetract;
+  // public final Intake m_intake;
+  // public final IntakeCommand IntakeCommandExtend;
+  // public final IntakeCommand IntakeCommandRetract;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
 
-   shootCommand = new Shoot(shooter, indexer);
+  // shootCommand = new Shoot(shooter, indexer);
     // Configure the trigger bindings
-    drivebase.setDefaultCommand(
-        new Drive(
-            drivebase,
-            () -> getScaledXY(),
-            () -> scaleRotationAxis(driveStick.getRawAxis(4))));
+    // drivebase.setDefaultCommand(
+    //     new Drive(
+    //         drivebase,
+    //         () -> getScaledXY(),
+    //         () -> scaleRotationAxis(driveStick.getRawAxis(4))));
 
-    autoChooser = AutoBuilder.buildAutoChooser("moveForward");
-    SmartDashboard.putData("Auto Choser", autoChooser);
+   // autoChooser = AutoBuilder.buildAutoChooser("moveForward");
+   // SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
 
-    m_intake = new Intake();
-    IntakeCommandExtend = new IntakeCommand(m_intake, true);
-    IntakeCommandRetract = new IntakeCommand(m_intake, false);
+    // m_intake = new Intake();
+    // IntakeCommandExtend = new IntakeCommand(m_intake, true);
+    // IntakeCommandRetract = new IntakeCommand(m_intake, false);
 
     configureBindings();
   }
@@ -133,7 +133,7 @@ public class RobotContainer {
     double theta = Math.atan2(xy[1], xy[0]);
 
     // Square radius and scale by max velocity
-    r = r * r * drivebase.getMaxVelocity();
+   // r = r * r * drivebase.getMaxVelocity();
 
     // Convert to Cartesian coordinates
     xy[0] = r * Math.cos(theta);
@@ -149,7 +149,7 @@ public class RobotContainer {
   public void updateDashboard() {
     SmartDashboard.putNumber("Scaled_X", getScaledXY()[0]);
     SmartDashboard.putNumber("Scaled_Y", getScaledXY()[1]);
-    SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
+   // SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
   }
 
   @SuppressWarnings("unused")
@@ -157,22 +157,22 @@ public class RobotContainer {
     return Math.copySign(input * input * input, input);
   }
 
-  @SuppressWarnings("unused")
-  private double scaleTranslationAxis(double input) {
-    return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
-  }
+  // @SuppressWarnings("unused")
+  // private double scaleTranslationAxis(double input) {
+  //   return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
+  // }
 
-  private double scaleRotationAxis(double input) {
-    return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
-  }
+  // private double scaleRotationAxis(double input) {
+  //   return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
+  // }
 
-  public void resetGyro() {
-    gyro.setYaw(0);
-  }
+  // public void resetGyro() {
+  //   gyro.setYaw(0);
+  // }
 
-  public double getGyroYaw() {
-    return -gyro.getYaw();
-  }
+  // public double getGyroYaw() {
+  //   return -gyro.getYaw();
+  // }
 
   public boolean onBlueAlliance() {
     var alliance = DriverStation.getAlliance();
@@ -197,13 +197,15 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    c_driveStick.rightTrigger().onTrue(shooter.moveRoller().alongWith(shooter.runFlywheel()));
-    c_driveStick.rightTrigger().onFalse((shooter.stopRoller().alongWith(shooter.stopRoller())));
+    c_driveStick.rightTrigger().onTrue(shooter.runRollerAndFlywheel(3,4));
+    c_driveStick.rightTrigger().onFalse(shooter.runRollerAndFlywheel(0, 0));
 
-    c_driveStick.b().whileTrue(shootCommand);
+   // c_driveStick.b().whileTrue(shootCommand);
 
     c_driveStick.povUp().onTrue(shooter.hoodUp());
     c_driveStick.povDown().onTrue((shooter.hoodDown()));
+
+    c_driveStick.a().onTrue(shooter.runFlywheelVolt(3));
 
   
     // c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
@@ -214,7 +216,7 @@ public class RobotContainer {
 
     //c_driveStick.rightTrigger().whileTrue(indexer.startIndexer());
 
-    unstickTrigger.whileTrue(unstick);
+   // unstickTrigger.whileTrue(unstick);
 
 
   }
@@ -225,6 +227,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return null;
   }
 }

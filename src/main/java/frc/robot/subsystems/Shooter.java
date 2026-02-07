@@ -16,10 +16,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,8 +37,10 @@ public class Shooter extends SubsystemBase {
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushless);
     public SparkMax roller = new SparkMax(Constants.ShooterConstants.rollerMotor, MotorType.kBrushless);
 
-    public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
-    public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+    public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+
+    public SparkMaxConfig hoodConfig = new SparkMaxConfig();
 
     public DigitalInput beamBreak = new DigitalInput(Constants.ShooterConstants.beamBreak);
     public Trigger beamBreakTrigger = new Trigger(() -> beamBreak.get());
@@ -51,9 +56,12 @@ public class Shooter extends SubsystemBase {
         flywheel1Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; //change later
         flywheel1Config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
 
+        hoodConfig.inverted(true);
+        hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
     }
 
-    double goalAngle = Constants.ShooterConstants.hoodTopLimit;
+    double goalAngle;
     @Override
     public void periodic() {
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
@@ -67,6 +75,11 @@ public class Shooter extends SubsystemBase {
 
 
     //Hood
+
+    public void setGoalAngle(double angle) {
+        goalAngle = angle;
+    }
+
     public double getHoodAngle () { //rad
         return hoodRelativeEncoder.getPosition()*2*Math.PI;
     }
@@ -77,7 +90,7 @@ public class Shooter extends SubsystemBase {
 
     public void moveHood(double angle) {
         if(angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
-            goalAngle = angle;
+            setGoalAngle(angle);
         }
         
 
@@ -85,21 +98,21 @@ public class Shooter extends SubsystemBase {
 
     public void moveHoodUpManual() {
         if(goalAngle + 1 < Constants.ShooterConstants.hoodTopLimit) {
-        goalAngle = getHoodAngle() + ((5/180) * Math.PI);
+       setGoalAngle(goalAngle+3);
         }
     }
 
     public void moveHoodDownManual() {
         if(goalAngle - 1 > Constants.ShooterConstants.hoodBottomLimit) {
-        goalAngle = getHoodAngle() - 1;
+        setGoalAngle(goalAngle-3);
     } 
     }
 
 
     //Flywheel
       public void setFlywheelVoltage(double volts) {
-        flywheel1.setVoltage(volts);
-        flywheel2.setVoltage(volts);
+        flywheel1.setVoltage(-volts);
+        flywheel2.setVoltage(-volts);
     }
 
     public double getFlywheelRotationalVelocity () { //rad/sec
@@ -117,11 +130,11 @@ public class Shooter extends SubsystemBase {
 
     //lil commands
     public Command hoodUp() {
-        return this.runOnce(() -> moveHoodUpManual());
+        return this.run(() -> moveHoodUpManual());
     }
 
     public Command hoodDown() {
-        return this.runOnce(() -> moveHoodDownManual());
+        return this.run(() -> moveHoodDownManual());
     }
 
     public Command moveRoller() {
@@ -151,6 +164,15 @@ public class Shooter extends SubsystemBase {
 
     public Command stopFlywheel() {
         return this.runOnce(() -> setFlywheelVelocity(0));
+    }
+
+    public void moveRollerandFlywheel(double FlywheeVolts, double rollerVolts) {
+        setFlywheelVoltage(FlywheeVolts);
+        setRollerVoltage(rollerVolts);
+    }
+
+    public Command runRollerAndFlywheel(double flywheelVolts, double rollerVolts) {
+        return this.run(() -> moveRollerandFlywheel(flywheelVolts, rollerVolts));
     }
 
 
