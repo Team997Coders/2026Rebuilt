@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.clumpLock;
 import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.vision.Camera;
@@ -181,6 +182,7 @@ public class RobotContainer {
     //When holding x robot goes to closest location in potential locations
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
     c_driveStick.b().whileTrue(new objectLock(drivebase, () -> getScaledXY(), frontCamera));
+    c_driveStick.a().whileTrue(new clumpLock(drivebase, () -> getScaledXY(), frontCamera));
   }
 
   /**
