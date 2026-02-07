@@ -50,6 +50,8 @@ public class Shooter extends SubsystemBase {
     public PIDController PIDFlywheelController = new PIDController(Constants.ShooterConstants.flywheelPID.kp, Constants.ShooterConstants.flywheelPID.ki, Constants.ShooterConstants.flywheelPID.kd);
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
+  
+
     public Shooter() {
         //could be wrong, both should be spinning the same way 
         flywheel2.setControl(new Follower(flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); //motor alignment could be different
@@ -59,12 +61,26 @@ public class Shooter extends SubsystemBase {
         hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
+       hoodRelativeEncoder.setPosition(0);
+
+
     }
 
-    double goalAngle;
+     private double goalAngle;
+     private double flywheelVoltageGoal;
     @Override
     public void periodic() {
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
+
+
+        SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
+        SmartDashboard.putNumber("Hood angle/pos", goalAngle);
+        SmartDashboard.putNumber("hood angle", getHoodAngle());
+        SmartDashboard.putNumber("hood motor applied output", hood.getAppliedOutput());
+
+        SmartDashboard.putNumber("shooter output", flywheel1.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotationalVelocity());
+        SmartDashboard.putNumber("shooter velocity tangential", flywheelTangentialVelocity());
     }
 
     
@@ -81,7 +97,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getHoodAngle () { //rad
-        return hoodRelativeEncoder.getPosition()*2*Math.PI;
+        return hoodRelativeEncoder.getPosition()*360/Constants.ShooterConstants.hoodGearRatio;
     }
 
     public void setHoodMotorVoltage(double volts) {
@@ -98,13 +114,13 @@ public class Shooter extends SubsystemBase {
 
     public void moveHoodUpManual() {
         if(goalAngle + 1 < Constants.ShooterConstants.hoodTopLimit) {
-       setGoalAngle(goalAngle+3);
+       setGoalAngle(goalAngle+1);
         }
     }
 
     public void moveHoodDownManual() {
         if(goalAngle - 1 > Constants.ShooterConstants.hoodBottomLimit) {
-        setGoalAngle(goalAngle-3);
+        setGoalAngle(goalAngle-1);
     } 
     }
 
@@ -113,7 +129,13 @@ public class Shooter extends SubsystemBase {
       public void setFlywheelVoltage(double volts) {
         flywheel1.setVoltage(-volts);
         flywheel2.setVoltage(-volts);
+
     }
+
+    public void setFlywheelVoltageGoal(double voltGoal) {
+        flywheelVoltageGoal = voltGoal;
+    }
+
 
     public double getFlywheelRotationalVelocity () { //rad/sec
         return flywheel1.getVelocity().getValueAsDouble()*(2*Math.PI)*(Constants.ShooterConstants.flywheelGearRatio); 
@@ -123,9 +145,11 @@ public class Shooter extends SubsystemBase {
         return getFlywheelRotationalVelocity()*Constants.ShooterConstants.flywheelRadius; 
     }
 
-    public void setFlywheelVelocity (double velocity) {
-        setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelRotationalVelocity(), velocity));
-    }
+    // public void setFlywheelVelocity (double velocity) {
+    //     setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelRotationalVelocity(), velocity));
+    // }
+
+
 
 
     //lil commands
@@ -149,22 +173,22 @@ public class Shooter extends SubsystemBase {
         return this.runOnce(() -> setRollerVoltage(0));
     }
 
-    public Command runFlywheel() {
-        return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelVelocity));
-    }
+    // public Command runFlywheel() {
+    //     return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelRotationalVelocity));
+    // }
 
 
     public Command runFlywheelVolt(double volts) {
         return this.run(() -> setFlywheelVoltage(volts));
     }
 
-    public Command reverseFlywheel() {
-        return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelReverseVelocity));
-    }
+    // public Command reverseFlywheel() {
+    //     return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelReverseVelocity));
+    // }
 
-    public Command stopFlywheel() {
-        return this.runOnce(() -> setFlywheelVelocity(0));
-    }
+    // public Command stopFlywheel() {
+    //     return this.runOnce(() -> setFlywheelVelocity(0));
+    // }
 
     public void moveRollerandFlywheel(double FlywheeVolts, double rollerVolts) {
         setFlywheelVoltage(FlywheeVolts);

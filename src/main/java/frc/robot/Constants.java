@@ -32,11 +32,14 @@ public final class Constants {
     public static final double rollerVoltage = 3;
     public static final double rollerReverseVoltage = -2;
 
-    public static final double flywheelVelocity = 3;
+    public static final double flywheelRotationalVelocity = 1;
     public static final double flywheelReverseVelocity = 0;
 
-    public static final double hoodTopLimit = 45; //degrees probs
+    public static final double hoodTopLimit = 50; //degrees 
     public static final double hoodBottomLimit = 0; 
+
+    public static final double hoodGearRatio = 35*(300/29);
+
 
     public static final int beamBreak = 0;
     public static final int absoluteEncoder = 1;
@@ -49,7 +52,7 @@ public final class Constants {
     }
 
     public static final class hoodPID {
-      public static final double kp = 0.1;
+      public static final double kp = 0.15;
       public static final double ki = 0.00;
       public static final double kd = 0.00;
     }
