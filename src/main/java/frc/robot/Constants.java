@@ -32,7 +32,7 @@ public final class Constants {
     public static final double rollerVoltage = 3;
     public static final double rollerReverseVoltage = -2;
 
-    public static final double flywheelRotationalVelocity = 1; 
+    public static final double flywheelRotationalVelocity = 2; 
     public static final double flywheelReverseVelocity = 0;
 
     public static final double flywheelVoltage = 4.2;

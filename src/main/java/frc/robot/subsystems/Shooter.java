@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
@@ -47,9 +48,9 @@ public class Shooter extends SubsystemBase {
 
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
-    public PIDController PIDFlywheelController = new PIDController(Constants.ShooterConstants.flywheelPID.kp, Constants.ShooterConstants.flywheelPID.ki, Constants.ShooterConstants.flywheelPID.kd);
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
+    public BangBangController flywheelBangBang = new BangBangController();
   
 
     public Shooter() {
@@ -67,9 +68,16 @@ public class Shooter extends SubsystemBase {
     }
 
      private double goalAngle;
+     private double goalVoltage;
     @Override
     public void periodic() {
-        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalVoltage));
+
+        if((flywheel1.getMotorVoltage().getValueAsDouble())< goalVoltage) {
+            setFlywheelVoltage(goalVoltage);
+        } else if (flywheel1.getMotorVoltage().getValueAsDouble() >= goalVoltage) {
+            setFlywheelVoltage(0);
+        }
 
 
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
@@ -80,6 +88,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("shooter output", flywheel1.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotVel());
         SmartDashboard.putNumber("shooter velocity tangential", getflywheelTanVel());
+        SmartDashboard.putNumber("bang bang output", flywheelBangBang.calculate(flywheel1.getMotorVoltage().getValueAsDouble(), goalVoltage));
+        SmartDashboard.putNumber("shooter goal voltage", goalVoltage);
     }
 
     
@@ -126,22 +136,21 @@ public class Shooter extends SubsystemBase {
 
     //Flywheel
     public void setFlywheelVoltage(double volts) {
-        flywheel1.setVoltage(-volts);
-        flywheel2.setVoltage(-volts);
+       flywheel1.setVoltage(volts);
 
     }
 
-    public void flywheelBangBang(double goalRotVelocity) {
-        if (getFlywheelRotVel() < goalRotVelocity) {
-            setFlywheelVoltage(Constants.ShooterConstants.flywheelVoltage);
-        } else if (getFlywheelRotVel() >= goalRotVelocity) {
-            setFlywheelVoltage(0);
-        }
+    public void setVoltGoal(double volts) {
+        goalVoltage = volts;
+    }
 
-    }   
+
+    public void stopBangBang() {
+        goalVoltage = 0;
+    }
     
-    public double getFlywheelRotVel () { //rad/sec
-        return flywheel1.getVelocity().getValueAsDouble()*(2*Math.PI)/(Constants.ShooterConstants.flywheelGearRatio); 
+    public double getFlywheelRotVel () { //rotations/sec
+        return flywheel1.getVelocity().getValueAsDouble()/(Constants.ShooterConstants.flywheelGearRatio); 
     }
 
     public double getflywheelTanVel() { //meter/sec
@@ -189,8 +198,8 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> setFlywheelVoltage(volts));
     }
 
-    public Command runFlywheelBangBang(double rotVelGoal) {
-        return this.run(() -> flywheelBangBang(rotVelGoal));
+    public Command runBangBang(double goalVolt) {
+        return this.startEnd(() -> setVoltGoal(goalVolt), () -> setVoltGoal(0));
     }
 
     // public Command reverseFlywheel() {
@@ -202,12 +211,12 @@ public class Shooter extends SubsystemBase {
     // }
 
     public void moveRollerandFlywheel(double FlywheeVolts, double rollerVolts) {
-        setFlywheelVoltage(FlywheeVolts);
+        setVoltGoal(FlywheeVolts);
         setRollerVoltage(rollerVolts);
     }
 
     public Command runRollerAndFlywheel(double flywheelVolts, double rollerVolts) {
-        return this.run(() -> moveRollerandFlywheel(flywheelVolts, rollerVolts));
+        return this.runOnce(() -> moveRollerandFlywheel(flywheelVolts, rollerVolts));
     }
 
 

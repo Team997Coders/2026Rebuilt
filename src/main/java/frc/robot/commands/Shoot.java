@@ -29,8 +29,8 @@ public class Shoot extends Command {
 
     @Override 
     public void execute() {
-        beamBreak.onFalse(new ParallelCommandGroup(m_indexer.startIndexer(), m_shooter.moveRoller(), m_shooter.runFlywheel()));
-        beamBreak.onTrue(new ParallelCommandGroup(m_indexer.stopIndexer(), m_shooter.stopRoller(), m_shooter.runFlywheel()));
+        // beamBreak.onFalse(new ParallelCommandGroup(m_indexer.startIndexer(), m_shooter.moveRoller(), m_shooter.runFlywheel()));
+        // beamBreak.onTrue(new ParallelCommandGroup(m_indexer.stopIndexer(), m_shooter.stopRoller(), m_shooter.runFlywheel()));
     }
 
     @Override

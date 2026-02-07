@@ -200,13 +200,13 @@ public class RobotContainer {
     c_driveStick.rightTrigger().onTrue(shooter.runRollerAndFlywheel(4.3,4));
     c_driveStick.rightTrigger().onFalse(shooter.runRollerAndFlywheel(0, 0));
 
+    c_driveStick.a().onTrue(shooter.moveRoller()).onFalse(shooter.stopRoller());
+
    // c_driveStick.b().whileTrue(shootCommand);
 
     c_driveStick.povUp().whileTrue(shooter.hoodUp());
     c_driveStick.povDown().whileTrue((shooter.hoodDown()));
 
-    c_driveStick.a().whileTrue(shooter.runFlywheelBangBang(1));
-    c_driveStick.a().whileFalse(shooter.runFlywheelBangBang(0));
 
    // c_driveStick.a().onTrue(shooter.runFlywheelVolt(5));
 
