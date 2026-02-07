@@ -50,7 +50,6 @@ public class Shooter extends SubsystemBase {
 
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
-    public BangBangController flywheelBangBang = new BangBangController();
   
 
     public Shooter() {
@@ -68,17 +67,9 @@ public class Shooter extends SubsystemBase {
     }
 
      private double goalAngle;
-     private double goalVoltage;
     @Override
     public void periodic() {
-        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalVoltage));
-
-        if((flywheel1.getMotorVoltage().getValueAsDouble())< goalVoltage) {
-            setFlywheelVoltage(goalVoltage);
-        } else if (flywheel1.getMotorVoltage().getValueAsDouble() >= goalVoltage) {
-            setFlywheelVoltage(0);
-        }
-
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
@@ -88,10 +79,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("shooter output", flywheel1.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotVel());
         SmartDashboard.putNumber("shooter velocity tangential", getflywheelTanVel());
-        SmartDashboard.putNumber("bang bang output", flywheelBangBang.calculate(flywheel1.getMotorVoltage().getValueAsDouble(), goalVoltage));
-        SmartDashboard.putNumber("shooter goal voltage", goalVoltage);
     }
-
     
     //Roller
     public void setRollerVoltage (double volts) {
@@ -136,17 +124,8 @@ public class Shooter extends SubsystemBase {
 
     //Flywheel
     public void setFlywheelVoltage(double volts) {
-       flywheel1.setVoltage(volts);
+       flywheel1.setVoltage(-volts);
 
-    }
-
-    public void setVoltGoal(double volts) {
-        goalVoltage = volts;
-    }
-
-
-    public void stopBangBang() {
-        goalVoltage = 0;
     }
     
     public double getFlywheelRotVel () { //rotations/sec
@@ -198,10 +177,6 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> setFlywheelVoltage(volts));
     }
 
-    public Command runBangBang(double goalVolt) {
-        return this.startEnd(() -> setVoltGoal(goalVolt), () -> setVoltGoal(0));
-    }
-
     // public Command reverseFlywheel() {
     //     return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelReverseVelocity));
     // }
@@ -211,7 +186,7 @@ public class Shooter extends SubsystemBase {
     // }
 
     public void moveRollerandFlywheel(double FlywheeVolts, double rollerVolts) {
-        setVoltGoal(FlywheeVolts);
+        setFlywheelVoltage(FlywheeVolts);
         setRollerVoltage(rollerVolts);
     }
 
