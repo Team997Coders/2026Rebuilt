@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.Unstick;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Intake;
@@ -55,6 +56,8 @@ public class RobotContainer {
 
   private static Shooter shooter = new Shooter();
 
+  private static Shoot shootCommand;
+
   //Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
@@ -68,7 +71,7 @@ public class RobotContainer {
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
   
-  private final Indexer indexer = new Indexer();
+  private static final Indexer indexer = new Indexer();
   private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
 
   private final Unstick unstick = new Unstick(indexer);
@@ -83,6 +86,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+   shootCommand = new Shoot(shooter, indexer);
     // Configure the trigger bindings
     drivebase.setDefaultCommand(
         new Drive(
@@ -195,20 +200,19 @@ public class RobotContainer {
     c_driveStick.rightTrigger().onTrue(shooter.moveRoller().alongWith(shooter.runFlywheel()));
     c_driveStick.rightTrigger().onFalse((shooter.stopRoller().alongWith(shooter.stopRoller())));
 
+    c_driveStick.b().whileTrue(shootCommand);
+
     c_driveStick.povUp().onTrue(shooter.hoodUp());
     c_driveStick.povDown().onTrue((shooter.hoodDown()));
 
-    // Gyro Reset
-    //c_driveStick.povUp().onTrue(Commands.runOnce(gyro::reset));
-    
-    //When holding x robot goes to closest location in potential locations
-    //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
-    c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
-    c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
-    c_driveStick.a().whileTrue(m_intake.intakeFuel());
+  
+    // c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
+    // c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
+  // c_driveStick.a().whileTrue(m_intake.intakeFuel());
     
 
-    c_driveStick.rightTrigger().whileTrue(indexer.startIdexCommand());
+
+    //c_driveStick.rightTrigger().whileTrue(indexer.startIndexer());
 
     unstickTrigger.whileTrue(unstick);
 

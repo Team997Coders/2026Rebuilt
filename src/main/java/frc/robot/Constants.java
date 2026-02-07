@@ -24,23 +24,35 @@ public final class Constants {
   public static final int gyroID = 46;
 
   public static class ShooterConstants {
-    public static final int flywheelID = 0;
-    public static final int flywheel2ID = 1;
-    public static final int hoodMotor = 1;
-    public static final int rollerMotor = 0;
+    public static final int flywheelID = 15;
+    public static final int flywheel2ID = 16;
+    public static final int hoodMotor = 17;
+    public static final int rollerMotor = 18;
 
     public static final double rollerVoltage = 3;
-    public static final double flywheelVelocity = 0;
+    public static final double rollerReverseVoltage = -2;
 
-    public static final double hoodTopLimit = 0; //degrees probs
+    public static final double flywheelVelocity = 3;
+    public static final double flywheelReverseVelocity = 0;
+
+    public static final double hoodTopLimit = 45; //degrees probs
     public static final double hoodBottomLimit = 0; 
 
     public static final int beamBreak = 0;
     public static final int absoluteEncoder = 1;
 
-    public static final double kp = 0.00;
-    public static final double ki = 0.00;
-    public static final double kd = 0.00;
+
+    public static final class flywheelPID {
+      public static final double kp = 0.1;
+      public static final double ki = 0.00;
+      public static final double kd = 0.00;
+    }
+
+    public static final class hoodPID {
+      public static final double kp = 0.1;
+      public static final double ki = 0.00;
+      public static final double kd = 0.00;
+    }
 
     public static final double flywheelGearRatio = 54/32; //54 is motor 32 is flywheel
     public static final double flywheelRadius = 0; //in meters
@@ -54,6 +66,9 @@ public final class Constants {
   public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
   public static final double speedToUnstick = -1; 
   public static final int disiredUnstickTime = 500;
+
+  public final static double defaultVolts = 3;
+  public final static double reverseVolts = -2;
   }
 
   public static final class DriveConstants {

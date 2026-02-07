@@ -22,8 +22,16 @@ public class Indexer extends SubsystemBase{
     indexMotor.setVoltage(voltage);
    } 
 
-   public Command startIdexCommand(){
-      return this.run(() -> spinIndexerMotor(1));
+   public Command startIndexer(){
+      return this.run(() -> spinIndexerMotor(Constants.IndexerConstants.defaultVolts));
+   }
+
+   public Command reverseIndexer() {
+      return this.run(() -> spinIndexerMotor(Constants.IndexerConstants.reverseVolts));
+   }
+
+   public Command stopIndexer() {
+      return this.run(() -> spinIndexerMotor(0));
    }
 
    public double getIndexVoltage(){

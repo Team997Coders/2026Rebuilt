@@ -39,6 +39,6 @@ public class Unstick extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_indexer.startIdexCommand();
+        m_indexer.startIndexer();
     }
 }

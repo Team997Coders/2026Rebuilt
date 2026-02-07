@@ -34,22 +34,23 @@ public class Shooter extends SubsystemBase {
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushless);
     public SparkMax roller = new SparkMax(Constants.ShooterConstants.rollerMotor, MotorType.kBrushless);
 
-    public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
-    public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+    public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
     public DigitalInput beamBreak = new DigitalInput(Constants.ShooterConstants.beamBreak);
     public Trigger beamBreakTrigger = new Trigger(() -> beamBreak.get());
 
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
-    public PIDController PIDFlywheelController = new PIDController(Constants.ShooterConstants.kp, Constants.ShooterConstants.ki, Constants.ShooterConstants.kd);
-    public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.kp, Constants.ShooterConstants.ki, Constants.ShooterConstants.kd);
+    public PIDController PIDFlywheelController = new PIDController(Constants.ShooterConstants.flywheelPID.kp, Constants.ShooterConstants.flywheelPID.ki, Constants.ShooterConstants.flywheelPID.kd);
+    public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
     public Shooter() {
         //could be wrong, both should be spinning the same way 
         flywheel2.setControl(new Follower(flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); //motor alignment could be different
         flywheel1Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; //change later
         flywheel1Config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+
     }
 
     double goalAngle = Constants.ShooterConstants.hoodTopLimit;
@@ -127,6 +128,10 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> setRollerVoltage(Constants.ShooterConstants.rollerVoltage));
     }
 
+    public Command reverseRoller() {
+        return this.run(() -> setRollerVoltage(Constants.ShooterConstants.rollerReverseVoltage));
+    }
+
     public Command stopRoller() {
         return this.runOnce(() -> setRollerVoltage(0));
     }
@@ -135,8 +140,26 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelVelocity));
     }
 
+
+    public Command runFlywheelVolt(double volts) {
+        return this.run(() -> setFlywheelVoltage(volts));
+    }
+
+    public Command reverseFlywheel() {
+        return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelReverseVelocity));
+    }
+
     public Command stopFlywheel() {
         return this.runOnce(() -> setFlywheelVelocity(0));
     }
 
+
+    //Logging
+    public void loggers() {
+        SmartDashboard.putNumber("flywheel tangential Velocity", flywheelTangentialVelocity());
+        SmartDashboard.putNumber("flywheel rotational velocity", getFlywheelRotationalVelocity());
+
+        SmartDashboard.putNumber("hood angle", getHoodAngle());
+        SmartDashboard.putNumber("hood goal angle", goalAngle);
+    }
 }
