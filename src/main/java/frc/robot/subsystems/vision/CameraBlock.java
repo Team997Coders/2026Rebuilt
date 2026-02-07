@@ -23,4 +23,9 @@ public class CameraBlock
             camera.update(poseEstimator);
         }
     }
+
+    public Camera getObjectCamera()
+    {
+        return cameraList.get(0);
+    }
 }

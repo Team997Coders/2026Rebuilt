@@ -16,6 +16,7 @@ import frc.robot.subsystems.vision.CameraBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.reduxrobotics.canand.CanandEventLoop;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
@@ -82,6 +83,9 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
+
+    NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+    NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
 
     configureBindings();
   }

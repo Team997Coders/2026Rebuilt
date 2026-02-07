@@ -109,4 +109,8 @@ public class Camera
         }
         return new Pose2d();
     }
+
+    public double getYawClump() {
+        return Double.MAX_VALUE;
+    }
 }

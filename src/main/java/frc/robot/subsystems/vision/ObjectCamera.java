@@ -56,7 +56,8 @@ public class ObjectCamera extends Camera
         return Double.MAX_VALUE;
     }
 
-        public double getYawClump()
+    @Override
+    public double getYawClump()
     {
         SmartDashboard.putBoolean("results not empty", !results.isEmpty());
         if (!results.isEmpty())
