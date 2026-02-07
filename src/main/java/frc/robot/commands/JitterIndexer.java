@@ -10,24 +10,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class JitterIndexer extends Command {
 
-    Timer timer;
-
-    private Indexer m_indexer;
-
-    public JitterIndexer(Indexer indexer) {
-        timer = new Timer();
-
-        this.m_indexer = indexer;
-
-    }
-
-    TimerTask task = new TimerTask() {
-
-        @Override
-        public void run() {
-           if (m_indexer.getIndexVoltage() > 0) {
-            //this is the speed it would run for the jitter, need to test
-            m_indexer.spinIndexerMotor(-0.5);
+    public boolean firstTime = true;
+    
+        Timer timer;
+    
+        private Indexer m_indexer;
+    
+        public JitterIndexer(Indexer indexer) {
+            timer = new Timer();
+    
+            this.m_indexer = indexer;
+    
+        }
+    
+        TimerTask task = new TimerTask() {
+    
+            @Override
+            public void run() {
+               if (m_indexer.getIndexVoltage() > 0) {
+                if (firstTime == true){
+                    //this is the speed it would run for the jitter, need to test
+                m_indexer.spinIndexerMotor(-0.5);
+                } else firstTime = false;
            } else {
             m_indexer.spinIndexerMotor(0.5);
            }
@@ -38,7 +42,7 @@ public class JitterIndexer extends Command {
 
     @Override
     public void initialize() {
-        //timer.start();
+        //timer.scheduleAtFixedRate();
         
     }
 
