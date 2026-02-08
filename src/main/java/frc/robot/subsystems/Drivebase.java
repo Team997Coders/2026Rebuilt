@@ -87,7 +87,7 @@ public class Drivebase extends SubsystemBase {
   private ProfiledPIDController thetaController = new ProfiledPIDController(
     9, 2, 0, THETA_CONSTRAINTS);
   private double thetaTollerance = 5;
-  private Camera objectCamera = cameraBlock.getObjectCamera();
+  private Camera objectCamera;
   private double thetaSpeed;
   private boolean seenTarget = false;
   /////////////////////////////////////////////////////////////
@@ -100,6 +100,8 @@ public class Drivebase extends SubsystemBase {
 
     this.gyro = gyro;
     this.cameraBlock = cameraBlock;
+
+    objectCamera = cameraBlock.getObjectCamera();
 
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getPositions());
 
