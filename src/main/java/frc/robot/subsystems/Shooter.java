@@ -20,6 +20,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -47,8 +48,12 @@ public class Shooter extends SubsystemBase {
 
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
-    public PIDController PIDFlywheelController = new PIDController(Constants.ShooterConstants.flywheelPID.kp, Constants.ShooterConstants.flywheelPID.ki, Constants.ShooterConstants.flywheelPID.kd);
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
+    
+    public PIDController ShooterVelocityController = new PIDController (
+        Constants.ShooterConstants.flywheelPID.SHOOTER_VELOCITY_GAINS.kP,
+        Constants.ShooterConstants.flywheelPID.SHOOTER_VELOCITY_GAINS.kI, 
+        Constants.ShooterConstants.flywheelPID.SHOOTER_VELOCITY_GAINS.kD);
 
     public Shooter() {
         //could be wrong, both should be spinning the same way 
@@ -73,15 +78,14 @@ public class Shooter extends SubsystemBase {
         roller.setVoltage(volts);
     }
 
-
-    //Hood
+    // Hood
 
     public void setGoalAngle(double angle) {
         goalAngle = angle;
     }
 
-    public double getHoodAngle () { //rad
-        return hoodRelativeEncoder.getPosition()*2*Math.PI;
+    public double getHoodAngle() { // rad
+        return hoodRelativeEncoder.getPosition() * 2 * Math.PI;
     }
 
     public void setHoodMotorVoltage(double volts) {
@@ -89,28 +93,25 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveHood(double angle) {
-        if(angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
+        if (angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
             setGoalAngle(angle);
         }
-        
-
     }
 
     public void moveHoodUpManual() {
-        if(goalAngle + 1 < Constants.ShooterConstants.hoodTopLimit) {
-       setGoalAngle(goalAngle+3);
+        if (goalAngle + 1 < Constants.ShooterConstants.hoodTopLimit) {
+            setGoalAngle(goalAngle + 3);
         }
     }
 
     public void moveHoodDownManual() {
-        if(goalAngle - 1 > Constants.ShooterConstants.hoodBottomLimit) {
-        setGoalAngle(goalAngle-3);
-    } 
+        if (goalAngle - 1 > Constants.ShooterConstants.hoodBottomLimit) {
+            setGoalAngle(goalAngle - 3);
+        }
     }
 
-
     //Flywheel
-      public void setFlywheelVoltage(double volts) {
+    public void setFlywheelVoltage(double volts) {
         flywheel1.setVoltage(-volts);
         flywheel2.setVoltage(-volts);
     }
@@ -123,10 +124,11 @@ public class Shooter extends SubsystemBase {
         return getFlywheelRotationalVelocity()*Constants.ShooterConstants.flywheelRadius; 
     }
 
-    public void setFlywheelVelocity (double velocity) {
-        setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelRotationalVelocity(), velocity));
+    public void setFlywheelVelocity(double velocity) {
+        double pidOutput = ShooterVelocityController.calculate(getFlywheelRotationalVelocity(), velocity);
+        double feedforward = velocity * Constants.ShooterConstants.flywheelPID.SHOOTER_VELOCITY_GAINS.kF;
+        setFlywheelVoltage(pidOutput + feedforward);
     }
-
 
     //lil commands
     public Command hoodUp() {
@@ -180,6 +182,7 @@ public class Shooter extends SubsystemBase {
     public void loggers() {
         SmartDashboard.putNumber("flywheel tangential Velocity", flywheelTangentialVelocity());
         SmartDashboard.putNumber("flywheel rotational velocity", getFlywheelRotationalVelocity());
+        SmartDashboard.putNumber("flywheel PID Setpoint", ShooterVelocityController.getSetpoint());
 
         SmartDashboard.putNumber("hood angle", getHoodAngle());
         SmartDashboard.putNumber("hood goal angle", goalAngle);

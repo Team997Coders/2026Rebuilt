@@ -7,6 +7,7 @@ package frc.robot;
 import swervelib.SwerveModuleConfig;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import utils.Gains;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -43,9 +44,12 @@ public final class Constants {
 
 
     public static final class flywheelPID {
+      public static final Gains SHOOTER_VELOCITY_GAINS = 
+        new Gains(0.001, 0, 0.005, (1.0 / (4060.0 * (22.0 / 18.0) * 0.5)));
       public static final double kp = 0.1;
       public static final double ki = 0.00;
       public static final double kd = 0.00;
+      public static final double kf = 0.00;
     }
 
     public static final class hoodPID {
