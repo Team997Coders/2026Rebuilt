@@ -46,13 +46,18 @@ public class Shooter extends SubsystemBase {
     public DigitalInput beamBreak = new DigitalInput(Constants.ShooterConstants.beamBreak);
     public Trigger beamBreakTrigger = new Trigger(() -> beamBreak.get());
 
+    public DigitalInput magnet = new DigitalInput(Constants.ShooterConstants.magnet);
+
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
-  
+    public PIDController shooterPID = new PIDController(0.1, 0, 0);
+
+    private double goalAngle;
 
     public Shooter() {
+        shooterPID.reset();
         //could be wrong, both should be spinning the same way 
         flywheel2.setControl(new Follower(flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); //motor alignment could be different
         flywheel1Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; //change later
@@ -61,12 +66,11 @@ public class Shooter extends SubsystemBase {
         hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
-       hoodRelativeEncoder.setPosition(0);
 
+       setHoodAnglePos(43.3); //angle from horizontal to top of hood 
 
+        goalAngle = 43.3;
     }
-
-     private double goalAngle;
     @Override
     public void periodic() {
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
@@ -79,6 +83,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("shooter output", flywheel1.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotVel());
         SmartDashboard.putNumber("shooter velocity tangential", getflywheelTanVel());
+
+        SmartDashboard.putBoolean("magnet sensor", magnet.get());
     }
     
     //Roller
@@ -95,6 +101,10 @@ public class Shooter extends SubsystemBase {
 
     public double getHoodAngle () { //rad
         return hoodRelativeEncoder.getPosition()*360/Constants.ShooterConstants.hoodGearRatio;
+    }
+
+    public void setHoodAnglePos(double angle) {
+        hoodRelativeEncoder.setPosition(angle*Constants.ShooterConstants.hoodGearRatio/360);
     }
 
     public void setHoodMotorVoltage(double volts) {
@@ -125,11 +135,12 @@ public class Shooter extends SubsystemBase {
     //Flywheel
     public void setFlywheelVoltage(double volts) {
        flywheel1.setVoltage(-volts);
+       SmartDashboard.putNumber("volts", volts);
 
     }
     
-    public double getFlywheelRotVel () { //rotations/sec
-        return flywheel1.getVelocity().getValueAsDouble()/(Constants.ShooterConstants.flywheelGearRatio); 
+    public double getFlywheelRotVel () { //radians/sec
+        return -flywheel1.getVelocity().getValueAsDouble()*2*Math.PI/(54/32); 
     }
 
     public double getflywheelTanVel() { //meter/sec
@@ -185,13 +196,15 @@ public class Shooter extends SubsystemBase {
     //     return this.runOnce(() -> setFlywheelVelocity(0));
     // }
 
-    public void moveRollerandFlywheel(double FlywheeVolts, double rollerVolts) {
-        setFlywheelVoltage(FlywheeVolts);
+    public void moveRollerandFlywheel(double flywheelVel, double rollerVolts) {
+        double vel=shooterPID.calculate(getFlywheelRotVel(),flywheelVel);
+        SmartDashboard.putNumber("shooter pid calculated val", vel);
+        setFlywheelVoltage(vel);
         setRollerVoltage(rollerVolts);
     }
 
-    public Command runRollerAndFlywheel(double flywheelVolts, double rollerVolts) {
-        return this.runOnce(() -> moveRollerandFlywheel(flywheelVolts, rollerVolts));
+    public Command runRollerAndFlywheel(double flywheelVelrot, double rollerVolts) {
+        return this.run(() -> moveRollerandFlywheel(flywheelVelrot, rollerVolts));
     }
 
 

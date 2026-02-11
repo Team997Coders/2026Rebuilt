@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 
-public class hubLock extends Command {
+public class HubLock extends Command {
 
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
@@ -35,7 +35,7 @@ public class hubLock extends Command {
   private double thetaTollerance = 2;
 
   /** Creates a new Drive. */
-  public hubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
+  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 
@@ -54,28 +54,8 @@ public class hubLock extends Command {
     thetaController.reset(drivebase.getPose().getRotation().getRadians());
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  private double thetaSpeed;
-  private Pose2d goalPose;
-  //TODO: SET FIELD TO 2026 WHEN UPDATED
-  private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-  @Override
-  public void execute() {
-    var xy = speedXY.get();
-    double vx = drivebase.getCurrentSpeeds().vxMetersPerSecond;
-    double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
-
-    var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
-    if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))
-    {
-      pidValues = valuesFromSmartDashbord;
-      thetaController = new ProfiledPIDController(pidValues[0], pidValues[1], pidValues[2], THETA_CONSTRAINTS);
-
-      thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
-      thetaController.enableContinuousInput(-Math.PI, Math.PI);
-      thetaController.reset(drivebase.getPose().getRotation().getRadians());
-    }
-
+  public Pose2d getGoalPose()
+  {
     if (alliance.equals(DriverStation.Alliance.Red))
     {
       //10
@@ -101,6 +81,40 @@ public class hubLock extends Command {
         goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
       }
     }
+    return goalPose;
+  }
+
+  public double getDistanceFromTarget(Pose2d goal)
+  {
+    return goal.getTranslation().getDistance(drivebase.getPose().getTranslation());
+  }
+
+  public double getDistance()
+  {
+    return getDistanceFromTarget(getGoalPose());
+  }
+
+  private double thetaSpeed;
+  private Pose2d goalPose;
+  private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+  @Override
+  public void execute() {
+    var xy = speedXY.get();
+    double vx = drivebase.getCurrentSpeeds().vxMetersPerSecond;
+    double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
+
+    var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
+    if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))
+    {
+      pidValues = valuesFromSmartDashbord;
+      thetaController = new ProfiledPIDController(pidValues[0], pidValues[1], pidValues[2], THETA_CONSTRAINTS);
+
+      thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
+      thetaController.enableContinuousInput(-Math.PI, Math.PI);
+      thetaController.reset(drivebase.getPose().getRotation().getRadians());
+    }
+
+    goalPose = getGoalPose();
 
     Pose2d robotPose = drivebase.getPose();
     

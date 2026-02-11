@@ -111,8 +111,8 @@ public class RobotContainer {
     // IntakeCommandExtend = new IntakeCommand(m_intake, true);
     // IntakeCommandRetract = new IntakeCommand(m_intake, false);
 
-    NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
-    NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
+    //NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+    //NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
 
     configureBindings();
   }
@@ -207,8 +207,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    c_driveStick.rightTrigger().onTrue(shooter.runRollerAndFlywheel(2,2));
-    c_driveStick.rightTrigger().onFalse(shooter.runRollerAndFlywheel(0, 0));
+    c_driveStick.rightTrigger().whileTrue(shooter.runRollerAndFlywheel(4,3));
+    c_driveStick.rightTrigger().whileFalse(shooter.runRollerAndFlywheel(0, 0));
 
    // c_driveStick.b().whileTrue(shootCommand);
 
@@ -227,17 +227,17 @@ public class RobotContainer {
     
     //When holding x robot goes to closest location in potential locations
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
-    c_driveStick.b().whileTrue(new objectLock(drivebase, () -> getScaledXY(), frontCamera));
-    c_driveStick.a().whileTrue(new clumpLock(drivebase, () -> getScaledXY(), frontCamera));
-    c_driveStick.x().whileTrue(new PlayMusic(drivebase));
-    c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
-    c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
-    c_driveStick.y().whileTrue(m_intake.intakeFuel());
+    // c_driveStick.b().whileTrue(new objectLock(drivebase, () -> getScaledXY(), frontCamera));
+    // c_driveStick.a().whileTrue(new clumpLock(drivebase, () -> getScaledXY(), frontCamera));
+    // c_driveStick.x().whileTrue(new PlayMusic(drivebase));
+    // c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
+    // c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
+    // c_driveStick.y().whileTrue(m_intake.intakeFuel());
     
 
 
 
-    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer());
+    //c_driveStick.rightTrigger().whileTrue(indexer.startIndexer());
 
    // unstickTrigger.whileTrue(unstick);
 
