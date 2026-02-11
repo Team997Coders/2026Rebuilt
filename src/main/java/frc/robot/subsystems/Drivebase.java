@@ -4,7 +4,12 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -165,6 +170,14 @@ public class Drivebase extends SubsystemBase {
         builder.addDoubleProperty("Robot Angle", () -> getFieldAngle(), null);
       }
     });
+  }
+
+  public List<TalonFX> getInstruments()
+  {
+    List<TalonFX> instruments = new ArrayList<TalonFX>();
+    instruments = Arrays.asList(frontLeft.getAngleMotor(), frontLeft.getDriveMotor(), frontRight.getAngleMotor(), frontRight.getAngleMotor(),
+    backLeft.getAngleMotor(), backLeft.getDriveMotor(), backRight.getAngleMotor(), backRight.getDriveMotor());
+    return instruments;
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds()

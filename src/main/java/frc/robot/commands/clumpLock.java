@@ -98,10 +98,10 @@ public class clumpLock extends Command {
     }
     else if (yaw)
     {
-    // if weve seen a target but dont anymore continue to turn twords it just dont set new goal
       thetaSpeed = thetaController.calculate(drivebase.getFieldAngle()*2*Math.PI);
+      SmartDashboard.putNumber("theta speed", thetaSpeed);
 
-      if (Math.abs(thetaController.getGoal().position-drivebase.getFieldAngle()*2*Math.PI) < Units.degreesToRadians(thetaTollerance))
+      if (Math.abs(Math.abs(thetaController.getGoal().position)-Math.abs(drivebase.getFieldAngle()*2*Math.PI)) < Units.degreesToRadians(thetaTollerance))
       {
         thetaSpeed = 0;
       }
