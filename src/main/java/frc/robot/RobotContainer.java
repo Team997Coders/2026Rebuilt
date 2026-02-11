@@ -44,7 +44,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
  
   // The robot's subsystems and commands are defined here...
-  private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
+  public final Canandgyro gyro = new Canandgyro(Constants.gyroID);
 
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
   private static XboxController driveStick = new XboxController(0);
@@ -66,6 +66,9 @@ public class RobotContainer {
 
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
+
+  Trigger gyroPitchTrigger = new Trigger(() -> Math.abs(gyro.getPitch()) >= 0.03);
+     Trigger gyroRollTrigger = new Trigger(() -> Math.abs(gyro.getRoll()) >= 0.03);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -129,6 +132,19 @@ public class RobotContainer {
     SmartDashboard.putNumber("Scaled_X", getScaledXY()[0]);
     SmartDashboard.putNumber("Scaled_Y", getScaledXY()[1]);
     SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
+
+    SmartDashboard.putNumber("Pitch Angle", gyro.getPitch());
+    SmartDashboard.putNumber("Roll angle", gyro.getRoll());
+
+    SmartDashboard.putBoolean("pith trigger", gyroPitchTrigger.getAsBoolean());
+    SmartDashboard.putBoolean("roll trigger", gyroRollTrigger.getAsBoolean());
+
+    SmartDashboard.putNumber("routput bump", bump.Routput);
+    SmartDashboard.putNumber("Yaw", gyro.getYaw());
+
+    SmartDashboard.putNumber("Field Angle", Math.toRadians(drivebase.getFieldAngle()));
+    SmartDashboard.putNumber("currentRotation", drivebase.getFieldAngle()*Math.PI*2);
+
   }
 
   @SuppressWarnings("unused")
@@ -181,12 +197,9 @@ public class RobotContainer {
     
     //When holding x robot goes to closest location in potential locations
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
-     //Trigger gyroPitchTrigger = new Trigger(() -> Math.abs(gyro.getPitch()) >= 10);
-     //Trigger gyroRollTrigger = new Trigger(() -> Math.abs(gyro.getRoll()) >= 10);
 
-     //gyroPitchTrigger.onTrue(bump);
-     //gyroRollTrigger.onTrue(bump);
-     c_driveStick.b().onTrue(bump);
+     gyroPitchTrigger.whileTrue(bump);
+     gyroRollTrigger.whileTrue(bump);
   }
 
   /**
