@@ -6,10 +6,15 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.Unstick;
 import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
 import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.ObjectCamera;
 import frc.robot.subsystems.vision.CameraBlock;
@@ -53,6 +58,8 @@ public class RobotContainer {
   private static XboxController driveStick = new XboxController(0);
   private static CommandXboxController c_driveStick = new CommandXboxController(0);
 
+  private static Shooter shooter = new Shooter();
+
   //Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
@@ -67,10 +74,18 @@ public class RobotContainer {
   private static final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
+  
+  private final Indexer indexer = new Indexer();
+  private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
+
+  private final Unstick unstick = new Unstick(indexer);
 
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
 
+  public final Intake m_intake;
+  public final IntakeCommand IntakeCommandExtend;
+  public final IntakeCommand IntakeCommandRetract;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -86,6 +101,10 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
+
+    m_intake = new Intake();
+    IntakeCommandExtend = new IntakeCommand(m_intake, true);
+    IntakeCommandRetract = new IntakeCommand(m_intake, false);
 
     NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
@@ -183,6 +202,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    c_driveStick.rightTrigger().onTrue(shooter.moveRoller().alongWith(shooter.runFlywheel()));
+    c_driveStick.rightTrigger().onFalse((shooter.stopRoller().alongWith(shooter.stopRoller())));
+
+    c_driveStick.povUp().onTrue(shooter.hoodUp());
+    c_driveStick.povDown().onTrue((shooter.hoodDown()));
+
     // Gyro Reset
     //c_driveStick.povUp().onTrue(Commands.runOnce(gyro::reset));
     
@@ -191,6 +216,16 @@ public class RobotContainer {
     c_driveStick.b().whileTrue(new objectLock(drivebase, () -> getScaledXY(), frontCamera));
     c_driveStick.a().whileTrue(new clumpLock(drivebase, () -> getScaledXY(), frontCamera));
     c_driveStick.x().whileTrue(new PlayMusic(drivebase));
+    c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
+    c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
+    c_driveStick.y().whileTrue(m_intake.intakeFuel());
+    
+
+    c_driveStick.rightTrigger().whileTrue(indexer.startIdexCommand());
+
+    unstickTrigger.whileTrue(unstick);
+
+
   }
 
   /**

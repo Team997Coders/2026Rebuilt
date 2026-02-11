@@ -42,7 +42,7 @@ public class PlayMusic extends Command {
       orchestra.addInstrument(motors.get(i), tracks[i]);
     }
     
-    SmartDashboard.putBoolean("load chrp file", orchestra.loadMusic("starwars3.chrp").isOK());
+    SmartDashboard.putBoolean("load chrp file", orchestra.loadMusic("starwars.chrp").isOK());
     SmartDashboard.putBoolean("audio enabled", audioConfigs.withAllowMusicDurDisable(true).AllowMusicDurDisable);
     SmartDashboard.putBoolean("orhcestra play no errors", orchestra.play().isOK());
     
