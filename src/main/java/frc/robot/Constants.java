@@ -40,8 +40,11 @@ public final class Constants {
     public static final double hoodTopLimit = 75; //degrees 
     public static final double hoodBottomLimit = 43.3; 
 
-    public static final double hoodGearRatio = 35*(300/27);
+    public static final double hoodGearRatio = 35*(300/28);
 
+    public static final double kf = 0;
+  
+  
 
     public static final int beamBreak = 10;
     public static final int magnet = 0;

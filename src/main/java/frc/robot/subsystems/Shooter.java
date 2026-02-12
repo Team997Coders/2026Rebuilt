@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -16,6 +17,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -52,7 +54,9 @@ public class Shooter extends SubsystemBase {
 
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
-    public PIDController shooterPID = new PIDController(0.1, 0, 0);
+    public PIDController shooterPID = new PIDController(0.01, 0, 0);
+
+
 
     private double goalAngle;
 
@@ -62,6 +66,9 @@ public class Shooter extends SubsystemBase {
         flywheel2.setControl(new Follower(flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); //motor alignment could be different
         flywheel1Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; //change later
         flywheel1Config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+        flywheel1.setNeutralMode(NeutralModeValue.Coast);
+        flywheel2.setNeutralMode(NeutralModeValue.Coast);
+
 
         hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
@@ -112,6 +119,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveHood(double angle) {
+    
         if(angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
             setGoalAngle(angle);
         }
@@ -133,14 +141,16 @@ public class Shooter extends SubsystemBase {
 
 
     //Flywheel
+    private double shooterVolts = 0.0;
     public void setFlywheelVoltage(double volts) {
-       flywheel1.setVoltage(-volts);
-       SmartDashboard.putNumber("volts", volts);
+        shooterVolts += volts;
+       flywheel1.setVoltage(-shooterVolts);
+       SmartDashboard.putNumber("volts", shooterVolts);
 
     }
     
-    public double getFlywheelRotVel () { //radians/sec
-        return -flywheel1.getVelocity().getValueAsDouble()*2*Math.PI/(54/32); 
+    public double getFlywheelRotVel () { //rotations/sec
+        return -flywheel1.getVelocity().getValueAsDouble(); 
     }
 
     public double getflywheelTanVel() { //meter/sec
@@ -197,10 +207,13 @@ public class Shooter extends SubsystemBase {
     // }
 
     public void moveRollerandFlywheel(double flywheelVel, double rollerVolts) {
-        double vel=shooterPID.calculate(getFlywheelRotVel(),flywheelVel);
+        double vel = shooterPID.calculate(getFlywheelRotVel(), flywheelVel); //+ flywheelVel*Constants.ShooterConstants.kf;
         SmartDashboard.putNumber("shooter pid calculated val", vel);
-        setFlywheelVoltage(vel);
-        setRollerVoltage(rollerVolts);
+        SmartDashboard.putNumber("requested velocity", flywheelVel);
+
+    setFlywheelVoltage(vel);
+      setRollerVoltage(rollerVolts);
+
     }
 
     public Command runRollerAndFlywheel(double flywheelVelrot, double rollerVolts) {
