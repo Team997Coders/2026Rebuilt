@@ -42,9 +42,9 @@ public final class Constants {
 
     public static final double hoodGearRatio = 35*(300/28);
 
-    public static final double kf = 0;
-  
-  
+    public static final double kS = 0.1; // Volts to account for static friction
+    public static final double kV = 0.12; // RPS per Volt, Kraken X60 is a 500 kV motor, 500 rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts / rotation per second
+    public static final double kA = 0;  // Volt seconds per radian
 
     public static final int beamBreak = 10;
     public static final int magnet = 0;

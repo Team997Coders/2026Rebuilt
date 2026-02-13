@@ -40,8 +40,8 @@ public class Shooter extends SubsystemBase {
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushless);
     public SparkMax roller = new SparkMax(Constants.ShooterConstants.rollerMotor, MotorType.kBrushless);
 
-    public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
     public SparkMaxConfig hoodConfig = new SparkMaxConfig();
 
@@ -56,7 +56,7 @@ public class Shooter extends SubsystemBase {
 
     public PIDController shooterPID = new PIDController(0.01, 0, 0);
 
-
+    public SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.ShooterConstants.kS, Constants.ShooterConstants.kV, Constants.ShooterConstants.kA);
 
     private double goalAngle;
 
@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
 
-       setHoodAnglePos(43.3); //angle from horizontal to top of hood 
+        setHoodAnglePos(43.3); //angle from horizontal to top of hood 
 
         goalAngle = 43.3;
     }
@@ -119,12 +119,9 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveHood(double angle) {
-    
-        if(angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
+        if (angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
             setGoalAngle(angle);
         }
-        
-
     }
 
     public void moveHoodUpManual() {
@@ -135,8 +132,8 @@ public class Shooter extends SubsystemBase {
 
     public void moveHoodDownManual() {
         if(goalAngle - 1 > Constants.ShooterConstants.hoodBottomLimit) {
-        setGoalAngle(goalAngle-1);
-    } 
+            setGoalAngle(goalAngle-1);
+        } 
     }
 
 
@@ -144,9 +141,8 @@ public class Shooter extends SubsystemBase {
     private double shooterVolts = 0.0;
     public void setFlywheelVoltage(double volts) {
         shooterVolts += volts;
-       flywheel1.setVoltage(-shooterVolts);
-       SmartDashboard.putNumber("volts", shooterVolts);
-
+        flywheel1.setVoltage(-shooterVolts);
+        SmartDashboard.putNumber("Flywheel Volts", shooterVolts);
     }
     
     public double getFlywheelRotVel () { //rotations/sec
@@ -157,12 +153,15 @@ public class Shooter extends SubsystemBase {
         return getFlywheelRotVel()*Constants.ShooterConstants.flywheelRadius; 
     }
 
-    // public void setFlywheelVelocity (double velocity) {
-    //     setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelRotationalVelocity(), velocity));
-    // }
-
-
-
+    public void setFlywheelVelocity (double velocity) {
+        // Input Velocity is in rpm == feedforward needs it in rotations/sec -> rpm/60
+        double feedforwardVolts = feedforward.calculate(velocity/60);
+        double vel = shooterPID.calculate(getFlywheelRotVel(), velocity/60) + feedforwardVolts;
+    
+        SmartDashboard.putNumber("shooter pid calculated val", vel);
+        SmartDashboard.putNumber("requested velocity", velocity);
+        //setFlywheelVoltage(vel);
+    }
 
     //lil commands
     //hood
@@ -207,12 +206,8 @@ public class Shooter extends SubsystemBase {
     // }
 
     public void moveRollerandFlywheel(double flywheelVel, double rollerVolts) {
-        double vel = shooterPID.calculate(getFlywheelRotVel(), flywheelVel); //+ flywheelVel*Constants.ShooterConstants.kf;
-        SmartDashboard.putNumber("shooter pid calculated val", vel);
-        SmartDashboard.putNumber("requested velocity", flywheelVel);
-
-    setFlywheelVoltage(vel);
-      setRollerVoltage(rollerVolts);
+        setFlywheelVelocity(flywheelVel);
+        setRollerVoltage(rollerVolts);
 
     }
 

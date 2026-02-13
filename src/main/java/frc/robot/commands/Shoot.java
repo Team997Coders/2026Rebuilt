@@ -10,16 +10,16 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.Constants;
-import frc.robot.commands.HubLock;
+import frc.robot.commands.hubLock;
 
 public class Shoot extends Command {
     private Shooter m_shooter;
     private Indexer m_indexer;
-    private HubLock m_hubLock;
+    private hubLock m_hubLock;
 
     private Trigger beamBreak = m_shooter.beamBreakTrigger;
 
-    public Shoot(Shooter shooter, Indexer indexer, HubLock hubLock) {
+    public Shoot(Shooter shooter, Indexer indexer, hubLock hubLock) {
         this.m_shooter = shooter;
         this.m_indexer = indexer;
         this.m_hubLock = hubLock;
