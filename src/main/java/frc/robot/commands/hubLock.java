@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 
-public class HubLock extends Command {
+public class hubLock extends Command {
 
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
@@ -35,7 +35,7 @@ public class HubLock extends Command {
   private double thetaTollerance = 2;
 
   /** Creates a new Drive. */
-  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
+  public hubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 
