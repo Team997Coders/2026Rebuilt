@@ -14,6 +14,7 @@ import java.net.ContentHandler;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -60,6 +61,9 @@ public class Shooter extends SubsystemBase {
 
     private double goalAngle;
 
+    private final VoltageOut m_request = new VoltageOut(0);
+
+
     public Shooter() {
         shooterPID.reset();
         //could be wrong, both should be spinning the same way 
@@ -82,7 +86,7 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
-        SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
+        SmartDashboard.putNumber("hood pid output", PIDHoodController.calculate(getHoodAngle(), goalAngle));
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
         SmartDashboard.putNumber("hood angle", getHoodAngle());
         SmartDashboard.putNumber("hood motor applied output", hood.getAppliedOutput());
@@ -138,11 +142,10 @@ public class Shooter extends SubsystemBase {
 
 
     //Flywheel
-    private double shooterVolts = 0.0;
     public void setFlywheelVoltage(double volts) {
-        shooterVolts += volts;
-        flywheel1.setVoltage(-shooterVolts);
-        SmartDashboard.putNumber("Flywheel Volts", shooterVolts);
+        //flywheel1.setVoltage(volts);
+        flywheel1.setControl(m_request.withOutput(volts));
+        SmartDashboard.putNumber("Flywheel Volts", volts);
     }
     
     public double getFlywheelRotVel () { //rotations/sec
@@ -156,11 +159,13 @@ public class Shooter extends SubsystemBase {
     public void setFlywheelVelocity (double velocity) {
         // Input Velocity is in rpm == feedforward needs it in rotations/sec -> rpm/60
         double feedforwardVolts = feedforward.calculate(velocity/60);
-        double vel = shooterPID.calculate(getFlywheelRotVel(), velocity/60) + feedforwardVolts;
+        double vel = shooterPID.calculate(getFlywheelRotVel(), velocity/60);
+        double totalVolts = feedforwardVolts + vel;
     
+        SmartDashboard.putNumber("shooter calculated FeedForward", feedforwardVolts);
         SmartDashboard.putNumber("shooter pid calculated val", vel);
         SmartDashboard.putNumber("requested velocity", velocity);
-        //setFlywheelVoltage(vel);
+        setFlywheelVoltage(totalVolts);
     }
 
     //lil commands

@@ -207,8 +207,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    c_driveStick.rightTrigger().whileTrue(shooter.runRollerAndFlywheel(24,3));
-    c_driveStick.rightTrigger().whileFalse(shooter.runRollerAndFlywheel(0, 0));
+    c_driveStick.a().whileTrue(shooter.runRollerAndFlywheel(1000,0));
+    c_driveStick.a().whileFalse(shooter.runRollerAndFlywheel(0, 0));
 
    // c_driveStick.b().whileTrue(shootCommand);
 
