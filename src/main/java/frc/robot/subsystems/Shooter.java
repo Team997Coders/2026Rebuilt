@@ -54,7 +54,7 @@ public class Shooter extends SubsystemBase {
 
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
-    public PIDController shooterPID = new PIDController(0.01, 0, 0);
+    public PIDController shooterPID = new PIDController(0.0005, 0, 0);
 
 
 
@@ -74,9 +74,9 @@ public class Shooter extends SubsystemBase {
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
 
-       setHoodAnglePos(43.3); //angle from horizontal to top of hood 
+       setHoodAnglePos(25); //angle from horizontal to top of hood 
 
-        goalAngle = 43.3;
+        goalAngle = 25;
     }
     @Override
     public void periodic() {
@@ -144,13 +144,16 @@ public class Shooter extends SubsystemBase {
     private double shooterVolts = 0.0;
     public void setFlywheelVoltage(double volts) {
         shooterVolts += volts;
+        if (shooterVolts < 0) {
+            shooterVolts = 0;
+        }
        flywheel1.setVoltage(-shooterVolts);
        SmartDashboard.putNumber("volts", shooterVolts);
 
     }
     
-    public double getFlywheelRotVel () { //rotations/sec
-        return -flywheel1.getVelocity().getValueAsDouble(); 
+    public double getFlywheelRotVel () { //radians/sec
+        return -flywheel1.getVelocity().getValueAsDouble()*2*Math.PI; 
     }
 
     public double getflywheelTanVel() { //meter/sec

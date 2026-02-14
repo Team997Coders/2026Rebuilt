@@ -76,7 +76,7 @@ public class Drivebase extends SubsystemBase {
 
   private SwerveDriveOdometry odometry;
 
-  private Field2d field = new Field2d();
+  //private Field2d field = new Field2d();
 
   private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
@@ -148,7 +148,7 @@ public class Drivebase extends SubsystemBase {
             this // Reference to this subsystem to set requirements
     );
 
-    SmartDashboard.putData("Field", field);
+    //SmartDashboard.putData("Field", field);
 
     SmartDashboard.putData("Swerve Drive", new Sendable() {
       @Override
@@ -352,6 +352,6 @@ public class Drivebase extends SubsystemBase {
 
     this.cameraBlock.update(poseEstimator);
 
-    field.setRobotPose(poseEstimator.getEstimatedPosition());
+    //field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 }

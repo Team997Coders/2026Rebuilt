@@ -35,10 +35,8 @@ public final class Constants {
     public static final double flywheelRotationalVelocity = 2; 
     public static final double flywheelReverseVelocity = 0;
 
-    public static final double flywheelVoltage = 4.2;
-
     public static final double hoodTopLimit = 75; //degrees 
-    public static final double hoodBottomLimit = 43.3; 
+    public static final double hoodBottomLimit = 25; 
 
     public static final double hoodGearRatio = 35*(300/28);
 
@@ -65,6 +63,8 @@ public final class Constants {
 
     public static final double flywheelGearRatio = 54/32; //54 is motor 32 is flywheel
     public static final double flywheelRadius = 0.0508; //in meters
+
+    public static final double flywheelVoltage = 10 / Constants.ShooterConstants.flywheelRadius;
   }
 
   public static final class IndexerConstants {

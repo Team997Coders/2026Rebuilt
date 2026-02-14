@@ -117,5 +117,6 @@ public class ObjectCamera extends Camera
         }
         return Double.MAX_VALUE;
     }
+   
 
 }

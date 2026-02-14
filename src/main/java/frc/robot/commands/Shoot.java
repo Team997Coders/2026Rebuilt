@@ -1,5 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -9,22 +13,26 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.vision.Camera;
+import frc.robot.subsystems.vision.CameraShooter;
 import frc.robot.Constants;
 import frc.robot.commands.HubLock;
 
 public class Shoot extends Command {
     private Shooter m_shooter;
     private Indexer m_indexer;
-    private HubLock m_hubLock;
+    private CameraShooter m_shootCamera;
+    private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-    private Trigger beamBreak = m_shooter.beamBreakTrigger;
 
-    public Shoot(Shooter shooter, Indexer indexer, HubLock hubLock) {
+
+    public Shoot(Shooter shooter, Indexer indexer, CameraShooter shootCamera) {
         this.m_shooter = shooter;
         this.m_indexer = indexer;
-        this.m_hubLock = hubLock;
+        this.m_shootCamera = shootCamera;
 
-        addRequirements(shooter, indexer);
+
+        addRequirements(shooter, indexer, shootCamera);
     }
 
     @Override
@@ -33,40 +41,55 @@ public class Shoot extends Command {
     }
 
     private double velocity;
-    private final double deltaH = 0.0;
+    private final double deltaH = 1.83 - 0.6;
     public double getAngle(double distance)
     {
-        velocity = m_shooter.getflywheelTanVel();
-        return 90 - Math.atan(
+   // velocity = m_shooter.getflywheelTanVel();
+    
+      velocity = 10;
+      double angle = (Math.atan(
             (Math.pow(velocity, 2) - 
             Math.sqrt(
                 Math.pow(velocity, 4) +
                 19.6 * (
-                    Math.pow(velocity, 2) * deltaH -
-                    4.9 * Math.pow(distance, 2)
+                    (Math.pow(velocity, 2) * (0 - deltaH)) -
+                    (4.9 * Math.pow(distance, 2))
                 )
             )) 
-            / (9.8 * distance)
-        );
+            / (9.8 * distance))
+                 )*180/Math.PI;
+
+        return angle;
+     
     }
 
     @Override 
     public void execute() {
-        m_shooter.setRollerVoltage(Constants.ShooterConstants.rollerVoltage);
-        m_shooter.runFlywheelVolt(Constants.ShooterConstants.flywheelVoltage);
-        double angle = getAngle(m_hubLock.getDistance());
+
+      //  m_shooter.moveRollerandFlywheel(-Constants.ShooterConstants.flywheelVoltage, Constants.ShooterConstants.rollerVoltage);
+        Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
+        Pose2d goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+        double angle = getAngle(m_shootCamera.getDistanceFromTarget(goalPose));
         SmartDashboard.putNumber("shooter target angle", angle);
-        m_shooter.setGoalAngle(angle);
+
+        if ((angle >= Constants.ShooterConstants.hoodBottomLimit) && (angle <= Constants.ShooterConstants.hoodTopLimit)){
+            m_shooter.setGoalAngle(angle);
+        }
+
         
     }
 
     @Override
     public boolean isFinished() {
         return false;
+
     }
     
 
     @Override
     public void end(boolean interrupted) {
+        m_shooter.setFlywheelVoltage(0);
     }
 }
+
+
