@@ -42,10 +42,8 @@ public class Shoot extends Command {
 
     private double velocity;
     private final double deltaH = 1.83 - 0.6;
-    public double getAngle(double distance)
+    public double getAngleGofX(double distance)
     {
-   // velocity = m_shooter.getflywheelTanVel();
-    
       velocity = 10;
       double angle = 90 - (Math.atan(
             (Math.pow(velocity, 2) - 
@@ -60,7 +58,24 @@ public class Shoot extends Command {
                  )*180/Math.PI;
 
         return angle;
-     
+    }
+
+    public double getAngleFofX(double distance)
+    {
+      velocity = 10;
+      double angle = 90 - (Math.atan(
+            (Math.pow(velocity, 2) - 
+            Math.sqrt(
+                Math.pow(velocity, 4) +
+                19.6 * (
+                    (Math.pow(velocity, 2) * (0 - deltaH)) -
+                    (4.9 * Math.pow(distance, 2))
+                )
+            )) 
+            / (9.8 * distance))
+                 )*180/Math.PI;
+
+        return angle;
     }
 
     @Override 
@@ -69,7 +84,7 @@ public class Shoot extends Command {
       //  m_shooter.moveRollerandFlywheel(-Constants.ShooterConstants.flywheelVoltage, Constants.ShooterConstants.rollerVoltage);
         Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
         Pose2d goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-        double angle = getAngle(m_shootCamera.getDistanceFromTarget(goalPose));
+        double angle = getAngleGofX(m_shootCamera.getDistanceFromTarget(goalPose));
         SmartDashboard.putNumber("shooter target angle", angle);
 
         if ((angle >= Constants.ShooterConstants.hoodBottomLimit) && (angle <= Constants.ShooterConstants.hoodTopLimit)){

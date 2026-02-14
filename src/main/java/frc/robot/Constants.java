@@ -29,7 +29,7 @@ public final class Constants {
     public static final int hoodMotor = 17;
     public static final int rollerMotor = 18;
 
-    public static final double rollerVoltage = 3;
+    public static final double rollerVoltage = 5;
     public static final double rollerReverseVoltage = -2;
 
     public static final double flywheelRotationalVelocity = 2; 

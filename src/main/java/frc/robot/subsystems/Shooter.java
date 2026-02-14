@@ -54,7 +54,9 @@ public class Shooter extends SubsystemBase {
 
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
-    public PIDController shooterPID = new PIDController(0.0005, 0, 0);
+    public PIDController shooterPID = new PIDController(0.025, 0, 0);
+
+    public SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0.1, 0.11/2/Math.PI, 0);
 
 
 
@@ -143,7 +145,7 @@ public class Shooter extends SubsystemBase {
     //Flywheel
     private double shooterVolts = 0.0;
     public void setFlywheelVoltage(double volts) {
-        shooterVolts += volts;
+        shooterVolts = volts;
         if (shooterVolts < 0) {
             shooterVolts = 0;
         }
@@ -211,7 +213,11 @@ public class Shooter extends SubsystemBase {
 
     public void moveRollerandFlywheel(double flywheelVel, double rollerVolts) {
         double vel = shooterPID.calculate(getFlywheelRotVel(), flywheelVel); //+ flywheelVel*Constants.ShooterConstants.kf;
+        double ff = shooterFF.calculate(flywheelVel);
+        SmartDashboard.putNumber("ff value", ff);
         SmartDashboard.putNumber("shooter pid calculated val", vel);
+        vel += ff;
+        SmartDashboard.putNumber("actual set vel", vel);
         SmartDashboard.putNumber("requested velocity", flywheelVel);
 
     setFlywheelVoltage(vel);
