@@ -15,6 +15,7 @@ import frc.robot.commands.clumpLock;
 import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
@@ -83,6 +84,7 @@ public class RobotContainer {
   
  private static final Indexer indexer = new Indexer();
   private static final Shooter shooter = new Shooter();
+  private static final Roller roller = new Roller();
 
  // private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
 
@@ -222,9 +224,8 @@ public class RobotContainer {
    // c_driveStick.b().whileTrue(shootCommand);
 
    c_driveStick.rightTrigger().whileTrue(ShootCommand);
-  c_driveStick.leftTrigger().whileTrue(shooter.runRollerAndFlywheel(Constants.ShooterConstants.flywheelVoltage, Constants.ShooterConstants.rollerVoltage));
-  c_driveStick.a().onTrue(shooter.moveRoller()).onFalse(shooter.stopRoller());
-  c_driveStick.leftTrigger().whileFalse(shooter.runRollerAndFlywheel(0,0));
+  c_driveStick.leftTrigger().whileTrue(shooter.moveFlywheelCommand(Constants.ShooterConstants.flywheelVoltage)).whileFalse(shooter.moveFlywheelCommand(0));
+  c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
     c_driveStick.povUp().whileTrue(shooter.hoodUp());
     c_driveStick.povDown().whileTrue((shooter.hoodDown()));
 

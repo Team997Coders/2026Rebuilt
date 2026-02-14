@@ -38,7 +38,6 @@ public class Shooter extends SubsystemBase {
     public TalonFX flywheel2 = new TalonFX(Constants.ShooterConstants.flywheel2ID);
 
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushless);
-    public SparkMax roller = new SparkMax(Constants.ShooterConstants.rollerMotor, MotorType.kBrushless);
 
     public TalonFXConfiguration flywheel2Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     public TalonFXConfiguration flywheel1Config = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
@@ -54,7 +53,7 @@ public class Shooter extends SubsystemBase {
 
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
-    public PIDController shooterPID = new PIDController(0.025, 0, 0);
+    public PIDController shooterPID = new PIDController(0.055, 0, 0);
 
     public SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0.1, 0.11/2/Math.PI, 0);
 
@@ -95,11 +94,7 @@ public class Shooter extends SubsystemBase {
 
         SmartDashboard.putBoolean("magnet sensor", magnet.get());
     }
-    
-    //Roller
-    public void setRollerVoltage (double volts) {
-        roller.setVoltage(volts);
-    }
+
 
 
     //Hood
@@ -130,13 +125,13 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveHoodUpManual() {
-        if(goalAngle + 1 < Constants.ShooterConstants.hoodTopLimit) {
+        if(goalAngle + 1 <= Constants.ShooterConstants.hoodTopLimit) {
        setGoalAngle(goalAngle+1);
         }
     }
 
     public void moveHoodDownManual() {
-        if(goalAngle - 1 > Constants.ShooterConstants.hoodBottomLimit) {
+        if(goalAngle - 1 >= Constants.ShooterConstants.hoodBottomLimit) {
         setGoalAngle(goalAngle-1);
     } 
     }
@@ -162,13 +157,6 @@ public class Shooter extends SubsystemBase {
         return getFlywheelRotVel()*Constants.ShooterConstants.flywheelRadius; 
     }
 
-    // public void setFlywheelVelocity (double velocity) {
-    //     setFlywheelVoltage(PIDFlywheelController.calculate(getFlywheelRotationalVelocity(), velocity));
-    // }
-
-
-
-
     //lil commands
     //hood
     public Command hoodUp() {
@@ -177,19 +165,6 @@ public class Shooter extends SubsystemBase {
 
     public Command hoodDown() {
         return this.run(() -> moveHoodDownManual());
-    }
-
-    //roller
-    public Command moveRoller() {
-        return this.run(() -> setRollerVoltage(Constants.ShooterConstants.rollerVoltage));
-    }
-
-    public Command reverseRoller() {
-        return this.run(() -> setRollerVoltage(Constants.ShooterConstants.rollerReverseVoltage));
-    }
-
-    public Command stopRoller() {
-        return this.runOnce(() -> setRollerVoltage(0));
     }
 
 
@@ -203,6 +178,11 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> setFlywheelVoltage(volts));
     }
 
+    public Command moveFlywheelCommand(double velocity)
+    {
+        return this.run(() -> moveFlywheel(velocity));
+    }
+
     // public Command reverseFlywheel() {
     //     return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelReverseVelocity));
     // }
@@ -211,7 +191,7 @@ public class Shooter extends SubsystemBase {
     //     return this.runOnce(() -> setFlywheelVelocity(0));
     // }
 
-    public void moveRollerandFlywheel(double flywheelVel, double rollerVolts) {
+    public void moveFlywheel(double flywheelVel) {
         double vel = shooterPID.calculate(getFlywheelRotVel(), flywheelVel); //+ flywheelVel*Constants.ShooterConstants.kf;
         double ff = shooterFF.calculate(flywheelVel);
         SmartDashboard.putNumber("ff value", ff);
@@ -221,12 +201,6 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("requested velocity", flywheelVel);
 
     setFlywheelVoltage(vel);
-      setRollerVoltage(rollerVolts);
-
-    }
-
-    public Command runRollerAndFlywheel(double flywheelVelrot, double rollerVolts) {
-        return this.run(() -> moveRollerandFlywheel(flywheelVelrot, rollerVolts));
     }
 
 
