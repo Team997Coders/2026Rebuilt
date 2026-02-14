@@ -47,7 +47,7 @@ public class Shoot extends Command {
    // velocity = m_shooter.getflywheelTanVel();
     
       velocity = 10;
-      double angle = (Math.atan(
+      double angle = 90 - (Math.atan(
             (Math.pow(velocity, 2) - 
             Math.sqrt(
                 Math.pow(velocity, 4) +

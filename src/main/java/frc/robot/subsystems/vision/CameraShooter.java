@@ -11,6 +11,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
 
 import org.photonvision.PhotonUtils;
 
@@ -128,8 +129,9 @@ public final double  getDistanceFromTarget(Pose2d goal)
         this.update(swerveDrivePoseEstimator);
         field.setRobotPose(swerveDrivePoseEstimator.getEstimatedPosition());
         Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-        Pose2d goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+        Pose2d goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
         SmartDashboard.putNumber("distance from hub", this.getDistanceFromTarget(goalPose));
-        
+        SmartDashboard.putNumber("goal pose x", goalPose.getX());
+        SmartDashboard.putNumber("goal pose y", goalPose.getY());
     }
 }
