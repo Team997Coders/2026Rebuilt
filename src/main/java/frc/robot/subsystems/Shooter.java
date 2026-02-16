@@ -183,6 +183,11 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> moveFlywheel(velocity));
     }
 
+    public Command moveFlywheelDashboardCommand()
+    {
+        return this.run(() -> flywheelWithDashboard());
+    }
+
     // public Command reverseFlywheel() {
     //     return this.run(() -> setFlywheelVelocity(Constants.ShooterConstants.flywheelReverseVelocity));
     // }
@@ -201,6 +206,11 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("requested velocity", flywheelVel);
 
     setFlywheelVoltage(vel);
+    }
+
+    public void flywheelWithDashboard()
+    {
+        moveFlywheel(SmartDashboard.getNumber("shooter velocity setpoint", 0.0) / Constants.ShooterConstants.flywheelRadius);
     }
 
 

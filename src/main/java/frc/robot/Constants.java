@@ -64,7 +64,7 @@ public final class Constants {
     public static final double flywheelGearRatio = 54/32; //54 is motor 32 is flywheel
     public static final double flywheelRadius = 0.0508; //in meters
 
-    public static final double flywheelVoltage = 11.13 / Constants.ShooterConstants.flywheelRadius;
+    public static final double flywheelVoltage = 10.8;
   }
 
   public static final class IndexerConstants {

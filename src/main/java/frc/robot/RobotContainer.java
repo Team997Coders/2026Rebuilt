@@ -224,8 +224,10 @@ public class RobotContainer {
    // c_driveStick.b().whileTrue(shootCommand);
 
    c_driveStick.rightTrigger().whileTrue(ShootCommand);
-  c_driveStick.leftTrigger().whileTrue(shooter.moveFlywheelCommand(Constants.ShooterConstants.flywheelVoltage)).whileFalse(shooter.moveFlywheelCommand(0));
+  //c_driveStick.leftTrigger().whileTrue(shooter.moveFlywheelCommand(Constants.ShooterConstants.flywheelVoltage)).whileFalse(shooter.moveFlywheelCommand(0));
   c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
+  SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
+  c_driveStick.x().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
     c_driveStick.povUp().whileTrue(shooter.hoodUp());
     c_driveStick.povDown().whileTrue((shooter.hoodDown()));
 
