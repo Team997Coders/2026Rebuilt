@@ -4,7 +4,11 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.Orchestra;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -12,16 +16,18 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
 import swervelib.SwerveModule;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
@@ -29,10 +35,13 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.SwerveModules;
+import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
 
 public class Drivebase extends SubsystemBase {
@@ -41,7 +50,6 @@ public class Drivebase extends SubsystemBase {
   private final double WHEEL_DIAMETER = 0.1016;
   private final double MAX_VELOCITY = NEO_FREE_SPEED * DRIVE_REDUCTION * WHEEL_DIAMETER * Math.PI;
   private final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / (ModuleLocations.dist / Math.sqrt(2.0));
-
   private final double MAX_VOLTAGE = 12;
 
   private Canandgyro gyro;
@@ -50,10 +58,8 @@ public class Drivebase extends SubsystemBase {
   private SwerveModule frontRight = new SwerveModule(SwerveModules.frontRight, MAX_VELOCITY, MAX_VOLTAGE);
   private SwerveModule backLeft = new SwerveModule(SwerveModules.backLeft, MAX_VELOCITY, MAX_VOLTAGE);
   private SwerveModule backRight = new SwerveModule(SwerveModules.backRight, MAX_VELOCITY, MAX_VOLTAGE);
-
   //                                                       0           1          2         3
   private SwerveModule[] modules = new SwerveModule[] { frontLeft, frontRight, backLeft, backRight };
-
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
       ModuleLocations.frontLeft,
       ModuleLocations.frontRight,
@@ -61,30 +67,38 @@ public class Drivebase extends SubsystemBase {
       ModuleLocations.backRight);
 
   private SwerveDrivePoseEstimator poseEstimator;
-
   private SwerveDriveOdometry odometry;
-
   private Field2d field = new Field2d();
 
   private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
-
-  private BooleanEntry fieldOrientedEntry;
-
   private CameraBlock cameraBlock;
+
+  //This stuff all for pathplanning with object detection
+  private static TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
+  private ProfiledPIDController thetaController = new ProfiledPIDController(
+    9, 2, 0, THETA_CONSTRAINTS);
+  private double thetaTollerance = 5;
+  private Camera objectCamera;
+  private double thetaSpeed;
+  private boolean seenTarget = false;
+  private Boolean objectLockDrive = false;
+  /////////////////////////////////////////////////////////////
 
   /** Creates a new Drivebase. */
   public Drivebase(Canandgyro gyro, CameraBlock cameraBlock) {
-    var inst = NetworkTableInstance.getDefault();
-    var table = inst.getTable("SmartDashboard");
-    this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
-
     this.gyro = gyro;
     this.cameraBlock = cameraBlock;
+
+    objectCamera = cameraBlock.getObjectCamera();
 
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getPositions());
 
     poseEstimator = new SwerveDrivePoseEstimator(kinematics, gyro.getRotation2d(), getPositions(), odometry.getPoseMeters());
+
+    thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.reset(getFieldAngle()*2*Math.PI);
 
     //ModuleConfig ModuleConfig = new ModuleConfig(WHEEL_DIAMETER/2, 3, WHEEL_DIAMETER, DCMotor.getNEO(2), 1.8, 0);
     //RobotConfig config = new RobotConfig(15, 11.25, ModuleConfig, 0.66);
@@ -102,7 +116,7 @@ public class Drivebase extends SubsystemBase {
             this::getPose, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            (speeds, feedforwards) -> objectLockDrive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(1.0, 0.0, 0.0) // Rotation PID constants
@@ -118,7 +132,7 @@ public class Drivebase extends SubsystemBase {
             this // Reference to this subsystem to set requirements
     );
 
-    SmartDashboard.putData("Field", field);
+    //SmartDashboard.putData("Field", field);
 
     SmartDashboard.putData("Swerve Drive", new Sendable() {
       @Override
@@ -140,6 +154,14 @@ public class Drivebase extends SubsystemBase {
         builder.addDoubleProperty("Robot Angle", () -> getFieldAngle(), null);
       }
     });
+  }
+
+  public List<TalonFX> getInstruments()
+  {
+    List<TalonFX> instruments = new ArrayList<TalonFX>();
+    instruments = Arrays.asList(frontLeft.getAngleMotor(), frontLeft.getDriveMotor(), frontRight.getAngleMotor(), frontRight.getAngleMotor(),
+    backLeft.getAngleMotor(), backLeft.getDriveMotor(), backRight.getAngleMotor(), backRight.getDriveMotor());
+    return instruments;
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds()
@@ -177,6 +199,76 @@ public class Drivebase extends SubsystemBase {
     //   robotOrientedDrive(speedX, speedY, rot);
     // }
     fieldOrientedDrive(speedX, speedY, rot);
+  }
+
+  public Command setObjectLockDriveTrueCommand()
+  {
+    return Commands.runOnce(() -> setObjectLockDriveTrue());
+  }
+
+  public void setObjectLockDriveTrue()
+  {
+    objectLockDrive = true;
+  }
+
+  public Command setObjectLockDriveFalseCommand()
+  {
+    return Commands.runOnce(() -> setObjectLockDriveFalse());
+  }
+
+  public void setObjectLockDriveFalse()
+  {
+    objectLockDrive = false;
+  }
+
+  public void objectLockDrive(ChassisSpeeds speeds)
+  {
+    //Command to toggle this bool in pathplanner lets you control when paths run normally or with object detect
+    if (objectLockDrive)
+    {
+      //gets the best clump of balls - returns Double.MAX_VALUE if no balls seen
+      double targetYaw = objectCamera.getYawClump();
+      // SmartDashboard.putNumber("target yaw", targetYaw);
+      // If it has any targets
+      if (targetYaw != Double.MAX_VALUE)
+      {
+        //Once it has seen a target we can continue to rotate in that direction to counteract momentary loss of vision
+        seenTarget = true;
+        //Sets robot target yaw to current angle + target
+        thetaController.setGoal(targetYaw/180*Math.PI + getFieldAngle()*2*Math.PI);
+        //SmartDashboard.putNumber("theta controller goal", targetYaw/180*Math.PI + getFieldAngle()*2*Math.PI);
+        thetaSpeed = thetaController.calculate(getFieldAngle()*2*Math.PI);
+        //SmartDashboard.putNumber("theta speed", thetaSpeed);
+
+        //This checks the tollerance because the setTollerance method of the pid controllers is not doing what i want it too
+        if (Math.abs(thetaController.getGoal().position-getFieldAngle()*2*Math.PI) < Units.degreesToRadians(thetaTollerance))
+        {
+          //If in tollerance stop rotation
+          thetaSpeed = 0;
+        }
+        //drives using pathplanner speeds for x y and the object detection for theta speed
+        defaultDrive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, -thetaSpeed);
+      }
+      else if (seenTarget)
+      {
+      //if we have seen a target but cant anymore dont change goal but continue to move towords past target
+      thetaSpeed = thetaController.calculate(getFieldAngle()*2*Math.PI);
+      //SmartDashboard.putNumber("theta speed", thetaSpeed);
+
+      //Check tollerances for theta position
+      if (Math.abs(thetaController.getGoal().position-getFieldAngle()*2*Math.PI) < Units.degreesToRadians(thetaTollerance))
+      {
+        thetaSpeed = 0;
+      }
+
+      defaultDrive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, -thetaSpeed);
+    }
+    }
+    // if we are not using object detect just drive normally
+    else
+    {
+      drive(speeds);
+    }
   }
 
   /** drive:
@@ -224,6 +316,7 @@ public class Drivebase extends SubsystemBase {
     return states;
   }
 
+
   public SwerveModulePosition[] getPositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
     for (int i = 0; i < modules.length; i++) {
@@ -243,6 +336,6 @@ public class Drivebase extends SubsystemBase {
 
     this.cameraBlock.update(poseEstimator);
 
-    field.setRobotPose(poseEstimator.getEstimatedPosition());
+    //field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 }

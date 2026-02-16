@@ -171,4 +171,8 @@ public class SwerveModule {
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocity(), getRotation());
   }
+
+public TalonFX getDriveMotor() {
+    return speedMotor;
+}
 }
