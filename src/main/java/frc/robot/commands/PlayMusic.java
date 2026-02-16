@@ -36,7 +36,7 @@ public class PlayMusic extends Command {
   public void initialize() {
 
     List<TalonFX> motors = drivebase.getInstruments();
-    int[] tracks = {1, 2, 3, 4, 5, 6, 18, 17};
+    int[] tracks = {1, 2, 3, 4, 5, 6, 17, 18};
     for (int i = 0; i < tracks.length; i++)
     {
       orchestra.addInstrument(motors.get(i), tracks[i]);

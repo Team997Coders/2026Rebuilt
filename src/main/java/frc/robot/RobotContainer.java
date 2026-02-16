@@ -66,20 +66,17 @@ public class RobotContainer {
   private  XboxController driveStick = new XboxController(0);
   private  CommandXboxController c_driveStick = new CommandXboxController(0);
   
-
- private  Shoot shootCommand;
-
  // Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
-  private final ObjectCamera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  private final ObjectCamera leftCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(0.0, 0,0), new Rotation3d(Units.degreesToRadians(0), 0.0, 0)));
+  //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
+  //private final Camera leftCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(0.0, 0,0), new Rotation3d(Units.degreesToRadians(0), 0.0, 0)));
 
-private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
+//private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(frontCamera, leftCamera));
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList());
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
@@ -91,18 +88,16 @@ private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new 
   private final Roller roller = new Roller();
   private final Hood hood = new Hood(pav, hubLock);
   
-
   private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
 
- private final Unstick unstick = new Unstick(indexer);
-
-  //
+  private final Unstick unstick = new Unstick(indexer);
+  
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
 
    public final Intake m_intake;
   public final IntakeCommand IntakeCommandExtend;
  public final IntakeCommand IntakeCommandRetract;
-  public final Shoot ShootCommand;
+  public final Shoot shootCommand;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -121,14 +116,10 @@ private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new 
 
     CanandEventLoop.getInstance();
 
-  
-
      m_intake = new Intake();
      IntakeCommandExtend = new IntakeCommand(m_intake, true);
      IntakeCommandRetract = new IntakeCommand(m_intake, false);
  
-      ShootCommand = new Shoot(shooter, indexer, hubLock, hood);
-
     NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
     
@@ -225,44 +216,31 @@ private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new 
    * joysticks}.
    */
   private void configureBindings() {
-    //c_driveStick.rightTrigger().whileTrue(ShootCommand);
-   // c_driveStick.rightTrigger().whileFalse(shooter.runRollerAndFlywheel(0, 0));
-   // c_driveStick.b().whileTrue(shootCommand);
-
-   c_driveStick.rightTrigger().whileTrue(ShootCommand);
-  //c_driveStick.leftTrigger().whileTrue(shooter.moveFlywheelCommand(Constants.ShooterConstants.flywheelVoltage)).whileFalse(shooter.moveFlywheelCommand(0));
-  c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
-  SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
-  c_driveStick.x().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
-  c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand()).onFalse(shooter.moveFlywheelCommand(0));
-  c_driveStick.b().whileTrue(hood.PAVcommand());
+    c_driveStick.rightTrigger().whileTrue(shootCommand);
+    //c_driveStick.leftTrigger().whileTrue(shooter.moveFlywheelCommand(Constants.ShooterConstants.flywheelVoltage)).whileFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
+    SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
+    //c_driveStick.x().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand()).onFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.b().whileTrue(hood.PAVcommand());
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue((hood.hoodDown()));
-
-
-
-    //_driveStick.a().onTrue(shooter.runFlywheelVolt(5));
-
   
      c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
      c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
-   c_driveStick.a().whileTrue(m_intake.intakeFuel());
-    // Gyro Reset
-   // c_driveStick.povUp().onTrue(Commands.runOnce(gyro::reset));
+     c_driveStick.a().whileTrue(m_intake.intakeFuel());
+     // Gyro Reset
+     // c_driveStick.povUp().onTrue(Commands.runOnce(gyro::reset));
     
-    //When holding x robot goes to closest location in potential locations
-    c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
-     c_driveStick.b().whileTrue(new objectLock(drivebase, () -> getScaledXY(), frontCamera));
-     c_driveStick.a().whileTrue(new clumpLock(drivebase, () -> getScaledXY(), frontCamera));
-     c_driveStick.x().whileTrue(new PlayMusic(drivebase));
-   c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
+     //When holding x robot goes to closest location in potential locations
+     //c_driveStick.b().whileTrue(new objectLock(drivebase, () -> getScaledXY(), frontCamera));
+     //c_driveStick.a().whileTrue(new clumpLock(drivebase, () -> getScaledXY(), frontCamera));
+     //c_driveStick.x().whileTrue(new PlayMusic(drivebase));
+     c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
      c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
-    c_driveStick.y().whileTrue(m_intake.intakeFuel());
-    
-
-
-
-    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer());
+     c_driveStick.x().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
+  
+    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
 
     unstickTrigger.whileTrue(unstick);
 

@@ -52,5 +52,10 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> spin(Constants.IntakeConstants.spinVoltage));
     }
 
+    public Command stopIntake()
+    {
+        return this.runOnce(() -> spin(0));
+    }
+
 
 }
