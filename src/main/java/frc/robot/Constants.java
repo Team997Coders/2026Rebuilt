@@ -41,8 +41,6 @@ public final class Constants {
     public static final double hoodGearRatio = 35*(300/28);
 
     public static final double kf = 0;
-  
-  
 
     public static final int beamBreak = 10;
     public static final int magnet = 0;
@@ -71,7 +69,7 @@ public final class Constants {
   public static final int indexerMotorID = 90; 
   public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
   public static final double speedToUnstick = -1; 
-  public static final int disiredUnstickTime = 500;
+  public static final int disiredUnstickTime = 25;
 
   public final static double defaultVolts = 3;
   public final static double reverseVolts = -2;
@@ -202,10 +200,10 @@ public final class Constants {
 
     public static final double spinVoltage = 0;
 
-    public static final int p = 0;
-    public static final int i = 0;
-    public static final int d = 0;
-    public static final double goal = 0;
+    public static final double p = 0;
+    public static final double i = 0;
+    public static final double d = 0;
+    public static final double extendedPosition = 5;
   }
 
 

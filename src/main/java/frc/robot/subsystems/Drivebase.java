@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -21,7 +20,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -45,7 +43,6 @@ import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.SwerveModules;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
-import frc.robot.subsystems.vision.ObjectCamera;
 
 public class Drivebase extends SubsystemBase {
   private final double DRIVE_REDUCTION = 1.0 / 6.75;
@@ -53,7 +50,6 @@ public class Drivebase extends SubsystemBase {
   private final double WHEEL_DIAMETER = 0.1016;
   private final double MAX_VELOCITY = NEO_FREE_SPEED * DRIVE_REDUCTION * WHEEL_DIAMETER * Math.PI;
   private final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / (ModuleLocations.dist / Math.sqrt(2.0));
-
   private final double MAX_VOLTAGE = 12;
 
   private Canandgyro gyro;
@@ -62,10 +58,8 @@ public class Drivebase extends SubsystemBase {
   private SwerveModule frontRight = new SwerveModule(SwerveModules.frontRight, MAX_VELOCITY, MAX_VOLTAGE);
   private SwerveModule backLeft = new SwerveModule(SwerveModules.backLeft, MAX_VELOCITY, MAX_VOLTAGE);
   private SwerveModule backRight = new SwerveModule(SwerveModules.backRight, MAX_VELOCITY, MAX_VOLTAGE);
-
   //                                                       0           1          2         3
   private SwerveModule[] modules = new SwerveModule[] { frontLeft, frontRight, backLeft, backRight };
-
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
       ModuleLocations.frontLeft,
       ModuleLocations.frontRight,
@@ -73,19 +67,12 @@ public class Drivebase extends SubsystemBase {
       ModuleLocations.backRight);
 
   private SwerveDrivePoseEstimator poseEstimator;
-
   private SwerveDriveOdometry odometry;
-
-  //private Field2d field = new Field2d();
+  private Field2d field = new Field2d();
 
   private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
-
-  private BooleanEntry fieldOrientedEntry;
-
   private CameraBlock cameraBlock;
-
-  private Boolean objectLockDrive = false;
 
   //This stuff all for pathplanning with object detection
   private static TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
@@ -95,14 +82,11 @@ public class Drivebase extends SubsystemBase {
   private Camera objectCamera;
   private double thetaSpeed;
   private boolean seenTarget = false;
+  private Boolean objectLockDrive = false;
   /////////////////////////////////////////////////////////////
 
   /** Creates a new Drivebase. */
   public Drivebase(Canandgyro gyro, CameraBlock cameraBlock) {
-    var inst = NetworkTableInstance.getDefault();
-    var table = inst.getTable("SmartDashboard");
-    this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
-
     this.gyro = gyro;
     this.cameraBlock = cameraBlock;
 

@@ -40,7 +40,6 @@ public class Indexer extends SubsystemBase{
 
    public boolean unstickFuel(){
       if (indexMotor.getOutputCurrent() > Constants.IndexerConstants.typicalIndexOutputCurrent) {
-         spinIndexerMotor(Constants.IndexerConstants.speedToUnstick);
          return true;
       } else {
          return false;
