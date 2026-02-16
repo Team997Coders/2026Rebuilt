@@ -216,6 +216,7 @@ public class RobotContainer {
     c_driveStick.leftBumper().onTrue(m_intake.extendIntake());
     c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
+    c_driveStick.back().onTrue(null);
 
     c_driveStick.b().whileTrue(new PlayMusic(drivebase));
     c_driveStick.x().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
