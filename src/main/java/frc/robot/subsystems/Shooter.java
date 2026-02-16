@@ -1,7 +1,8 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.vision.CameraShooter;
+import frc.robot.commands.HubLock;
+import frc.robot.commands.HubLock;
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 import java.net.ContentHandler;
 
@@ -59,10 +61,10 @@ public class Shooter extends SubsystemBase {
     public SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0.1, 0.11/2/Math.PI, 0);
 
     private PAVController pav;
-    private CameraShooter shootCam;
+    private HubLock hubLock;
 
-    public Shooter(PAVController pav, CameraShooter shootCam) {
-        this.shootCam = shootCam;
+    public Shooter(PAVController pav, HubLock hubLock) {
+        this.hubLock = hubLock;
         this.pav = pav;
         shooterPID.reset();
         //could be wrong, both should be spinning the same way 
@@ -146,7 +148,7 @@ public class Shooter extends SubsystemBase {
     public void PAVcontroller() {
         Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
         Pose2d goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-        pav.update(shootCam.getDistanceFromTarget(goalPose));
+        pav.update(hubLock.getDistanceFromTarget(goalPose));
         moveFlywheel(pav.getVelocity() / Constants.ShooterConstants.flywheelRadius);
         SmartDashboard.putNumber("pav target velocity", pav.getVelocity());
     }

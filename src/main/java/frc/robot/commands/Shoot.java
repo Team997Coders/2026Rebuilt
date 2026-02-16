@@ -10,32 +10,32 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
-import frc.robot.subsystems.vision.CameraShooter;
 import frc.robot.Constants;
 import frc.robot.commands.HubLock;
 
 public class Shoot extends Command {
     private Shooter m_shooter;
     private Indexer m_indexer;
-    private CameraShooter m_shootCamera;
+    private HubLock m_hubLock;
     private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     private Hood m_hood;
 
 
 
-    public Shoot(Shooter shooter, Indexer indexer, CameraShooter shootCamera, Hood hood) {
+    public Shoot(Shooter shooter, Indexer indexer, HubLock hubLock, Hood hood) {
         this.m_shooter = shooter;
         this.m_indexer = indexer;
-        this.m_shootCamera = shootCamera;
+        this.m_hubLock = hubLock;
         this.m_hood = hood;
 
 
-        addRequirements(shooter, indexer, shootCamera);
+        addRequirements(shooter, indexer, hood);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class Shoot extends Command {
       //  m_shooter.moveRollerandFlywheel(-Constants.ShooterConstants.flywheelVoltage, Constants.ShooterConstants.rollerVoltage);
         Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
         Pose2d goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-        double angle = getAngleGofX(m_shootCamera.getDistanceFromTarget(goalPose));
+        double angle = getAngleGofX(m_hubLock.getDistanceFromTarget(goalPose));
         SmartDashboard.putNumber("shooter target angle", angle);
 
         if ((angle >= Constants.ShooterConstants.hoodBottomLimit) && (angle <= Constants.ShooterConstants.hoodTopLimit)){
