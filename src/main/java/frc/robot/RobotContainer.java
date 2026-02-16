@@ -7,7 +7,7 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.HubLock;
-import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.JitterIndexer;
 import frc.robot.commands.Unstick;
 import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
@@ -26,6 +26,8 @@ import frc.robot.subsystems.vision.CameraBlock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.jar.Attributes.Name;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.reduxrobotics.canand.CanandEventLoop;
@@ -92,8 +94,7 @@ public class RobotContainer {
   private final Unstick unstick = new Unstick(indexer);
   
   public final Intake m_intake;
-  public final IntakeCommand IntakeCommandExtend;
-  public final IntakeCommand IntakeCommandRetract;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -110,12 +111,25 @@ public class RobotContainer {
 
     CanandEventLoop.getInstance();
 
-     m_intake = new Intake();
-     IntakeCommandExtend = new IntakeCommand(m_intake, true);
-     IntakeCommandRetract = new IntakeCommand(m_intake, false);
+    m_intake = new Intake();
  
     NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
+
+    NamedCommands.registerCommand("move roller", roller.moveRoller());
+    NamedCommands.registerCommand("stop roller", roller.stopRoller());
+    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()));
+    NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
+
+    NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
+    NamedCommands.registerCommand("return intake", m_intake.returnIntake());
+    NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
+    NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
+
+    NamedCommands.registerCommand("start index", indexer.startIndexer());
+    NamedCommands.registerCommand("stop index", indexer.stopIndexer());
+
+    
     
     configureBindings();
   }
@@ -216,7 +230,7 @@ public class RobotContainer {
     c_driveStick.leftBumper().onTrue(m_intake.extendIntake());
     c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
-    c_driveStick.back().onTrue(null);
+
 
     c_driveStick.b().whileTrue(new PlayMusic(drivebase));
     c_driveStick.x().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
