@@ -13,6 +13,7 @@ import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
 import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -85,6 +86,7 @@ public class RobotContainer {
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
+  private final Climber climber = new Climber();
   private final Shooter shooter = new Shooter(pav, hubLock);
   private final Roller roller = new Roller();
   private final Hood hood = new Hood(pav, hubLock);
@@ -128,6 +130,9 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("start index", indexer.startIndexer());
     NamedCommands.registerCommand("stop index", indexer.stopIndexer());
+
+    NamedCommands.registerCommand("raise climber", climber.raise());
+    NamedCommands.registerCommand("lower climber", climber.lower());
 
     
     
@@ -231,12 +236,14 @@ public class RobotContainer {
     c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
 
-
     c_driveStick.b().whileTrue(new PlayMusic(drivebase));
     c_driveStick.x().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
     c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
     c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
     SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
+
+    c_driveStick.povRight().onTrue(climber.raise());
+    c_driveStick.povLeft().onFalse(climber.lower());
 
     unstickTrigger.whileTrue(unstick);
   }
