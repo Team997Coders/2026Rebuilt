@@ -14,12 +14,14 @@ import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
 import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.ObjectCamera;
+import frc.robot.subsystems.vision.PAVController;
 import frc.robot.subsystems.vision.CameraBlock;
 import frc.robot.subsystems.vision.CameraShooter;
 
@@ -81,10 +83,13 @@ public class RobotContainer {
  // private static final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
  // private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-  
- private static final Indexer indexer = new Indexer();
-  private static final Shooter shooter = new Shooter();
+
+  private static final PAVController pav = new PAVController();
+  private static final Indexer indexer = new Indexer();
+  private static final Shooter shooter = new Shooter(pav, leftCamera);
   private static final Roller roller = new Roller();
+  private static final Hood hood = new Hood(pav, leftCamera);
+  
 
  // private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
 
@@ -121,7 +126,7 @@ public class RobotContainer {
     // IntakeCommandExtend = new IntakeCommand(m_intake, true);
     // IntakeCommandRetract = new IntakeCommand(m_intake, false);
  
-      ShootCommand = new Shoot(shooter, indexer, leftCamera);
+      ShootCommand = new Shoot(shooter, indexer, leftCamera, hood);
 
     //NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     //NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
@@ -228,10 +233,10 @@ public class RobotContainer {
   c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
   SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
   c_driveStick.x().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.povUp().whileTrue(shooter.hoodUp());
-    c_driveStick.povDown().whileTrue((shooter.hoodDown()));
-
-    
+  c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand()).onFalse(shooter.moveFlywheelCommand(0));
+  c_driveStick.b().whileTrue(hood.PAVcommand());
+    c_driveStick.povUp().whileTrue(hood.hoodUp());
+    c_driveStick.povDown().whileTrue((hood.hoodDown()));
 
 
 

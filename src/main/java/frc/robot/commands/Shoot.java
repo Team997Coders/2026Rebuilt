@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -23,13 +24,15 @@ public class Shoot extends Command {
     private Indexer m_indexer;
     private CameraShooter m_shootCamera;
     private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    private Hood m_hood;
 
 
 
-    public Shoot(Shooter shooter, Indexer indexer, CameraShooter shootCamera) {
+    public Shoot(Shooter shooter, Indexer indexer, CameraShooter shootCamera, Hood hood) {
         this.m_shooter = shooter;
         this.m_indexer = indexer;
         this.m_shootCamera = shootCamera;
+        this.m_hood = hood;
 
 
         addRequirements(shooter, indexer, shootCamera);
@@ -88,7 +91,7 @@ public class Shoot extends Command {
         SmartDashboard.putNumber("shooter target angle", angle);
 
         if ((angle >= Constants.ShooterConstants.hoodBottomLimit) && (angle <= Constants.ShooterConstants.hoodTopLimit)){
-            m_shooter.setGoalAngle(angle);
+            m_hood.setGoalAngle(angle);
         }
 
         
