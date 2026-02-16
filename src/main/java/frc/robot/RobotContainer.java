@@ -83,7 +83,7 @@ private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new 
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-  private final HubLock hubLock = new HubLock(drivebase,  () -> getScaledXY());
+  private final HubLock hubLock = new HubLock(drivebase, () -> getScaledXY());
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
