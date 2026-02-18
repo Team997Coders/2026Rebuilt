@@ -27,11 +27,11 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 public class Camera
 {
-    private PhotonCamera camera;
+    protected PhotonCamera camera;
     private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     private PhotonPoseEstimator photonPoseEstimator;
 
-    private List<PhotonPipelineResult> results;
+    protected List<PhotonPipelineResult> results;
 
     public Camera(String cameraName, Transform3d robotToCamera)
     {
@@ -42,9 +42,9 @@ public class Camera
         this.results = null;
     }
 
-    public void update(SwerveDrivePoseEstimator poseEstimator, List<PhotonPipelineResult> results)
+    public void update(SwerveDrivePoseEstimator poseEstimator)
     {
-        this.results = results;
+        results = this.camera.getAllUnreadResults();
         if (!this.results.isEmpty())
         {
             var result = results.get(results.size() - 1);
@@ -57,12 +57,6 @@ public class Camera
                 }
             }
         } 
-    }
-
-    public void update(SwerveDrivePoseEstimator poseEstimator)
-    {
-        List<PhotonPipelineResult> pipelineResults = this.camera.getAllUnreadResults();
-        this.update(poseEstimator, pipelineResults);
     }
 
     public List<PhotonPipelineResult> getResults()
@@ -114,5 +108,9 @@ public class Camera
             }
         }
         return new Pose2d();
+    }
+
+    public double getYawClump() {
+        return Double.MAX_VALUE;
     }
 }

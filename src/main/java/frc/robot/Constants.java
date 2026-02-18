@@ -23,6 +23,58 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static final int gyroID = 46;
 
+  public static class ShooterConstants {
+    public static final int flywheelID = 15;
+    public static final int flywheel2ID = 16;
+    public static final int hoodMotor = 17;
+    public static final int rollerMotor = 18;
+
+    public static final double rollerVoltage = 5;
+    public static final double rollerReverseVoltage = -2;
+
+    public static final double flywheelRotationalVelocity = 2; 
+    public static final double flywheelReverseVelocity = 0;
+
+    public static final double hoodTopLimit = 75; //degrees 
+    public static final double hoodBottomLimit = 25; 
+
+    public static final double hoodGearRatio = 35*(300/28);
+
+    public static final double kf = 0;
+
+    public static final int beamBreak = 10;
+    public static final int magnet = 0;
+    public static final int absoluteEncoder = 1;
+
+
+    public static final class flywheelPID {
+      public static final double kp = 0.1;
+      public static final double ki = 0.00;
+      public static final double kd = 0.00;
+    }
+
+    public static final class hoodPID {
+      public static final double kp = 0.15;
+      public static final double ki = 0.00;
+      public static final double kd = 0.00;
+    }
+
+    public static final double flywheelGearRatio = 54/32; //54 is motor 32 is flywheel
+    public static final double flywheelRadius = 0.0508; //in meters
+
+    public static final double flywheelVoltage = 10.8;
+  }
+
+  public static final class IndexerConstants {
+  public static final int indexerMotorID = 90; 
+  public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
+  public static final double speedToUnstick = -1; 
+  public static final int disiredUnstickTime = 25;
+
+  public final static double defaultVolts = 3;
+  public final static double reverseVolts = -2;
+  }
+
   public static final class DriveConstants {
     public static final double deadband = 0.02;
     public static final int currentLimit = 40;
@@ -31,9 +83,10 @@ public final class Constants {
     public static final class SwervePID {
       public static final double p = 0.005;
       public static final double i = 0;
-
       public static final double d = 0;
     }
+
+ 
 
     public static final class SwerveModules {
 
@@ -140,4 +193,20 @@ public final class Constants {
     public static final int id = 50;
     public static final int ledCount = 50;
   }
+
+   public static final class IntakeConstants {
+    public static final int spinMotorID = 91;
+    public static final int extendMotorID = 92;
+
+    public static final double spinVoltage = 0;
+
+    public static final double p = 0;
+    public static final double i = 0;
+    public static final double d = 0;
+    public static final double extendedPosition = 5;
+  }
+
+
+
+public static double airTime = 1;
 }

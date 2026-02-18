@@ -6,27 +6,44 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.HubLock;
+
+import frc.robot.commands.Unstick;
+import frc.robot.commands.PlayMusic;
+import frc.robot.commands.clumpLock;
+import frc.robot.commands.goToLocation;
+import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Roller;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
+import frc.robot.subsystems.vision.ObjectCamera;
+import frc.robot.subsystems.vision.PAVController;
 import frc.robot.subsystems.vision.CameraBlock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.reduxrobotics.canand.CanandEventLoop;
+import com.reduxrobotics.sensors.canandcolor.DigoutChannel.Index;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -45,41 +62,58 @@ public class RobotContainer {
   private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
 
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
-  private static XboxController driveStick = new XboxController(0);
-  private static CommandXboxController c_driveStick = new CommandXboxController(0);
-
-  //Pathplanner autoChooser
+  private  XboxController driveStick = new XboxController(0);
+  private  CommandXboxController c_driveStick = new CommandXboxController(0);
+  
+  // Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
-  private static final Camera frontCamera = new Camera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  //private static final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
+  //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
+  //private final Camera leftCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(0.0, 0,0), new Rotation3d(Units.degreesToRadians(0), 0.0, 0)));
+
+  //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private static final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(frontCamera));
-  private static final CameraBlock cameraBlock = new CameraBlock(cameraList);
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList());
+  private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
+  private final HubLock hubLock = new HubLock(drivebase, () -> getScaledXY());
 
-  //
-  private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
+  private final PAVController pav = new PAVController();
+  private final Indexer indexer = new Indexer();
+  private final Shooter shooter = new Shooter(pav, hubLock);
+  private final Roller roller = new Roller();
+  private final Hood hood = new Hood(pav, hubLock);
+  
+  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
+
+  private final Unstick unstick = new Unstick(indexer);
+  
+  public final Intake m_intake;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the trigger bindings
-    drivebase.setDefaultCommand(
+     drivebase.setDefaultCommand(
         new Drive(
-            drivebase,
-            () -> getScaledXY(),
-            () -> scaleRotationAxis(driveStick.getRawAxis(4))));
+             drivebase,
+           () -> getScaledXY(),
+           () -> scaleRotationAxis(driveStick.getRawAxis(4))));
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
     SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
 
+     m_intake = new Intake();
+ 
+    NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+    NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
+    
     configureBindings();
   }
 
@@ -133,22 +167,22 @@ public class RobotContainer {
     return Math.copySign(input * input * input, input);
   }
 
-  @SuppressWarnings("unused")
-  private double scaleTranslationAxis(double input) {
-    return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
+   @SuppressWarnings("unused")
+   private double scaleTranslationAxis(double input) {
+     return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
+   }
+
+   private double scaleRotationAxis(double input) {
+     return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
   }
 
-  private double scaleRotationAxis(double input) {
-    return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
-  }
-
-  public void resetGyro() {
+   public void resetGyro() {
     gyro.setYaw(0);
-  }
+   }
 
-  public double getGyroYaw() {
-    return -gyro.getYaw();
-  }
+   public double getGyroYaw() {
+     return -gyro.getYaw();
+   }
 
   public boolean onBlueAlliance() {
     var alliance = DriverStation.getAlliance();
@@ -173,11 +207,21 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Gyro Reset
-    //c_driveStick.povUp().onTrue(Commands.runOnce(gyro::reset));
-    
-    //When holding x robot goes to closest location in potential locations
-    //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
+    c_driveStick.povUp().whileTrue(hood.hoodUp());
+    c_driveStick.povDown().whileTrue((hood.hoodDown()));
+  
+    c_driveStick.leftBumper().onTrue(m_intake.extendIntake());
+    c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
+    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
+    c_driveStick.back().onTrue(null);
+
+    c_driveStick.b().whileTrue(new PlayMusic(drivebase));
+    c_driveStick.x().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
+    c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
+    c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
+    SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
+
+    unstickTrigger.whileTrue(unstick);
   }
 
   /**
@@ -186,6 +230,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return null;
   }
 }
