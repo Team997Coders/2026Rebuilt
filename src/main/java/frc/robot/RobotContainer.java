@@ -242,6 +242,9 @@ public class RobotContainer {
     c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
     SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
 
+    c_driveStick.povLeft().onTrue(m_intake.decreaseGoalCommand());
+    c_driveStick.povRight().onTrue(m_intake.increaseGoalCommand());
+
     c_driveStick.povRight().onTrue(climber.raise());
     c_driveStick.povLeft().onFalse(climber.lower());
 

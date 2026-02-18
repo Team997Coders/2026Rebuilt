@@ -39,6 +39,26 @@ public class Intake extends SubsystemBase {
     {
         this.goal = goal;
     }
+
+    public void increaseGoal()
+    {
+        setGoal(goal + 1);
+    }
+
+    public void decreaseGoal()
+    {
+        setGoal(goal - 1);
+    }
+
+    public Command increaseGoalCommand()
+    {
+        return this.runOnce(() -> increaseGoal());
+    }
+
+    public Command decreaseGoalCommand()
+    {
+        return this.runOnce(() -> decreaseGoal());
+    }
             
     public void spin(double voltage) {
         spinMotor.setVoltage(voltage);

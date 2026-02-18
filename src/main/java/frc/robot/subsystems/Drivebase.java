@@ -132,7 +132,7 @@ public class Drivebase extends SubsystemBase {
             this // Reference to this subsystem to set requirements
     );
 
-    //SmartDashboard.putData("Field", field);
+    SmartDashboard.putData("Field", field);
 
     SmartDashboard.putData("Swerve Drive", new Sendable() {
       @Override
@@ -336,6 +336,6 @@ public class Drivebase extends SubsystemBase {
 
     this.cameraBlock.update(poseEstimator);
 
-    //field.setRobotPose(poseEstimator.getEstimatedPosition());
+    field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 }

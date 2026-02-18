@@ -155,6 +155,7 @@ public final class Constants {
       );
     }
 
+    //TODO: FIX DISTANCES
     public static final class ModuleLocations {
       public static final double dist = Units.inchesToMeters(11.0);
       public static final double robotRaduius = Math.sqrt(2 * Math.pow(dist, 2));
@@ -215,7 +216,7 @@ public final class Constants {
 
     public static final double spinVoltage = 0;
 
-    public static final double p = 0;
+    public static final double p = 0.01;
     public static final double i = 0;
     public static final double d = 0;
     public static final double extendedPosition = 5;

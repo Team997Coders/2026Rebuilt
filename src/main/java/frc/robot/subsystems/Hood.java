@@ -96,8 +96,6 @@ public class Hood extends SubsystemBase {
         if(angle > Constants.ShooterConstants.hoodBottomLimit && angle < Constants.ShooterConstants.hoodTopLimit) {
             setGoalAngle(angle);
         }
-        
-
     }
 
     public void moveHoodUpManual() {
