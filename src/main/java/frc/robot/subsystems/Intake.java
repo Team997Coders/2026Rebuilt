@@ -15,9 +15,11 @@ import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
     private final SparkMax spinMotor;
-    private final SparkMax extendMotor;
+    private final SparkMax extendMotorRight;
+    private final SparkMax extendMotorLeft;
     private final SparkMaxConfig spinConfig;
-    private final SparkMaxConfig extendConfig;
+    private final SparkMaxConfig extendConfigRight;
+    private final SparkMaxConfig extendConfigLeft;
 
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
     private double goal = 0;    
@@ -25,13 +27,17 @@ public class Intake extends SubsystemBase {
                     
     public Intake(){
         spinMotor = new SparkMax(Constants.IntakeConstants.spinMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-        extendMotor = new SparkMax(Constants.IntakeConstants.extendMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+        extendMotorRight = new SparkMax(Constants.IntakeConstants.extendMotorIDright, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+        extendMotorLeft = new SparkMax(Constants.IntakeConstants.extendMotorIDleft, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
         spinConfig = new SparkMaxConfig();
-        extendConfig = new SparkMaxConfig();
+        extendConfigRight = new SparkMaxConfig();
+        extendConfigLeft = new SparkMaxConfig();
                     
         spinMotor.configure(spinConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        extendMotor.configure(extendConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        encoder = extendMotor.getEncoder();     
+        extendMotorRight.configure(extendConfigRight, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        extendMotorLeft.configure(extendConfigLeft, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+        encoder = extendMotorLeft.getEncoder();     
         encoder.setPosition(0);
     }
 
@@ -65,7 +71,8 @@ public class Intake extends SubsystemBase {
     }
             
     public void runExtendMotor(double voltage) {
-        extendMotor.setVoltage(voltage);
+        extendMotorLeft.setVoltage(voltage);
+        extendMotorRight.setVoltage(voltage);
     }
             
     public double getEncoderPosition(){

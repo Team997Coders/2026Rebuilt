@@ -76,7 +76,7 @@ public final class Constants {
   }
 
   public static final class ClimberConstants {
-    public static final int climberID = 0;
+    public static final int climberID = 62;
 
     public static final int limitChannel = 0;
 
@@ -211,15 +211,16 @@ public final class Constants {
   }
 
    public static final class IntakeConstants {
-    public static final int spinMotorID = 91;
-    public static final int extendMotorID = 92;
+    public static final int spinMotorID = 11;
+    public static final int extendMotorIDright = 10;
+    public static final int extendMotorIDleft = 9;
 
-    public static final double spinVoltage = 0;
+    public static final double spinVoltage = 8;
 
     public static final double p = 0.01;
     public static final double i = 0;
     public static final double d = 0;
-    public static final double extendedPosition = 5;
+    public static final double extendedPosition = -10;
   }
 
 

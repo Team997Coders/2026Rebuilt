@@ -13,7 +13,7 @@ import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
 import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
-import frc.robot.subsystems.Climber;
+//import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -86,7 +86,7 @@ public class RobotContainer {
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
-  private final Climber climber = new Climber();
+  //private final Climber climber = new Climber();
   private final Shooter shooter = new Shooter(pav, hubLock);
   private final Roller roller = new Roller();
   private final Hood hood = new Hood(pav, hubLock);
@@ -131,8 +131,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("start index", indexer.startIndexer());
     NamedCommands.registerCommand("stop index", indexer.stopIndexer());
 
-    NamedCommands.registerCommand("raise climber", climber.raise());
-    NamedCommands.registerCommand("lower climber", climber.lower());
+    //NamedCommands.registerCommand("raise climber", climber.raise());
+    //NamedCommands.registerCommand("lower climber", climber.lower());
 
     
     
@@ -245,8 +245,8 @@ public class RobotContainer {
     c_driveStick.povLeft().onTrue(m_intake.decreaseGoalCommand());
     c_driveStick.povRight().onTrue(m_intake.increaseGoalCommand());
 
-    c_driveStick.povRight().onTrue(climber.raise());
-    c_driveStick.povLeft().onFalse(climber.lower());
+    //c_driveStick.povRight().onTrue(climber.raise());
+    //c_driveStick.povLeft().onFalse(climber.lower());
 
     unstickTrigger.whileTrue(unstick);
   }

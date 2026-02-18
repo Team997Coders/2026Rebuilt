@@ -90,7 +90,7 @@ public class Drivebase extends SubsystemBase {
     this.gyro = gyro;
     this.cameraBlock = cameraBlock;
 
-    objectCamera = cameraBlock.getObjectCamera();
+    //objectCamera = cameraBlock.getObjectCamera();
 
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getPositions());
 
