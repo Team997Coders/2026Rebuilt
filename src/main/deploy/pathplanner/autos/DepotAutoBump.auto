@@ -63,6 +63,12 @@
           "data": {
             "pathName": "Depot-climb"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": null
+          }
         }
       ]
     }

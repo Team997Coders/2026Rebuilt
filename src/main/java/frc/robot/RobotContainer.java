@@ -7,11 +7,6 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.HubLock;
-<<<<<<< HEAD
-import frc.robot.commands.JitterIndexer;
-=======
-
->>>>>>> Autos
 import frc.robot.commands.Unstick;
 import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
@@ -117,15 +112,12 @@ public class RobotContainer {
 
     CanandEventLoop.getInstance();
 
-<<<<<<< HEAD
-    m_intake = new Intake();
-=======
      m_intake = new Intake();
->>>>>>> Autos
  
     NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
-
+    NamedCommands.registerCommand("name", hubLock);
+    
     NamedCommands.registerCommand("move roller", roller.moveRoller());
     NamedCommands.registerCommand("stop roller", roller.stopRoller());
     NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()));
