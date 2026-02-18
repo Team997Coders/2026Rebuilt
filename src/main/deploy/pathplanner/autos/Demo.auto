@@ -7,49 +7,67 @@
         {
           "type": "path",
           "data": {
-            "pathName": "rotato2"
+            "pathName": "Depot-aim@Hub"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "unrotato2"
+            "pathName": "Depot-goToMid-Trench"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "rotato2"
+            "pathName": "SwipeMid"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "unrotato2"
+            "pathName": "Return(Bump)-from(mid)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "rotato2"
+            "pathName": "Depot-goToMid-Trench"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "unrotato2"
+            "pathName": "SwipeMid"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "rotato2"
+            "pathName": "Return(Bump)-from(mid)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "unrotato2"
+            "pathName": "Depot-climb"
           }
         }
       ]
