@@ -7,49 +7,61 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot-aim@Hub"
+            "pathName": "Outpost-aim@Hub"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "object lock set true"
+            "waitTime": 2.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TestDepot-goToMid-Trench"
+            "pathName": "Outpost-goToMid-Trench"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TestSwipeMid"
+            "pathName": "Outpost-MiddleToCenterField"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TestDepotSwipe"
+            "pathName": "CenterFieldtoOutpost-Middle"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "object lock set false"
+            "waitTime": 2.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TestReturn(Trench)-from(top)"
+            "pathName": "Outpost-MiddleReturnTrench"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost-climb"
           }
         }
       ]
