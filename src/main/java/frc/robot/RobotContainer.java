@@ -113,14 +113,12 @@ public class RobotContainer {
     CanandEventLoop.getInstance();
 
      m_intake = new Intake();
- 
-    NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+  NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
-    NamedCommands.registerCommand("name", hubLock);
     
-    NamedCommands.registerCommand("move roller", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller", roller.stopRoller());
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()));
+    NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
+    NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
+    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
     NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
 
     NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
@@ -128,11 +126,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
     NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
 
-    NamedCommands.registerCommand("start index", indexer.startIndexer());
-    NamedCommands.registerCommand("stop index", indexer.stopIndexer());
 
-    //NamedCommands.registerCommand("raise climber", climber.raise());
-    //NamedCommands.registerCommand("lower climber", climber.lower());
+    // NamedCommands.registerCommand("raise climber", climber.raise());
+    // NamedCommands.registerCommand("lower climber", climber.lower());
 
     
     
