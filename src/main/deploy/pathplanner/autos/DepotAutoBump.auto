@@ -11,9 +11,46 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "start index"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop shooting"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop index"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -29,9 +66,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "extend intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "SwipeAll"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "return intake"
           }
         },
         {
@@ -62,12 +111,6 @@
           "type": "path",
           "data": {
             "pathName": "Depot-climb"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
           }
         }
       ]

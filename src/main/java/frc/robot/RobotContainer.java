@@ -116,12 +116,10 @@ public class RobotContainer {
  
     NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
-    NamedCommands.registerCommand("name", hubLock);
-    
-    NamedCommands.registerCommand("move roller", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller", roller.stopRoller());
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()));
-    NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
+
+
+    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(roller.moveRoller()));
+    NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0).alongWith(roller.stopRoller()));
 
     NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
