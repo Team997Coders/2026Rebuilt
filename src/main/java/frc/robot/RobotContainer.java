@@ -16,6 +16,7 @@ import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.NeoPixel;
 import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
@@ -89,6 +90,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter(pav, hubLock);
   private final Roller roller = new Roller();
   private final Hood hood = new Hood(pav, hubLock);
+  private final NeoPixel neoPixel = new NeoPixel(null, null);
   
   private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
 
@@ -113,7 +115,7 @@ public class RobotContainer {
     CanandEventLoop.getInstance();
 
      m_intake = new Intake();
-  NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+    NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
     
     NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
@@ -234,7 +236,7 @@ public class RobotContainer {
 
     c_driveStick.b().whileTrue(new PlayMusic(drivebase));
     c_driveStick.x().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
-    c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
+    c_driveStick.a().whileTrue(roller.moveRoller().alongWith(indexer.startIndexer())).whileFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
     c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
     SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
 
@@ -244,7 +246,7 @@ public class RobotContainer {
     //c_driveStick.povRight().onTrue(climber.raise());
     //c_driveStick.povLeft().onFalse(climber.lower());
 
-    unstickTrigger.whileTrue(unstick);
+    //unstickTrigger.whileTrue(unstick);
   }
 
   /**
