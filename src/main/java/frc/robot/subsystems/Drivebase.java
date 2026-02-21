@@ -51,7 +51,7 @@ public class Drivebase extends SubsystemBase {
   private final double NEO_FREE_SPEED = 5820.0 / 60.0;
   private final double WHEEL_DIAMETER = 0.1016;
   private final double MAX_VELOCITY = NEO_FREE_SPEED * DRIVE_REDUCTION * WHEEL_DIAMETER * Math.PI;
-  private final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / (ModuleLocations.dist / Math.sqrt(2.0));
+  private final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / (ModuleLocations.width / Math.sqrt(2.0));
   private final double MAX_VOLTAGE = 12;
 
   private Canandgyro gyro;

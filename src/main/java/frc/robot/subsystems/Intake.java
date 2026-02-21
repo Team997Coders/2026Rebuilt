@@ -66,8 +66,8 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> decreaseGoal());
     }
             
-    public void spin(double voltage) {
-        spinMotor.setVoltage(voltage);
+    public void spin(double output) {
+        spinMotor.set(output);
     }
             
     public void runExtendMotor(double voltage) {
