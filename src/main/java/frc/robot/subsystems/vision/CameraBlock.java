@@ -6,6 +6,7 @@ import java.util.List;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CameraBlock 
 {
@@ -18,9 +19,13 @@ public class CameraBlock
 
     public void update(SwerveDrivePoseEstimator poseEstimator)
     {
+        SmartDashboard.putBoolean("update camera block", true);
+        SmartDashboard.putNumber("number of cameras", this.cameraList.size());
         for (Camera camera: this.cameraList)
         {
+            SmartDashboard.putNumber("camera #", camera.getClass().hashCode());
             camera.update(poseEstimator);
+            SmartDashboard.putBoolean("made it to the other side of the method!", true);
         }
     }
 
