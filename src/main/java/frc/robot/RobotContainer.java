@@ -12,7 +12,7 @@ import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
 import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
-//import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -85,7 +85,7 @@ public class RobotContainer {
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
-  //private final Climber climber = new Climber();
+  private final Climber climber = new Climber();
   private final Shooter shooter = new Shooter(pav, hubLock);
   private final Roller roller = new Roller();
   private final Hood hood = new Hood(pav, hubLock);
@@ -116,18 +116,21 @@ public class RobotContainer {
     // NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     // NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
     
+    NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
+    NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
+    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
     // NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
     // NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
     // NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
     // NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
 
-    // NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
-    // NamedCommands.registerCommand("return intake", m_intake.returnIntake());
-    // NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
-    // NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
+    NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
+    NamedCommands.registerCommand("return intake", m_intake.returnIntake());
+    NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
+    NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
 
-    // NamedCommands.registerCommand("raise climber", climber.raise());
-    // NamedCommands.registerCommand("lower climber", climber.lower());
+    NamedCommands.registerCommand("raise climber", climber.raise());
+    NamedCommands.registerCommand("lower climber", climber.lower());
     
     configureBindings();
     resetGyro();
@@ -223,29 +226,18 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    c_driveStick.povUp().whileTrue(hood.hoodUp());
-    c_driveStick.povDown().whileTrue((hood.hoodDown()));
-  
-    c_driveStick.leftBumper().onTrue(m_intake.extendIntake());
-    c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
-    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
-    c_driveStick.leftTrigger().whileTrue(hubLock);
+    c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
+    c_driveStick.rightBumper().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
 
-    c_driveStick.b().onTrue(m_intake.toggleIntakeCommand());
-    c_driveStick.x().whileTrue(m_intake.intakeFull()).whileFalse(m_intake.stopIntake());
-    c_driveStick.a().whileTrue(roller.moveRoller().alongWith(indexer.startIndexer())).whileFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
-    c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
-    //c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).whileFalse(shooter.moveFlywheelCommand(0));
-    SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
+    c_driveStick.leftTrigger().whileTrue(hubLock.alongWith(shooter.PAVcontrollerCommand()).alongWith(hood.PAVcommand())).whileFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).whileFalse(roller.stopRoller());
 
-    //c_driveStick.povLeft().onTrue(m_intake.decreaseGoalCommand());
-    //c_driveStick.povRight().onTrue(m_intake.increaseGoalCommand());
-    //c_driveStick.povLeft().whileTrue(m_intake.maxSpeedStow()).onFalse(m_intake.stopExtendo());
+    c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
 
     //c_driveStick.povRight().onTrue(climber.raise());
     //c_driveStick.povLeft().onFalse(climber.lower());
 
-    //unstickTrigger.whileTrue(unstick);
+    unstickTrigger.whileTrue(unstick);
   }
 
   /**
