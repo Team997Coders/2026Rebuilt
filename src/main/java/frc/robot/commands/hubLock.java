@@ -42,7 +42,7 @@ public class HubLock extends Command {
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{5.0, 0.0, 0.0});
+    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.drivebase);
@@ -86,7 +86,7 @@ public class HubLock extends Command {
 
   public double getDistanceFromTarget(Pose2d goal)
   {
-    return goal.getTranslation().getDistance(drivebase.getPose().getTranslation());
+    return goal.getTranslation().getDistance(drivebase.getShooterPose().getTranslation());
   }
 
   public double getDistance()
@@ -111,12 +111,12 @@ public class HubLock extends Command {
 
       thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
-      thetaController.reset(drivebase.getPose().getRotation().getRadians());
+      thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
     }
 
     goalPose = getGoalPose();
 
-    Pose2d robotPose = drivebase.getPose();
+    Pose2d robotPose = drivebase.getShooterPose();
     
     thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
           /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)));

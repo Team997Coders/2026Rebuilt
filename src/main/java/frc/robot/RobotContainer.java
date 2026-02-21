@@ -72,12 +72,12 @@ public class RobotContainer {
 
   //Cameras - pineapple is front facing camera
   //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  //private final Camera leftCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(0.0, 0,0), new Rotation3d(Units.degreesToRadians(0), 0.0, 0)));
+  private final Camera shooterCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12.5), Units.inchesToMeters(6), Units.inchesToMeters(13.5)), new Rotation3d(Units.degreesToRadians(0), 0.0, Math.PI/2)));
 
   //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList());
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
