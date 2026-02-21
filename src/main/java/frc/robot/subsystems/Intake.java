@@ -147,10 +147,27 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> setGoal(0));
     }
 
+    public void toggleIntake()
+    {
+        if (goal == 0)
+        {
+            setGoal(Constants.IntakeConstants.extendedPosition);
+        }
+        else
+        {
+            setGoal(0);
+        }
+    }
+
+    public Command toggleIntakeCommand()
+    {
+        return this.runOnce(() -> toggleIntake());
+    }
+
     @Override
     public void periodic()
     {
-        //runExtendMotor(pid.calculate(getEncoderPosition(), goal));
+        runExtendMotor(pid.calculate(getEncoderPosition(), goal));
         //runExtendWithGravity();
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());

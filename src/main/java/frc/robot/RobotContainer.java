@@ -113,7 +113,7 @@ public class RobotContainer {
     CanandEventLoop.getInstance();
 
      m_intake = new Intake();
-  NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+    NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
     
     NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
@@ -126,13 +126,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
     NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
 
-
     // NamedCommands.registerCommand("raise climber", climber.raise());
     // NamedCommands.registerCommand("lower climber", climber.lower());
-
-    
     
     configureBindings();
+    resetGyro();
   }
 
   /**
@@ -232,7 +230,7 @@ public class RobotContainer {
     c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
 
-    c_driveStick.b().whileTrue(m_intake.extendIntake()).whileFalse(m_intake.returnIntake());
+    c_driveStick.b().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.x().whileTrue(m_intake.intakeFull()).whileFalse(m_intake.stopIntake());
     c_driveStick.a().whileTrue(roller.moveRoller().alongWith(indexer.startIndexer())).whileFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
     //c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
@@ -241,7 +239,7 @@ public class RobotContainer {
 
     //c_driveStick.povLeft().onTrue(m_intake.decreaseGoalCommand());
     //c_driveStick.povRight().onTrue(m_intake.increaseGoalCommand());
-    c_driveStick.povLeft().whileTrue(m_intake.maxSpeedStow()).onFalse(m_intake.stopExtendo());
+    //c_driveStick.povLeft().whileTrue(m_intake.maxSpeedStow()).onFalse(m_intake.stopExtendo());
 
     //c_driveStick.povRight().onTrue(climber.raise());
     //c_driveStick.povLeft().onFalse(climber.lower());
