@@ -24,7 +24,9 @@ public class CameraBlock
         for (Camera camera: this.cameraList)
         {
             SmartDashboard.putNumber("camera #", camera.getClass().hashCode());
-            camera.update(poseEstimator);
+            //camera.update(poseEstimator);
+            SmartDashboard.putNumber("testing camera other method", camera.getYawClump());
+            SmartDashboard.putNumber("does this work for camera?", camera.update2(poseEstimator));
             SmartDashboard.putBoolean("made it to the other side of the method!", true);
         }
     }

@@ -72,7 +72,7 @@ public class RobotContainer {
 
   //Cameras - pineapple is front facing camera
   //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  private final Camera shooterCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12.5), Units.inchesToMeters(6), Units.inchesToMeters(13.5)), new Rotation3d(-Math.PI/2, 0.0, Math.PI/2)));
+  private final Camera shooterCamera = new Camera("blueberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12.5), Units.inchesToMeters(6), Units.inchesToMeters(13.5)), new Rotation3d(-Math.PI/2, 0.0, Math.PI/2)));
 
   //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
@@ -112,19 +112,19 @@ public class RobotContainer {
 
     CanandEventLoop.getInstance();
 
-     m_intake = new Intake();
-    NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
-    NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
+    m_intake = new Intake();
+    // NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+    // NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
     
-    NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
-    NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
-    NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
+    // NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
+    // NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
+    // NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
+    // NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
 
-    NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
-    NamedCommands.registerCommand("return intake", m_intake.returnIntake());
-    NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
-    NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
+    // NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
+    // NamedCommands.registerCommand("return intake", m_intake.returnIntake());
+    // NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
+    // NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
 
     // NamedCommands.registerCommand("raise climber", climber.raise());
     // NamedCommands.registerCommand("lower climber", climber.lower());
@@ -229,12 +229,13 @@ public class RobotContainer {
     c_driveStick.leftBumper().onTrue(m_intake.extendIntake());
     c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
+    c_driveStick.leftTrigger().whileTrue(hubLock);
 
     c_driveStick.b().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.x().whileTrue(m_intake.intakeFull()).whileFalse(m_intake.stopIntake());
     c_driveStick.a().whileTrue(roller.moveRoller().alongWith(indexer.startIndexer())).whileFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
-    //c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).whileFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
+    //c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).whileFalse(shooter.moveFlywheelCommand(0));
     SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
 
     //c_driveStick.povLeft().onTrue(m_intake.decreaseGoalCommand());

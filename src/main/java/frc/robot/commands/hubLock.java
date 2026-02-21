@@ -51,7 +51,7 @@ public class HubLock extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    thetaController.reset(drivebase.getPose().getRotation().getRadians());
+    thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
   }
 
   public Pose2d getGoalPose()
@@ -60,7 +60,7 @@ public class HubLock extends Command {
     {
       //10
       Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+      goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
     }
     else if (alliance.equals(DriverStation.Alliance.Blue))
     {
@@ -118,8 +118,10 @@ public class HubLock extends Command {
 
     Pose2d robotPose = drivebase.getShooterPose();
     
-    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)));
+    // thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
+    //       /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - Math.PI/2);
+    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
+          /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
     SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
 
     SmartDashboard.putNumber("goal: ", Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
