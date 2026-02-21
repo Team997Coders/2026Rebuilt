@@ -72,12 +72,12 @@ public class RobotContainer {
 
   //Cameras - pineapple is front facing camera
   //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  //private final Camera leftCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(0.0, 0,0), new Rotation3d(Units.degreesToRadians(0), 0.0, 0)));
+  private final Camera shooterCamera = new ObjectCamera("blueberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12.5), Units.inchesToMeters(6), Units.inchesToMeters(13.5)), new Rotation3d(-Math.PI/2, 0.0, Math.PI/2)));
 
   //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList());
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
@@ -113,10 +113,12 @@ public class RobotContainer {
     CanandEventLoop.getInstance();
 
      m_intake = new Intake();
- 
     NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
     NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
     
+    NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
+    NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
+    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
     NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
     NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
     NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
@@ -134,6 +136,7 @@ public class RobotContainer {
     
     
     configureBindings();
+    resetGyro();
   }
 
   /**
@@ -234,9 +237,8 @@ public class RobotContainer {
 
     c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
 
-    c_driveStick.povUp().whileTrue(climber.raise());
-    c_driveStick.povDown().whileTrue(climber.lower());
-    
+    //c_driveStick.povRight().onTrue(climber.raise());
+    //c_driveStick.povLeft().onFalse(climber.lower());
 
     unstickTrigger.whileTrue(unstick);
   }

@@ -29,7 +29,7 @@ public final class Constants {
     public static final int hoodMotor = 17;
     public static final int rollerMotor = 18;
 
-    public static final double rollerVoltage = 5;
+    public static final double rollerVoltage = 8;
     public static final double rollerReverseVoltage = -2;
 
     public static final double flywheelRotationalVelocity = 2; 
@@ -38,7 +38,7 @@ public final class Constants {
     public static final double hoodTopLimit = 75; //degrees 
     public static final double hoodBottomLimit = 25; 
 
-    public static final double hoodGearRatio = 35*(300/28);
+    public static final double hoodGearRatio = 3.5*(300/28)/35*20;
 
     public static final double kf = 0;
 
@@ -54,7 +54,7 @@ public final class Constants {
     }
 
     public static final class hoodPID {
-      public static final double kp = 0.15;
+      public static final double kp = 0.8;
       public static final double ki = 0.00;
       public static final double kd = 0.00;
     }
@@ -66,12 +66,12 @@ public final class Constants {
   }
 
   public static final class IndexerConstants {
-  public static final int indexerMotorID = 90; 
+  public static final int indexerMotorID = 12; 
   public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
   public static final double speedToUnstick = -1; 
   public static final int disiredUnstickTime = 25;
 
-  public final static double defaultVolts = 3;
+  public final static double defaultVolts = 10;
   public final static double reverseVolts = -2;
   }
 
@@ -157,12 +157,13 @@ public final class Constants {
 
     //TODO: FIX DISTANCES
     public static final class ModuleLocations {
-      public static final double dist = Units.inchesToMeters(11.0);
-      public static final double robotRaduius = Math.sqrt(2 * Math.pow(dist, 2));
-      public static final Translation2d frontLeft = new Translation2d(dist, dist);
-      public static final Translation2d frontRight = new Translation2d(dist, -dist);
-      public static final Translation2d backLeft = new Translation2d(-dist, dist);
-      public static final Translation2d backRight = new Translation2d(-dist, -dist);
+      public static final double length = Units.inchesToMeters(19.25)/2;
+      public static final double width = Units.inchesToMeters(24)/2;
+      //public static final double robotRaduius = Math.sqrt(2 * Math.pow(dist, 2));
+      public static final Translation2d frontLeft = new Translation2d(length, width);
+      public static final Translation2d frontRight = new Translation2d(length, -width);
+      public static final Translation2d backLeft = new Translation2d(-length, width);
+      public static final Translation2d backRight = new Translation2d(-length, -width);
     }
   }
   public static final class AutoConstants {
@@ -215,12 +216,12 @@ public final class Constants {
     public static final int extendMotorIDright = 10;
     public static final int extendMotorIDleft = 9;
 
-    public static final double spinVoltage = 8;
+    public static final double spinVoltage = 1;
 
-    public static final double p = 0.01;
-    public static final double i = 0;
+    public static final double p = 1.2;
+    public static final double i = 0.1;
     public static final double d = 0;
-    public static final double extendedPosition = -10;
+    public static final double extendedPosition = -11.42;
   }
 
 

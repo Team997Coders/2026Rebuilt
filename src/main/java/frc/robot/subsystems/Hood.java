@@ -41,7 +41,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class Hood extends SubsystemBase {
     
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushed);
-    public AbsoluteEncoder hoodRelativeEncoder = hood.getAbsoluteEncoder();
+    public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
     public SparkMaxConfig hoodConfig = new SparkMaxConfig();
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
@@ -53,17 +53,18 @@ public class Hood extends SubsystemBase {
     public Hood(PAVController pav, HubLock hubLock) {
         this.pav = pav;
         this.hubLock = hubLock;
-        hoodConfig.inverted(true);
+        //hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
-      // setHoodAnglePos(25); //angle from horizontal to top of hood 
+        //setHoodAnglePos(25); //angle from horizontal to top of hood 
 
+        hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         goalAngle = 25;
     }
 
     @Override
     public void periodic() {
-        //setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
         SmartDashboard.putNumber("hood angle", getHoodAngle());
@@ -71,24 +72,17 @@ public class Hood extends SubsystemBase {
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
     }
 
-
-
     //Hood
-
     public void setGoalAngle(double angle) {
         goalAngle = angle;
     }
 
-    public double getHoodAngle () { //rad
+    public double getHoodAngle () { //degrees
         return hoodRelativeEncoder.getPosition()*360/Constants.ShooterConstants.hoodGearRatio;
     }
 
-    // public void setHoodAnglePos(double angle) {
-    //     hoodRelativeEncoder.set(angle*Constants.ShooterConstants.hoodGearRatio/360);
-    // }
-
     public void setHoodMotorVoltage(double volts) {
-        hood.setVoltage(volts);
+        hood.setVoltage(-volts);
     }
 
     public void moveHood(double angle) {
@@ -110,7 +104,6 @@ public class Hood extends SubsystemBase {
     } 
     }
 
-
     //lil commands
     //hood
     public Command hoodUp() {
@@ -121,12 +114,8 @@ public class Hood extends SubsystemBase {
         return this.run(() -> moveHoodDownManual());
     }
 
-    private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-
     public void PAVcontrollerAngle() {
-        Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-        Pose2d goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-        pav.update(hubLock.getDistanceFromTarget(goalPose));
+        pav.update(hubLock.getDistanceFromTarget(hubLock.getGoalPose()));
         this.setGoalAngle(pav.getAngle());
     }
     public Command PAVcommand() {
