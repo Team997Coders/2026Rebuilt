@@ -90,7 +90,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter(pav, hubLock);
   private final Roller roller = new Roller();
   private final Hood hood = new Hood(pav, hubLock);
-  private final NeoPixel neoPixel = new NeoPixel(null, null);
+  private final NeoPixel neoPixel = new NeoPixel(null);
   
   private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
 
