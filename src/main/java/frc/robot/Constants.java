@@ -38,7 +38,7 @@ public final class Constants {
     public static final double hoodTopLimit = 75; //degrees 
     public static final double hoodBottomLimit = 25; 
 
-    public static final double hoodGearRatio = 35*(300/28);
+    public static final double hoodGearRatio = 3.5*(300/28)/35*20;
 
     public static final double kf = 0;
 
@@ -54,7 +54,7 @@ public final class Constants {
     }
 
     public static final class hoodPID {
-      public static final double kp = 0.15;
+      public static final double kp = 0.8;
       public static final double ki = 0.00;
       public static final double kd = 0.00;
     }
@@ -157,12 +157,13 @@ public final class Constants {
 
     //TODO: FIX DISTANCES
     public static final class ModuleLocations {
-      public static final double dist = Units.inchesToMeters(11.0);
-      public static final double robotRaduius = Math.sqrt(2 * Math.pow(dist, 2));
-      public static final Translation2d frontLeft = new Translation2d(dist, dist);
-      public static final Translation2d frontRight = new Translation2d(dist, -dist);
-      public static final Translation2d backLeft = new Translation2d(-dist, dist);
-      public static final Translation2d backRight = new Translation2d(-dist, -dist);
+      public static final double length = Units.inchesToMeters(19.25)/2;
+      public static final double width = Units.inchesToMeters(24)/2;
+      //public static final double robotRaduius = Math.sqrt(2 * Math.pow(dist, 2));
+      public static final Translation2d frontLeft = new Translation2d(length, width);
+      public static final Translation2d frontRight = new Translation2d(length, -width);
+      public static final Translation2d backLeft = new Translation2d(-length, width);
+      public static final Translation2d backRight = new Translation2d(-length, -width);
     }
   }
   public static final class AutoConstants {
@@ -215,7 +216,7 @@ public final class Constants {
     public static final int extendMotorIDright = 10;
     public static final int extendMotorIDleft = 9;
 
-    public static final double spinVoltage = 8;
+    public static final double spinVoltage = 1;
 
     public static final double p = 1.2;
     public static final double i = 0.1;
