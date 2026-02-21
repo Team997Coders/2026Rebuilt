@@ -65,14 +65,58 @@ public class Intake extends SubsystemBase {
     {
         return this.runOnce(() -> decreaseGoal());
     }
+
+    public void maxStow()
+    {
+        extendMotorLeft.set(1);
+    }
+
+    public Command maxSpeedStow()
+    {
+        return this.runOnce(() -> maxStow());
+    }
+
+    public void stopExtendoMotor()
+    {
+        extendMotorLeft.set(0);
+    }
+
+    public Command stopExtendo()
+    {
+        return this.runOnce(() -> stopExtendoMotor());
+    }
             
     public void spin(double voltage) {
+        if (voltage > 14)
+        {
+            voltage = 14;
+        }
+        if (voltage < -4)
+        {
+            voltage = -4;
+        }
         spinMotor.setVoltage(voltage);
+    }
+
+    public void output()
+    {
+        spinMotor.set(1.0);
     }
             
     public void runExtendMotor(double voltage) {
+        SmartDashboard.putNumber("intake extendo voltage", voltage);
         extendMotorLeft.setVoltage(voltage);
-        extendMotorRight.setVoltage(voltage);
+    }
+
+    double Kg = 8;
+    public void runExtendWithGravity()
+    {
+        double voltage = pid.calculate(getEncoderPosition(), goal);
+        if (getEncoderPosition() > goal && getEncoderPosition() < 0)
+        {
+            voltage += Kg;
+        }
+        runExtendMotor(voltage);
     }
             
     public double getEncoderPosition(){
@@ -81,6 +125,11 @@ public class Intake extends SubsystemBase {
     
     public Command intakeFuel(){
         return this.runOnce(() -> spin(Constants.IntakeConstants.spinVoltage));
+    }
+
+    public Command intakeFull()
+    {
+        return this.runOnce(() -> output());
     }
 
     public Command stopIntake()
@@ -101,7 +150,8 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic()
     {
-        runExtendMotor(pid.calculate(getEncoderPosition(), goal));
+        //runExtendMotor(pid.calculate(getEncoderPosition(), goal));
+        //runExtendWithGravity();
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());
     }

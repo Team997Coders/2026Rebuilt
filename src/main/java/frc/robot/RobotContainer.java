@@ -232,19 +232,21 @@ public class RobotContainer {
     c_driveStick.rightBumper().onTrue(m_intake.returnIntake());
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer()).whileFalse(indexer.stopIndexer());
 
-    c_driveStick.b().whileTrue(new PlayMusic(drivebase));
-    c_driveStick.x().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
-    c_driveStick.a().whileTrue(roller.moveRoller()).whileFalse(roller.stopRoller());
-    c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.b().whileTrue(m_intake.extendIntake()).whileFalse(m_intake.returnIntake());
+    c_driveStick.x().whileTrue(m_intake.intakeFull()).whileFalse(m_intake.stopIntake());
+    c_driveStick.a().whileTrue(roller.moveRoller().alongWith(indexer.startIndexer())).whileFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
+    //c_driveStick.y().whileTrue(shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).whileFalse(shooter.moveFlywheelCommand(0));
     SmartDashboard.putNumber("shooter velocity setpoint", Constants.ShooterConstants.flywheelVoltage);
 
-    c_driveStick.povLeft().onTrue(m_intake.decreaseGoalCommand());
-    c_driveStick.povRight().onTrue(m_intake.increaseGoalCommand());
+    //c_driveStick.povLeft().onTrue(m_intake.decreaseGoalCommand());
+    //c_driveStick.povRight().onTrue(m_intake.increaseGoalCommand());
+    c_driveStick.povLeft().whileTrue(m_intake.maxSpeedStow()).onFalse(m_intake.stopExtendo());
 
     //c_driveStick.povRight().onTrue(climber.raise());
     //c_driveStick.povLeft().onFalse(climber.lower());
 
-    unstickTrigger.whileTrue(unstick);
+    //unstickTrigger.whileTrue(unstick);
   }
 
   /**

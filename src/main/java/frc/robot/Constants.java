@@ -29,7 +29,7 @@ public final class Constants {
     public static final int hoodMotor = 17;
     public static final int rollerMotor = 18;
 
-    public static final double rollerVoltage = 5;
+    public static final double rollerVoltage = 8;
     public static final double rollerReverseVoltage = -2;
 
     public static final double flywheelRotationalVelocity = 2; 
@@ -66,12 +66,12 @@ public final class Constants {
   }
 
   public static final class IndexerConstants {
-  public static final int indexerMotorID = 90; 
+  public static final int indexerMotorID = 12; 
   public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
   public static final double speedToUnstick = -1; 
   public static final int disiredUnstickTime = 25;
 
-  public final static double defaultVolts = 5;
+  public final static double defaultVolts = 10;
   public final static double reverseVolts = -2;
   }
 
@@ -217,10 +217,10 @@ public final class Constants {
 
     public static final double spinVoltage = 8;
 
-    public static final double p = 0.01;
-    public static final double i = 0;
+    public static final double p = 1;
+    public static final double i = 0.1;
     public static final double d = 0;
-    public static final double extendedPosition = -10;
+    public static final double extendedPosition = -11.42;
   }
 
 
