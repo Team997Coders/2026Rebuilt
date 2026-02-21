@@ -71,7 +71,7 @@ public final class Constants {
   public static final double speedToUnstick = -1; 
   public static final int disiredUnstickTime = 25;
 
-  public final static double defaultVolts = 3;
+  public final static double defaultVolts = 5;
   public final static double reverseVolts = -2;
   }
 
