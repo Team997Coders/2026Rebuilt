@@ -19,12 +19,22 @@ public class PAVController {
         {
             targetAngle = 25;
         }
-        else if (distance < 2.66){}
+        else if (distance < 2.66){
+            if (targetAngle == 40)
+            {
+                targetAngle = 35;
+            }
+        }
         else if (distance >= 2.66 && distance <= 3.6)
         {
             targetAngle = 35;
         }
-        else if (distance > 3.6 && distance < 4){}
+        else if (distance > 3.6 && distance < 4){
+            if (targetAngle == 25)
+            {
+                targetAngle = 35;
+            }
+        }
         else 
         {
             targetAngle = 40;

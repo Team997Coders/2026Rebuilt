@@ -22,6 +22,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -300,6 +301,14 @@ public class Drivebase extends SubsystemBase {
 
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public Pose2d getShooterPose()
+  {
+    Pose2d robotPose = getPose();
+    return new Pose2d(robotPose.getX() - Units.inchesToMeters(10) * robotPose.getRotation().getCos(),
+                      robotPose.getY() - Units.inchesToMeters(10) * robotPose.getRotation().getSin(), 
+                      robotPose.getRotation());
   }
 
   public void resetPose(Pose2d pose2d) {

@@ -129,9 +129,7 @@ public class Shooter extends SubsystemBase {
      * Then sets the flywheels to go to correct tangential velocity
      */
     public void PAVcontroller() {
-        Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-        Pose2d goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-        pav.update(hubLock.getDistanceFromTarget(goalPose));
+        pav.update(hubLock.getDistanceFromTarget(hubLock.getGoalPose()));
         moveFlywheel(pav.getVelocity() / Constants.ShooterConstants.flywheelRadius);
         SmartDashboard.putNumber("pav target velocity", pav.getVelocity());
     }
