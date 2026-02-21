@@ -63,7 +63,7 @@ public class Hood extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
         SmartDashboard.putNumber("hood angle", getHoodAngle());
