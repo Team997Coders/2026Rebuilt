@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.756,
-        "y": 4.527
+        "y": 3.7508795180722894
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.756,
-        "y": 5.527
+        "y": 4.750879518072289
       },
       "isLocked": false,
       "linkedName": null
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 92.20531009522664
   },
   "reversed": false,
-  "folder": "Middle Outpost",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 89.94209359058658
   },
   "useDefaultConstraints": true
 }

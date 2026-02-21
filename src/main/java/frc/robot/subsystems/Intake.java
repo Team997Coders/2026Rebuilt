@@ -87,15 +87,8 @@ public class Intake extends SubsystemBase {
     }
             
     public void spin(double voltage) {
-        if (voltage > 14)
-        {
-            voltage = 14;
-        }
-        if (voltage < -4)
-        {
-            voltage = -4;
-        }
-        spinMotor.setVoltage(voltage);
+
+        spinMotor.set(voltage);
     }
 
     public void output()
@@ -121,6 +114,11 @@ public class Intake extends SubsystemBase {
             
     public double getEncoderPosition(){
         return encoder.getPosition();
+    }
+
+    public Command runFull()
+    {
+        return this.runOnce(() -> output());
     }
     
     public Command intakeFuel(){

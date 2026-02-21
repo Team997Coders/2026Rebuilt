@@ -32,14 +32,16 @@ public class Climber extends SubsystemBase {
         config.inverted(Constants.ClimberConstants.inverted);
 
         climber.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+        encoder.setPosition(0);
     }
 
     double goalPos;
     @Override
     public void periodic() {
-        if(limit.get()) {
-            resetEncoder();
-        }
+        // if(limit.get()) {
+        //     resetEncoder();
+        // }
 
         SmartDashboard.putNumber("climber pos", encoder.getPosition());
     

@@ -129,6 +129,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
     NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
     NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
+    NamedCommands.registerCommand("hub lock", hubLock);
+    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()));
+    NamedCommands.registerCommand("stop shoot", shooter.runFlywheelVolt(0));
 
     NamedCommands.registerCommand("raise climber", climber.raise());
     NamedCommands.registerCommand("lower climber", climber.lower());
@@ -227,8 +230,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
-    c_driveStick.rightBumper().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
+    //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
+    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).whileFalse(m_intake.stopIntake());
 
     c_driveStick.leftTrigger().whileTrue(hubLock.alongWith(shooter.PAVcontrollerCommand()).alongWith(hood.PAVcommand())).whileFalse(shooter.moveFlywheelCommand(0));
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).whileFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
@@ -248,6 +251,7 @@ public class RobotContainer {
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
+   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {

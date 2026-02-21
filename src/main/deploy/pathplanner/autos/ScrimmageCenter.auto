@@ -5,57 +5,51 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "extend intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Depot-aim@Hub"
+            "pathName": "Center-aim@hub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 0.5
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Depot-goToMid-Trench"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SwipeMid"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "DepotSwipe"
+            "name": "move roller and index"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 2.5
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Return(Trench)-from(top)"
+            "name": "stop roller and index"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 2.0
+            "name": "stop shoot"
           }
         }
       ]

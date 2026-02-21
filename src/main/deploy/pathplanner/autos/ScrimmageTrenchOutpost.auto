@@ -1,0 +1,133 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "extend intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost-aim@Hub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "move roller and index"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop roller and index"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost-goToMid-Trench"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake fuel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost-MiddleToCenterField"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterFieldtoOutpost-Middle"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost-MiddleReturnTrench"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "move roller and index"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop roller and index"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
