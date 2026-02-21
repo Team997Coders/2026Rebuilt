@@ -66,7 +66,7 @@ public final class Constants {
   }
 
   public static final class IndexerConstants {
-  public static final int indexerMotorID = 90; 
+  public static final int indexerMotorID = 12; 
   public static final double typicalIndexOutputCurrent = 1; //this is the value indexer normaly uses when ball is not stuck
   public static final double speedToUnstick = -1; 
   public static final int disiredUnstickTime = 25;
