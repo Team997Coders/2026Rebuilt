@@ -72,12 +72,13 @@ public class RobotContainer {
 
   //Cameras - pineapple is front facing camera
   //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  private final Camera shooterCamera = new Camera("blueberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12.5), Units.inchesToMeters(6), Units.inchesToMeters(13.5)), new Rotation3d(-Math.PI/2, 0.0, Math.PI/2)));
+  private final Camera shooterCameraTape = new Camera("blueberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12.5), Units.inchesToMeters(6), Units.inchesToMeters(13.5)), new Rotation3d(-Math.PI/2, 0.0, Math.PI/2)));
+  private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
 
   //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera));
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, shooterCameraTape));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
@@ -118,7 +119,7 @@ public class RobotContainer {
     
     NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
     NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
+    //NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
     // NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
     // NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
     // NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
@@ -230,12 +231,16 @@ public class RobotContainer {
     c_driveStick.rightBumper().whileTrue(m_intake.intakeFuel()).whileFalse(m_intake.stopIntake());
 
     c_driveStick.leftTrigger().whileTrue(hubLock.alongWith(shooter.PAVcontrollerCommand()).alongWith(hood.PAVcommand())).whileFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).whileFalse(roller.stopRoller());
+    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).whileFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
 
-    c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
-
-    //c_driveStick.povRight().onTrue(climber.raise());
-    //c_driveStick.povLeft().onFalse(climber.lower());
+    //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
+    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
+    c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
+    c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
+    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.povUp().whileTrue(hood.hoodUp());
+    c_driveStick.povDown().whileTrue(hood.hoodDown());
 
     unstickTrigger.whileTrue(unstick);
   }
