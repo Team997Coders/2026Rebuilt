@@ -121,7 +121,7 @@ public class HubLock extends Command {
     // thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
     //       /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - Math.PI/2);
     thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
+          /(goalPose.getX() - robotPose.getX())) + (Math.PI/2));
     SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
 
     SmartDashboard.putNumber("goal: ", Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)

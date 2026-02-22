@@ -72,13 +72,13 @@ public class RobotContainer {
 
   //Cameras - pineapple is front facing camera
   //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  private final Camera shooterCameraTape = new Camera("blueberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12.5), Units.inchesToMeters(6), Units.inchesToMeters(13.5)), new Rotation3d(-Math.PI/2, 0.0, Math.PI/2)));
+  private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
   private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
 
   //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, shooterCameraTape));
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
@@ -108,17 +108,10 @@ public class RobotContainer {
            () -> getScaledXY(),
            () -> scaleRotationAxis(driveStick.getRawAxis(4))));
 
-    autoChooser = AutoBuilder.buildAutoChooser("moveForward");
-    SmartDashboard.putData("Auto Choser", autoChooser);
-
-    CanandEventLoop.getInstance();
-
     m_intake = new Intake();
-    // NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
-    // NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
-    
-    NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
-    NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
+
+    NamedCommands.registerCommand("move roller and index", roller.moveRoller());
+    NamedCommands.registerCommand("stop roller and index", roller.stopRoller());
     //NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
     // NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
     // NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
@@ -130,7 +123,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
     NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
     NamedCommands.registerCommand("hub lock", hubLock);
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()));
+    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand());
+    NamedCommands.registerCommand("hood", hood.PAVcommand());
+    NamedCommands.registerCommand("index", indexer.startIndexer());
+    NamedCommands.registerCommand("stop index", indexer.stopIndexer());
+
     NamedCommands.registerCommand("stop shoot", shooter.runFlywheelVolt(0));
 
     NamedCommands.registerCommand("raise climber", climber.raise());
@@ -138,6 +135,17 @@ public class RobotContainer {
     
     configureBindings();
     resetGyro();
+
+    autoChooser = AutoBuilder.buildAutoChooser("moveForward");
+    SmartDashboard.putData("Auto Choser", autoChooser);
+
+    CanandEventLoop.getInstance();
+
+    
+    // NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
+    // NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
+    
+    
   }
 
   /**
@@ -255,6 +263,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    return autoChooser.getSelected();
   }
 }

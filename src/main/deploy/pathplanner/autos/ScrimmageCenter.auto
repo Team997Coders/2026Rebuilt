@@ -17,39 +17,65 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hood"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "move roller and index"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "index"
+                }
+              }
+            ]
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 5.0
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "move roller and index"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stop roller and index"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stop shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "stop roller and index"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "stop shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "stop index"
+                }
+              }
+            ]
           }
         }
       ]
