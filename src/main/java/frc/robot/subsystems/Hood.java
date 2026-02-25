@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.commands.hubLock;
+import frc.robot.commands.HubLock;
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -48,9 +48,9 @@ public class Hood extends SubsystemBase {
 
     private double goalAngle;
     private PAVController pav;
-    private hubLock hubLock;
+    private HubLock hubLock;
 
-    public Hood(PAVController pav, hubLock hubLock) {
+    public Hood(PAVController pav, HubLock hubLock) {
         this.pav = pav;
         this.hubLock = hubLock;
         hoodConfig.inverted(true);
