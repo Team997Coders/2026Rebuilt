@@ -50,6 +50,8 @@ public class Hood extends SubsystemBase {
     private PAVController pav;
     private HubLock hubLock;
 
+    private DigitalInput magnet = new DigitalInput(Constants.ShooterConstants.magnet);
+
     public Hood(PAVController pav, HubLock hubLock) {
         this.pav = pav;
         this.hubLock = hubLock;
@@ -70,6 +72,12 @@ public class Hood extends SubsystemBase {
         SmartDashboard.putNumber("hood angle", getHoodAngle());
 
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
+
+        SmartDashboard.putBoolean("hood magnet", magnet.get());
+
+        if(magnet.get()) {
+            hoodRelativeEncoder.setPosition(0);
+        }
     }
 
     //Hood
