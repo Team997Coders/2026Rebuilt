@@ -127,6 +127,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("hood", hood.PAVcommand());
     NamedCommands.registerCommand("index", indexer.startIndexer());
     NamedCommands.registerCommand("stop index", indexer.stopIndexer());
+    NamedCommands.registerCommand("move roller", roller.moveRoller());
+    NamedCommands.registerCommand("stop roller", roller.stopRoller());
 
     NamedCommands.registerCommand("stop shoot", shooter.runFlywheelVolt(0));
 
@@ -239,7 +241,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
-    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).whileFalse(m_intake.stopIntake());
+    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
 
     c_driveStick.leftTrigger().whileTrue(hubLock.alongWith(shooter.PAVcontrollerCommand()).alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
     c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).onFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
@@ -251,10 +253,10 @@ public class RobotContainer {
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
     c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
     c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
+    c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
     c_driveStick.povUp().whileTrue(hood.hoodUp());
-    c_driveStick.povDown().whileTrue(hood.hoodDown());
+    c_driveStick.povDown().whileTrue(hood.hoodDown());    
 
-    unstickTrigger.whileTrue(unstick);
   }
 
   /**

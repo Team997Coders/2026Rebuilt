@@ -36,7 +36,7 @@ public final class Constants {
     public static final double flywheelReverseVelocity = 0;
 
     public static final double hoodTopLimit = 75; //degrees 
-    public static final double hoodBottomLimit = 25; 
+    public static final double hoodBottomLimit = 0; 
 
     public static final double hoodGearRatio = 3.5*(300/28)/35*20;
 

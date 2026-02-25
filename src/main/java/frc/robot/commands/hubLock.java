@@ -26,7 +26,6 @@ public class HubLock extends Command {
 
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
-  private final DriverStation.Alliance alliance = DriverStation.getAlliance().orElseThrow();
 
   private static TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
   private ProfiledPIDController thetaController = new ProfiledPIDController(
@@ -56,24 +55,24 @@ public class HubLock extends Command {
 
   public Pose2d getGoalPose()
   {
-    if (alliance.equals(DriverStation.Alliance.Red))
+    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Red))
     {
       //10
       Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
       goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
     }
-    else if (alliance.equals(DriverStation.Alliance.Blue))
+    else if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
     {
       //26
       Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+      goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
     }
     else 
     {
       if (drivebase.getPose().getX() > 16.53)
       {
         Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-        goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
       }
       else 
       {
@@ -120,8 +119,16 @@ public class HubLock extends Command {
     
     // thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
     //       /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - Math.PI/2);
-    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
+    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
+    {
+      thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
+          /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
+    } else
+    {
+      thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
           /(goalPose.getX() - robotPose.getX())) + (Math.PI/2));
+    }
+    
     SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
 
     SmartDashboard.putNumber("goal: ", Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)

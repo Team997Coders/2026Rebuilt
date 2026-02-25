@@ -162,6 +162,11 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> toggleIntake());
     }
 
+    public Command reverse()
+    {
+        return this.runOnce(() -> spin(-8));
+    }
+
     @Override
     public void periodic()
     {

@@ -56,7 +56,7 @@ public class PAVController {
         }
         else //40
         {
-            velocity = 7.3463 + .9521 * distance;
+            velocity = 7.3463 + .9521 * distance + 0.2;
         }
     }
 
