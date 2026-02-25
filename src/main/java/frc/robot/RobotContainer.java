@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Bump;
+import frc.robot.commands.BumpButton;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.vision.Camera;
@@ -63,7 +64,7 @@ public class RobotContainer {
 
   // needs a Supplier<double[]>d and a DoubleSupplier (in that order)
   private final Bump bump = new Bump(() -> getScaledXY(), () -> scaleRotationAxis(driveStick.getRawAxis(4)), drivebase);
-
+  private final BumpButton BumpButton = new BumpButton(() -> getScaledXY(), () -> scaleRotationAxis(driveStick.getRawAxis(4)), drivebase);
   //
   private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
 
@@ -136,14 +137,14 @@ public class RobotContainer {
     SmartDashboard.putNumber("Pitch Angle", gyro.getPitch());
     SmartDashboard.putNumber("Roll angle", gyro.getRoll());
 
-    SmartDashboard.putBoolean("pith trigger", gyroPitchTrigger.getAsBoolean());
-    SmartDashboard.putBoolean("roll trigger", gyroRollTrigger.getAsBoolean());
+    SmartDashboard.putBoolean("Pitch trigger", gyroPitchTrigger.getAsBoolean());
+    SmartDashboard.putBoolean("Roll trigger", gyroRollTrigger.getAsBoolean());
 
-    SmartDashboard.putNumber("routput bump", bump.Routput);
+    SmartDashboard.putNumber("Routput Bump", bump.Routput);
     SmartDashboard.putNumber("Yaw", gyro.getYaw());
 
     SmartDashboard.putNumber("Field Angle", Math.toRadians(drivebase.getFieldAngle()));
-    SmartDashboard.putNumber("currentRotation", drivebase.getFieldAngle()*Math.PI*2);
+    SmartDashboard.putNumber("CurrentRotation", drivebase.getFieldAngle()*Math.PI*2);
 
   }
 
@@ -200,6 +201,8 @@ public class RobotContainer {
 
      gyroPitchTrigger.whileTrue(bump);
      gyroRollTrigger.whileTrue(bump);
+     c_driveStick.b().onTrue(BumpButton);
+     
   }
 
   /**

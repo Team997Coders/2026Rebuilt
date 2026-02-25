@@ -17,7 +17,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class Bump extends Command {
+public class BumpButton extends Command {
 
   private final Drivebase m_drivebase;
   private final Supplier<double[]> speedXY;
@@ -25,7 +25,7 @@ public class Bump extends Command {
   private final ProfiledPIDController thetaController = new ProfiledPIDController(3.0, 0.0, 0.0, new TrapezoidProfile.Constraints(60, 60));
   public Canandgyro m_gyro = new Canandgyro(46);
   
-  public Bump(Supplier<double[]> speedXY, DoubleSupplier rot, Drivebase drivebase) {
+  public BumpButton(Supplier<double[]> speedXY, DoubleSupplier rot, Drivebase drivebase) {
     this.speedXY = speedXY;
     this.rot = rot;
     this.m_drivebase = drivebase;
@@ -45,27 +45,16 @@ public class Bump extends Command {
   }
    public double Routput;
     double angleThreshold = 0.03;
-    boolean isLocking = false;
+   
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     var xy = speedXY.get();
-    double AnglePitch = m_gyro.getPitch();
-    double AngleRoll = m_gyro.getRoll();
+ 
    
-
-    //detect if robot is at an angle greater than 20 degrees
-    if (AnglePitch > angleThreshold || AngleRoll > angleThreshold || AngleRoll > -angleThreshold || AnglePitch > -angleThreshold) {
-
-      isLocking = true;
-    } else {
-      
-      isLocking = false;
-    }
     
 
     //use isLocking boolean to turn 45 degrees if true and switch to normal drive if false
-    if (isLocking == true) {
 
       double currentAngle = m_drivebase.getFieldAngle();
       double goalAngle = Math.toRadians(45);
@@ -87,11 +76,8 @@ public class Bump extends Command {
           goalAngle = Math.toRadians(315);
       }
 
-      Routput = thetaController.calculate(currentAngle, goalAngle);
-    } else {
+     
   
-        Routput = rot.getAsDouble();
-    }
 
     //set defaultDrive to output
     SmartDashboard.putNumber("rotoutput", Routput);
