@@ -27,26 +27,27 @@ public class Climber extends SubsystemBase {
     private final DigitalInput limit = new DigitalInput(Constants.ClimberConstants.limitChannel);
 
     private final PIDController climbPid = new PIDController(Constants.ClimberConstants.kP, Constants.ClimberConstants.kI, Constants.ClimberConstants.kD);
+    
+
 
     public Climber () {
         config.inverted(Constants.ClimberConstants.inverted);
 
         climber.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
-        encoder.setPosition(0);
     }
 
-    double goalPos;
+    double goalPos = encoder.getPosition();
+
     @Override
     public void periodic() {
-        // if(limit.get()) {
-        //     resetEncoder();
-        // }
-
-        SmartDashboard.putNumber("climber pos", encoder.getPosition());
+        if(limit.get()) {
+            resetEncoder();
+        }
     
-        //setClimberVolts(climbPid.calculate(getPosition(), goalPos));
+      setClimberVolts(climbPid.calculate(getPosition(), goalPos));
 
+        SmartDashboard.putNumber("pid goal", goalPos);
+        SmartDashboard.putNumber("encoder pos", encoder.getPosition());
     }
 
 
@@ -75,11 +76,6 @@ public class Climber extends SubsystemBase {
         goalPos-=1;
     }
 
-    public Command climberVoltsCommand(double volts)
-    {
-        return this.runOnce(() -> setClimberVolts(volts));
-    }
-
 
     public Command raise() {
         return this.runOnce(() -> goToPos(Constants.ClimberConstants.raisedPos));
@@ -89,5 +85,17 @@ public class Climber extends SubsystemBase {
         return this.runOnce(() -> goToPos(Constants.ClimberConstants.loweredPos));
     }
 
+    public Command manualRaise() {
+
+        return this.run(() -> manualUp());
+    }
+
+    public Command manualLower() {
+        return this.run(() -> manualLower());
+    }
+
+    public Command stopClimb() {
+        return this.run(() -> setClimberVolts(0));
+    }
 
 }

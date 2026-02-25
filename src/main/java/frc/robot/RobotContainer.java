@@ -248,9 +248,16 @@ public class RobotContainer {
 
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
     c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
-    c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
-    c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
-    c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
+    // c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
+    // c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
+    // c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
+
+    //c_driveStick.povRight().whileTrue(climber.raise());
+    //c_driveStick.povLeft().whileTrue(climber.lower());
+    c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.stopClimb());
+    c_driveStick.povRight().whileTrue(climber.manualRaise());
+    c_driveStick.povLeft().whileTrue(climber.manualLower());
+
     c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
     c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
     c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
