@@ -27,7 +27,7 @@ public class SwerveModule {
   private TalonFX angleMotor;
   private TalonFX speedMotor;
   private PIDController pidController;
-  private Canandmag absoluteEncoder;
+  private CANcoder absoluteEncoder;
   private double maxVelocity;
   private double maxVoltage;
   private TalonFXConfiguration speedConfig;
@@ -65,7 +65,7 @@ public class SwerveModule {
     angleMotor.getConfigurator().apply(speedConfig, 0.25);
 
     this.pidController = new PIDController(SwervePID.p, SwervePID.i, SwervePID.d);
-    this.absoluteEncoder =  new Canandmag(encoderId);
+    this.absoluteEncoder =  new CANcoder(encoderId);
     //this.absoluteEncoder.setAbsPosition(0);
 
     this.maxVelocity = maxVelocity;
@@ -102,7 +102,7 @@ public class SwerveModule {
     speedMotor.set(drive_output);
 
     pidController.setSetpoint(angle);
-    angleMotor.set(-pidController.calculate(absoluteEncoder.getAbsPosition()* 360));
+    angleMotor.set(-pidController.calculate(absoluteEncoder.getAbsolutePosition().getValueAsDouble()*360));
   }
 
   /**
@@ -154,7 +154,7 @@ public class SwerveModule {
    * Return the absolute encoder position in radians (0-2pi)
    */
   public double getEncoderRadians() {
-    return (absoluteEncoder.getAbsPosition()*2*Math.PI);
+    return (absoluteEncoder.getAbsolutePosition().getValueAsDouble()*2*Math.PI);
   }
 
   /*
