@@ -199,8 +199,8 @@ public class RobotContainer {
     //When holding x robot goes to closest location in potential locations
     //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
 
-     gyroPitchTrigger.whileTrue(bump);
-     gyroRollTrigger.whileTrue(bump);
+     gyroPitchTrigger.onTrue(bump);
+     gyroRollTrigger.onTrue(bump);
      c_driveStick.b().onTrue(BumpButton);
      
   }
