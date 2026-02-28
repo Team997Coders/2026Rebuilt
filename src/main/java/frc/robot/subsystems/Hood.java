@@ -39,33 +39,46 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Hood extends SubsystemBase {
-    
+    public DigitalInput hoodSwitch;
+
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushed);
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
     public SparkMaxConfig hoodConfig = new SparkMaxConfig();
+
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
     private double goalAngle;
     private PAVController pav;
     private HubLock hubLock;
+    private double initializeCounter;
 
     public Hood(PAVController pav, HubLock hubLock) {
         this.pav = pav;
         this.hubLock = hubLock;
         //hoodConfig.inverted(true);
+        hoodConfig.smartCurrentLimit(Constants.ShooterConstants.normalCurrentLimit);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         //setHoodAnglePos(25); //angle from horizontal to top of hood 
 
         hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         goalAngle = 25;
+        initializeCounter = 0;
+        hoodSwitch = new DigitalInput(Constants.ShooterConstants.beamBreak);
     }
 
     @Override
     public void periodic() {
-        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
+        if (initializeCounter == 0) {
+            while (!this.checkSwitch()) {
+            hoodConfig.smartCurrentLimit(Constants.ShooterConstants.lowCurrentLimit);
+            hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+            this.moveHoodDownManual();
+        }
+        }
 
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
         SmartDashboard.putNumber("hood angle", getHoodAngle());
 
@@ -93,6 +106,7 @@ public class Hood extends SubsystemBase {
     }
 
     public void moveHoodUpManual() {
+        initializeCounter += 1;
         if(goalAngle + 1 <= Constants.ShooterConstants.hoodTopLimit) {
        setGoalAngle(goalAngle+1);
         }
@@ -102,6 +116,19 @@ public class Hood extends SubsystemBase {
         if(goalAngle - 1 >= Constants.ShooterConstants.hoodBottomLimit) {
         setGoalAngle(goalAngle-1);
     } 
+    }
+
+    public void resetEncoder() {
+        initializeCounter += 1;
+        hoodRelativeEncoder.setPosition(0);
+        hood.setVoltage(0);
+        hoodConfig.smartCurrentLimit(Constants.ShooterConstants.normalCurrentLimit);
+        hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+    }
+
+    public boolean checkSwitch() {
+        return hoodSwitch.get();
     }
 
     //lil commands
@@ -115,10 +142,16 @@ public class Hood extends SubsystemBase {
     }
 
     public void PAVcontrollerAngle() {
+    
         pav.update(hubLock.getDistanceFromTarget(hubLock.getGoalPose()));
         this.setGoalAngle(pav.getAngle());
+
     }
     public Command PAVcommand() {
         return this.run(() -> PAVcontrollerAngle());
+    }
+
+    public Command reset() {
+        return this.runOnce(() -> resetEncoder());
     }
 }

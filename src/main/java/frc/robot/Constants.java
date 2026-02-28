@@ -42,6 +42,9 @@ public final class Constants {
 
     public static final double kf = 0;
 
+    public static final int normalCurrentLimit = 10;
+    public static final int lowCurrentLimit = 2;
+    public static final int hoodSwitchID = 0;
     public static final int beamBreak = 10;
     public static final int magnet = 0;
     public static final int absoluteEncoder = 1;

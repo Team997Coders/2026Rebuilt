@@ -92,6 +92,7 @@ public class RobotContainer {
   private final Hood hood = new Hood(pav, hubLock);
   
   private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
+  private Trigger hoodTrigger = new Trigger(() -> hood.checkSwitch());
 
   private final Unstick unstick = new Unstick(indexer);
   
@@ -256,7 +257,8 @@ public class RobotContainer {
     c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown());    
-
+    hoodTrigger.onTrue(hood.reset());
+    
   }
 
   /**
