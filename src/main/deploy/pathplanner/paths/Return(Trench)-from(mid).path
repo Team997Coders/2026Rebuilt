@@ -74,10 +74,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -41.552613148134846
+    "rotation": -139.37233253505724
   },
   "reversed": false,
-  "folder": "Middle Depot",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -89.95560657543696

@@ -6,12 +6,16 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
-import frc.robot.commands.HubLock;
+import frc.robot.commands.SubsystemCommands.HubLock;
+import frc.robot.commands.SubsystemCommands.IndexerCommand;
+import frc.robot.commands.SubsystemCommands.PavHood;
 import frc.robot.commands.Unstick;
 import frc.robot.commands.PlayMusic;
 import frc.robot.commands.clumpLock;
 import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
+import frc.robot.commands.SubsystemCommands.PavShooter;
+import frc.robot.commands.SubsystemCommands.RollerCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -45,6 +49,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -82,20 +87,25 @@ public class RobotContainer {
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-  private final HubLock hubLock = new HubLock(drivebase, () -> getScaledXY());
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
   private final Climber climber = new Climber();
-  private final Shooter shooter = new Shooter(pav, hubLock);
+  private final Shooter shooter = new Shooter();
   private final Roller roller = new Roller();
-  private final Hood hood = new Hood(pav, hubLock);
+  private final Hood hood = new Hood();
   
   private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
 
   private final Unstick unstick = new Unstick(indexer);
   
-  public final Intake m_intake;
+  public final Intake m_intake = new Intake();
+
+  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY());
+  private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
+  private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
+  private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
+  private RollerCommand m_RollerCommand = new RollerCommand(roller);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -108,29 +118,19 @@ public class RobotContainer {
            () -> getScaledXY(),
            () -> scaleRotationAxis(driveStick.getRawAxis(4))));
 
-    m_intake = new Intake();
-
-    NamedCommands.registerCommand("move roller and index", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller and index", roller.stopRoller());
-    //NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
-    // NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
-    // NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
-    // NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
-    // NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
-
     NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
     NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
     NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
-    NamedCommands.registerCommand("hub lock", hubLock);
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand());
-    NamedCommands.registerCommand("hood", hood.PAVcommand());
-    NamedCommands.registerCommand("index", indexer.startIndexer());
-    NamedCommands.registerCommand("stop index", indexer.stopIndexer());
-    NamedCommands.registerCommand("move roller", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller", roller.stopRoller());
 
-    NamedCommands.registerCommand("stop shoot", shooter.runFlywheelVolt(0));
+    NamedCommands.registerCommand("index", m_IndexerCommand);
+    NamedCommands.registerCommand("stop index", m_IndexerCommand.finishCommand());
+    NamedCommands.registerCommand("move roller", m_RollerCommand);
+    NamedCommands.registerCommand("stop roller", m_RollerCommand.finishCommand());
+    NamedCommands.registerCommand("shoot", m_PavShooter);
+    NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());
+    NamedCommands.registerCommand("hub lock", m_HubLock);
+    NamedCommands.registerCommand("stop hub lock", m_HubLock.finishCommand());
 
     NamedCommands.registerCommand("raise climber", climber.raise());
     NamedCommands.registerCommand("lower climber", climber.lower());
@@ -142,12 +142,6 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
-
-    
-    // NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
-    // NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
-    
-    
   }
 
   /**
@@ -243,8 +237,10 @@ public class RobotContainer {
     //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
     c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
 
-    c_driveStick.leftTrigger().whileTrue(hubLock.alongWith(shooter.PAVcontrollerCommand()).alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).onFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
+    c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
+      .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
+    c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand))
+      .onFalse(m_IndexerCommand.finishCommand().alongWith(m_RollerCommand.finishCommand()));
 
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
     c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());

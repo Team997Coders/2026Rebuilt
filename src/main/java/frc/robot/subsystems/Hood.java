@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.commands.HubLock;
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -47,12 +46,9 @@ public class Hood extends SubsystemBase {
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
     private double goalAngle;
-    private PAVController pav;
-    private HubLock hubLock;
 
-    public Hood(PAVController pav, HubLock hubLock) {
-        this.pav = pav;
-        this.hubLock = hubLock;
+    public Hood() {
+
         //hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -112,13 +108,5 @@ public class Hood extends SubsystemBase {
 
     public Command hoodDown() {
         return this.run(() -> moveHoodDownManual());
-    }
-
-    public void PAVcontrollerAngle() {
-        pav.update(hubLock.getDistanceFromTarget(hubLock.getGoalPose()));
-        this.setGoalAngle(pav.getAngle());
-    }
-    public Command PAVcommand() {
-        return this.run(() -> PAVcontrollerAngle());
     }
 }

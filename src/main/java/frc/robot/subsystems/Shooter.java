@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.commands.HubLock;
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -27,23 +26,10 @@ public class Shooter extends SubsystemBase {
     private TalonFX flywheel2 = new TalonFX(Constants.ShooterConstants.flywheel2ID);
     private TalonFXConfiguration flywheelConfig = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
-    private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-
     private PIDController shooterPID = new PIDController(0.055, 0, 0);
     private SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0.1, 0.11/2/Math.PI, 0);
 
-    private PAVController pav;
-    private HubLock hubLock;
-
-    /**
-     * The shooter subsystem of the robot, contains both flywheels and velocity control for shooter
-     * @param pav Position Angle Velocity Contoller, used for shooter configuration given the distance from the hub
-     * @param hubLock The temporary SwerveDrivePoseEstimator without the swerve, just uses camera for localization.
-     * We used this to get the actual distance from the hub and update the location on the field.
-     */
-    public Shooter(PAVController pav, HubLock hubLock) {
-        this.hubLock = hubLock;
-        this.pav = pav;
+    public Shooter() {
         shooterPID.reset();
         flywheel2.setControl(new Follower(flywheel1.getDeviceID(), MotorAlignmentValue.Aligned)); 
         flywheelConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
@@ -123,22 +109,8 @@ public class Shooter extends SubsystemBase {
         moveFlywheel(SmartDashboard.getNumber("shooter velocity setpoint", 0.0) / Constants.ShooterConstants.flywheelRadius);
     }
 
-    /**
-     * This method runs the flywheel using the position angle velocity contoller
-     * It first updates the controller target angle + velocity by passing the distance from the target 
-     * Then sets the flywheels to go to correct tangential velocity
-     */
-    public void PAVcontroller() {
-        double distance = hubLock.getDistanceFromTarget(hubLock.getGoalPose());
-        pav.update(distance);
-        SmartDashboard.putNumber("distance from target", distance);
-        moveFlywheel(pav.getVelocity() / Constants.ShooterConstants.flywheelRadius);
-        SmartDashboard.putNumber("pav target velocity", pav.getVelocity());
-    }
-
-    
     public Command runFlywheelVolt(double volts) {
-        return this.run(() -> setFlywheelVoltage(volts));
+        return this.runOnce(() -> setFlywheelVoltage(volts));
     }
 
     public Command moveFlywheelCommand(double velocity)
@@ -149,10 +121,5 @@ public class Shooter extends SubsystemBase {
     public Command moveFlywheelDashboardCommand()
     {
         return this.run(() -> flywheelWithDashboard());
-    }
-
-    public Command PAVcontrollerCommand()
-    {
-        return this.run(() -> PAVcontroller());
     }
 }

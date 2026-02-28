@@ -61,7 +61,7 @@
     "rotation": -41.552613148134846
   },
   "reversed": false,
-  "folder": "Middle Depot",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -89.95560657543696
