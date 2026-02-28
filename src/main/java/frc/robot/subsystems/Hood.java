@@ -51,32 +51,22 @@ public class Hood extends SubsystemBase {
     private double goalAngle;
     private PAVController pav;
     private HubLock hubLock;
-    private double initializeCounter;
+
 
     public Hood(PAVController pav, HubLock hubLock) {
         this.pav = pav;
         this.hubLock = hubLock;
         //hoodConfig.inverted(true);
-        hoodConfig.smartCurrentLimit(Constants.ShooterConstants.normalCurrentLimit);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         //setHoodAnglePos(25); //angle from horizontal to top of hood 
 
         hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         goalAngle = 25;
-        initializeCounter = 0;
-        hoodSwitch = new DigitalInput(Constants.ShooterConstants.beamBreak);
     }
 
     @Override
     public void periodic() {
-        if (initializeCounter == 0) {
-            while (!this.checkSwitch()) {
-            hoodConfig.smartCurrentLimit(Constants.ShooterConstants.lowCurrentLimit);
-            hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-            this.moveHoodDownManual();
-        }
-        }
 
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
@@ -106,7 +96,6 @@ public class Hood extends SubsystemBase {
     }
 
     public void moveHoodUpManual() {
-        initializeCounter += 1;
         if(goalAngle + 1 <= Constants.ShooterConstants.hoodTopLimit) {
        setGoalAngle(goalAngle+1);
         }
@@ -118,18 +107,6 @@ public class Hood extends SubsystemBase {
     } 
     }
 
-    public void resetEncoder() {
-        initializeCounter += 1;
-        hoodRelativeEncoder.setPosition(0);
-        hood.setVoltage(0);
-        hoodConfig.smartCurrentLimit(Constants.ShooterConstants.normalCurrentLimit);
-        hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
-    }
-
-    public boolean checkSwitch() {
-        return hoodSwitch.get();
-    }
 
     //lil commands
     //hood
@@ -151,7 +128,4 @@ public class Hood extends SubsystemBase {
         return this.run(() -> PAVcontrollerAngle());
     }
 
-    public Command reset() {
-        return this.runOnce(() -> resetEncoder());
-    }
 }
