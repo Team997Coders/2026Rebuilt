@@ -236,20 +236,25 @@ public class RobotContainer {
   private void configureBindings() {
     //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
     c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    //c_driveStick.leftBumper().whileTrue(m_intake.extendManual(0.5));
+    // c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
+    //   .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
 
     c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
-      .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
+    .onFalse(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand()));
     c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand))
       .onFalse(m_IndexerCommand.finishCommand().alongWith(m_RollerCommand.finishCommand()));
+   //c_driveStick.leftBumper().or(c_driveStick.x()).whileFalse(m_intake.extendManual(0));
 
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
+   // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
     c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
     c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
-    c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
+    //c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown());    
 
