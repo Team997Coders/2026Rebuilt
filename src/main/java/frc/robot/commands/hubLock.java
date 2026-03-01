@@ -4,14 +4,10 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
-import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.DARE;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -29,8 +25,8 @@ public class HubLock extends Command {
 
   private static TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
   private ProfiledPIDController thetaController = new ProfiledPIDController(
-    9, 2, 0, THETA_CONSTRAINTS);
-  private Double[] pidValues = new Double[]{9.0, 2.0, 0.0};
+      9, 2, 0, THETA_CONSTRAINTS);
+  private Double[] pidValues = new Double[] { 9.0, 2.0, 0.0 };
   private double thetaTollerance = 2;
 
   /** Creates a new Drive. */
@@ -41,7 +37,7 @@ public class HubLock extends Command {
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
+    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[] { 9.0, 2.0, 0.0 });
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.drivebase);
@@ -53,49 +49,39 @@ public class HubLock extends Command {
     thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
   }
 
-  public Pose2d getGoalPose()
-  {
-    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Red))
-    {
-      //10
+  public Pose2d getGoalPose() {
+    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Red)) {
+      // 10
       Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-    }
-    else if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
-    {
-      //26
+      goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0 / 2), tag.getY(), tag.getRotation());
+    } else if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue)) {
+      // 26
       Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-    }
-    else 
-    {
-      if (drivebase.getPose().getX() > 16.53)
-      {
+      goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0 / 2), tag.getY(), tag.getRotation());
+    } else {
+      if (drivebase.getPose().getX() > 16.53) {
         Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-      }
-      else 
-      {
+        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0 / 2), tag.getY(), tag.getRotation());
+      } else {
         Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0 / 2), tag.getY(), tag.getRotation());
       }
     }
     return goalPose;
   }
 
-  public double getDistanceFromTarget(Pose2d goal)
-  {
+  public double getDistanceFromTarget(Pose2d goal) {
     return goal.getTranslation().getDistance(drivebase.getShooterPose().getTranslation());
   }
 
-  public double getDistance()
-  {
+  public double getDistance() {
     return getDistanceFromTarget(getGoalPose());
   }
 
   private double thetaSpeed;
   private Pose2d goalPose;
   private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
   @Override
   public void execute() {
     var xy = speedXY.get();
@@ -103,8 +89,8 @@ public class HubLock extends Command {
     double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
 
     var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
-    if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))
-    {
+    if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1])
+        && valuesFromSmartDashbord[2].equals(pidValues[2]))) {
       pidValues = valuesFromSmartDashbord;
       thetaController = new ProfiledPIDController(pidValues[0], pidValues[1], pidValues[2], THETA_CONSTRAINTS);
 
@@ -116,42 +102,38 @@ public class HubLock extends Command {
     goalPose = getGoalPose();
 
     Pose2d robotPose = drivebase.getShooterPose();
-    
-    // thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-    //       /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - Math.PI/2);
-    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
-    {
+
+    // thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy *
+    // Constants.airTime)
+    // /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - Math.PI/2);
+    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue)) {
       thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
-    } else
-    {
+          / (goalPose.getX() - robotPose.getX())) - (Math.PI / 2));
+    } else {
       thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) + (Math.PI/2));
+          / (goalPose.getX() - robotPose.getX())) + (Math.PI / 2));
     }
-    
+
     SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
 
     SmartDashboard.putNumber("goal: ", Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)));
+        / (goalPose.getX() - robotPose.getX() - vx * Constants.airTime)));
     SmartDashboard.putNumber("measered value: ", robotPose.getRotation().getRadians());
 
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
     SmartDashboard.putBoolean("at goal", thetaController.atGoal());
 
     if (Math.abs(thetaSpeed) < 0.04 || Math.abs(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - robotPose.getRotation().getRadians()) < 0.05)
-    {
+        / (goalPose.getX() - robotPose.getX() - vx * Constants.airTime))
+        - robotPose.getRotation().getRadians()) < 0.05) {
       thetaSpeed = 0;
     }
-    
 
     drivebase.defaultDrive(-xy[1], -xy[0], thetaSpeed);
     SmartDashboard.putNumber("x speed", -xy[1]);
     SmartDashboard.putNumber("y speed", -xy[0]);
     SmartDashboard.putNumber("theta speed", thetaSpeed);
   }
-
-
 
   // Called once the command ends or is interrupted.
   @Override

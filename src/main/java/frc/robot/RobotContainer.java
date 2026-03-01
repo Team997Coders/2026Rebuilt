@@ -8,10 +8,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.HubLock;
 import frc.robot.commands.Unstick;
-import frc.robot.commands.PlayMusic;
-import frc.robot.commands.clumpLock;
-import frc.robot.commands.goToLocation;
-import frc.robot.commands.objectLock;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -20,21 +16,17 @@ import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
-import frc.robot.subsystems.vision.ObjectCamera;
 import frc.robot.subsystems.vision.PAVController;
 import frc.robot.subsystems.vision.CameraBlock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.jar.Attributes.Name;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.reduxrobotics.canand.CanandEventLoop;
-import com.reduxrobotics.sensors.canandcolor.DigoutChannel.Index;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -45,9 +37,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
