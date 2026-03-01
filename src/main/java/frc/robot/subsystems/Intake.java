@@ -20,9 +20,10 @@ public class Intake extends SubsystemBase {
     private final SparkMaxConfig spinConfig;
     private final SparkMaxConfig extendConfigRight;
     private final SparkMaxConfig extendConfigLeft;
+    private double tolerence = 0.25;
 
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
-    private double goal = 0;    
+    private double goal = 0.25;    
     private RelativeEncoder encoder; 
                     
     public Intake(){
@@ -93,23 +94,16 @@ public class Intake extends SubsystemBase {
 
     public void output()
     {
-        spinMotor.set(1.0);
+        spinMotor.set(-1.0);
     }
             
     public void runExtendMotor(double voltage) {
         SmartDashboard.putNumber("intake extendo voltage", voltage);
+        if (Math.abs(goal - getEncoderPosition()) < tolerence) {
+            extendMotorLeft.setVoltage(0);
+        } else {
         extendMotorLeft.setVoltage(voltage);
-    }
-
-    double Kg = 8;
-    public void runExtendWithGravity()
-    {
-        double voltage = pid.calculate(getEncoderPosition(), goal);
-        if (getEncoderPosition() > goal && getEncoderPosition() < 0)
-        {
-            voltage += Kg;
         }
-        runExtendMotor(voltage);
     }
             
     public double getEncoderPosition(){
@@ -147,13 +141,13 @@ public class Intake extends SubsystemBase {
 
     public void toggleIntake()
     {
-        if (goal == 0)
+        if (goal == 0.25)
         {
             setGoal(Constants.IntakeConstants.extendedPosition);
         }
         else
         {
-            setGoal(0);
+            setGoal(0.25);
         }
     }
 
@@ -170,8 +164,10 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic()
     {
-        runExtendMotor(pid.calculate(getEncoderPosition(), goal));
+        double pidOutput = pid.calculate(getEncoderPosition(), goal);
+        runExtendMotor(pidOutput);
         //runExtendWithGravity();
+        SmartDashboard.putNumber("intake extension pid output", pidOutput);
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());
     }

@@ -218,9 +218,9 @@ public final class Constants {
 
     public static final double spinVoltage = 1;
 
-    public static final double p = 1.2;
+    public static final double p = 0.8;
     public static final double i = 0.1;
-    public static final double d = 0;
+    public static final double d = 0.1;
     public static final double extendedPosition = -11.42;
   }
 

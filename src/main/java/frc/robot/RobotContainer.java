@@ -116,7 +116,7 @@ public class RobotContainer {
         new Drive(
              drivebase,
            () -> getScaledXY(),
-           () -> scaleRotationAxis(driveStick.getRawAxis(4))));
+           () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
 
     NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
@@ -157,8 +157,8 @@ public class RobotContainer {
 
   private double[] getXY() {
     double[] xy = new double[2];
-    xy[0] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
-    xy[1] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+    xy[0] = -deadband(driveStick.getLeftX(), DriveConstants.deadband);
+    xy[1] = -deadband(driveStick.getLeftY(), DriveConstants.deadband);
     return xy;
   }
 
