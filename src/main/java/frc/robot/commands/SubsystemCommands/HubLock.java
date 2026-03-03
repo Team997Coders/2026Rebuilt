@@ -14,6 +14,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.DARE;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -60,26 +61,27 @@ public class HubLock extends Command {
   {
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Red))
     {
-      //10
-      Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-    }
-    else if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
-    {
-      //26
-      Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-    }
-    else 
-    {
-      if (drivebase.getPose().getX() > 16.53)
+      if (drivebase.getPose().getX() < 11.901424)
       {
-        Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+        goalPose = new Pose2d(drivebase.getShooterPose().getX() + 1, drivebase.getShooterPose().getY(), new Rotation2d());
       }
       else 
       {
+        //10
         Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
+        goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+      }
+    }
+    else if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
+    {
+      if (drivebase.getPose().getX() > 4.611624)
+      {
+        goalPose = new Pose2d(drivebase.getShooterPose().getX() - 1, drivebase.getShooterPose().getY(), new Rotation2d());
+      }
+      else
+      {
+        //26
+        Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
         goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
       }
     }
@@ -148,10 +150,10 @@ public class HubLock extends Command {
     }
     
 
-    drivebase.defaultDrive(-xy[1], -xy[0], thetaSpeed);
+    drivebase.defaultDrive(-xy[1], -xy[0], -thetaSpeed);
     SmartDashboard.putNumber("x speed", -xy[1]);
     SmartDashboard.putNumber("y speed", -xy[0]);
-    SmartDashboard.putNumber("theta speed", thetaSpeed);
+    SmartDashboard.putNumber("theta speed", -thetaSpeed);
   }
 
 

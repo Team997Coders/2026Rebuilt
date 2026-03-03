@@ -163,7 +163,7 @@ public class SwerveModule {
    * return the valid location in meters.
    */
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(speedMotor.getPosition().getValueAsDouble() * rotationsToDistance, getRotation());
+    return new SwerveModulePosition(-speedMotor.getPosition().getValueAsDouble() * rotationsToDistance, getRotation());
   }
 
   /*
