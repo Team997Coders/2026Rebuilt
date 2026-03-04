@@ -8,6 +8,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.SubsystemCommands.HubLock;
 import frc.robot.commands.SubsystemCommands.IndexerCommand;
+import frc.robot.commands.SubsystemCommands.IntakeFuel;
 import frc.robot.commands.SubsystemCommands.PavHood;
 import frc.robot.commands.Unstick;
 import frc.robot.commands.PlayMusic;
@@ -77,13 +78,13 @@ public class RobotContainer {
 
   //Cameras - pineapple is front facing camera
   //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
+  //private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
   private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
 
   //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera));
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
@@ -106,6 +107,7 @@ public class RobotContainer {
   private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
   private RollerCommand m_RollerCommand = new RollerCommand(roller);
+  private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intake);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -120,8 +122,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
-    NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
-    NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
+    NamedCommands.registerCommand("intake fuel", m_IntakeFuel);
+    NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
 
     NamedCommands.registerCommand("index", m_IndexerCommand);
     NamedCommands.registerCommand("stop index", m_IndexerCommand.finishCommand());
@@ -131,6 +133,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());
     NamedCommands.registerCommand("hub lock", m_HubLock);
     NamedCommands.registerCommand("stop hub lock", m_HubLock.finishCommand());
+    NamedCommands.registerCommand("hood", m_PavHood);
+    NamedCommands.registerCommand("stop hood", m_PavHood.finishCommand());
 
     NamedCommands.registerCommand("raise climber", climber.raise());
     NamedCommands.registerCommand("lower climber", climber.lower());

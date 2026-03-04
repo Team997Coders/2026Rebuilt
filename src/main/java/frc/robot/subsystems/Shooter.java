@@ -36,6 +36,8 @@ public class Shooter extends SubsystemBase {
         flywheelConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
         flywheel1.setNeutralMode(NeutralModeValue.Coast);
         flywheel2.setNeutralMode(NeutralModeValue.Coast);
+
+        SmartDashboard.putNumber("shooter velocity setpoint", 10.8);
     }
 
     /**

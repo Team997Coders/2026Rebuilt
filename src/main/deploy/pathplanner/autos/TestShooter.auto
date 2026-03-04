@@ -5,9 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "extend intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hood"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "extend intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -23,7 +42,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "test shooter"
+                  "name": "move roller"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "index"
                 }
               },
               {
@@ -33,13 +58,31 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.0
+                        "waitTime": 2.0
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop test shooter"
+                        "name": "stop index"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop roller"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop shoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop hood"
                       }
                     }
                   ]
@@ -49,21 +92,28 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "finishSequential"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Depot-goToMid-Trench"
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "SwipeMid"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SwipeMid"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake fuel"
+                }
+              }
+            ]
           }
         },
         {
