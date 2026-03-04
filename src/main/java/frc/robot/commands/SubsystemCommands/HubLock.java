@@ -126,12 +126,22 @@ public class HubLock extends Command {
     //       /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - Math.PI/2);
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
     {
-      thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
+      thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() + vy * Constants.airTime) 
+          /(goalPose.getX() - robotPose.getX() + vx * Constants.airTime)) - (Math.PI/2));
     } else
     {
-      thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) + (Math.PI/2));
+      if (drivebase.getPose().getX() < 11.901424)
+      {
+        thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
+          /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
+      }
+      else
+      
+      {
+        thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() + vy * Constants.airTime)
+          /(goalPose.getX() - robotPose.getX() + vx * Constants.airTime)) + (Math.PI/2));
+      }
+      
     }
     
     SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);

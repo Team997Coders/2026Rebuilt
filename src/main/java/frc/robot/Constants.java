@@ -224,7 +224,5 @@ public final class Constants {
     public static final double extendedPosition = -11.42;
   }
 
-
-
 public static double airTime = 1;
 }

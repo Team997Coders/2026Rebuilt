@@ -47,6 +47,8 @@ public class Hood extends SubsystemBase {
 
     private double goalAngle;
 
+    private DigitalInput magnet = new DigitalInput(0);
+
     public Hood() {
 
         //hoodConfig.inverted(true);
@@ -66,6 +68,12 @@ public class Hood extends SubsystemBase {
         SmartDashboard.putNumber("hood angle", getHoodAngle());
 
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
+
+          if(!magnet.get()) {
+            hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+        }
+
+        SmartDashboard.putBoolean("magnet", magnet.get());
     }
 
     //Hood
