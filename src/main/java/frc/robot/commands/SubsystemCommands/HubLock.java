@@ -63,7 +63,7 @@ public class HubLock extends Command {
     {
       if (drivebase.getPose().getX() < 11.901424)
       {
-        goalPose = new Pose2d(drivebase.getShooterPose().getX() + 1, drivebase.getShooterPose().getY(), new Rotation2d());
+        goalPose = new Pose2d(drivebase.getShooterPose().getX() - 1, drivebase.getShooterPose().getY(), new Rotation2d());
       }
       else 
       {
@@ -76,7 +76,7 @@ public class HubLock extends Command {
     {
       if (drivebase.getPose().getX() > 4.611624)
       {
-        goalPose = new Pose2d(drivebase.getShooterPose().getX() - 1, drivebase.getShooterPose().getY(), new Rotation2d());
+        goalPose = new Pose2d(drivebase.getShooterPose().getX() + 1, drivebase.getShooterPose().getY(), new Rotation2d());
       }
       else
       {
@@ -150,7 +150,7 @@ public class HubLock extends Command {
     }
     
 
-    drivebase.defaultDrive(-xy[1], -xy[0], -thetaSpeed);
+    drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
     SmartDashboard.putNumber("x speed", -xy[1]);
     SmartDashboard.putNumber("y speed", -xy[0]);
     SmartDashboard.putNumber("theta speed", -thetaSpeed);
