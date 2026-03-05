@@ -39,7 +39,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 3.0
                       }
                     },
                     {
@@ -67,27 +67,96 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Depot-goToMid-Trench"
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "SwipeMid"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake fuel"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SwipeMid"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop intake"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Return(Trench)-from(mid)"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "move roller"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "index"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 10.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop shoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop index"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop roller"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         }
       ]
