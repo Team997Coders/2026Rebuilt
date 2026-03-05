@@ -23,6 +23,18 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "extend intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hood"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "shoot"
                 }
               },
@@ -58,6 +70,12 @@
                       "type": "named",
                       "data": {
                         "name": "stop roller"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop hood"
                       }
                     }
                   ]
