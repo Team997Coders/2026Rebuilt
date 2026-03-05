@@ -26,7 +26,7 @@ public class Shooter extends SubsystemBase {
     private TalonFX flywheel2 = new TalonFX(Constants.ShooterConstants.flywheel2ID);
     private TalonFXConfiguration flywheelConfig = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
-    private PIDController shooterPID = new PIDController(0.05, 0, 0);
+    private PIDController shooterPID = new PIDController(0.035, 0, 0);
     private SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0.1, 0.11/2/Math.PI, 0);
 
     public Shooter() {

@@ -31,44 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "hood",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "extend intake",
-      "waypointRelativePos": 0.23767724510465288,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "intake fuel",
-      "waypointRelativePos": 0.39702903443618826,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "shoot",
-      "waypointRelativePos": 0.7535449020931848,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "index",
-      "waypointRelativePos": 0.9020931802835872,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "move roller",
-      "waypointRelativePos": 0.9047940580688608,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 5.0,
