@@ -158,7 +158,7 @@ public class Intake extends SubsystemBase {
 
     public Command reverse()
     {
-        return this.runOnce(() -> spin(-8));
+        return this.runOnce(() -> spin(8));
     }
 
     @Override

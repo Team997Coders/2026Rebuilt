@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.732253922967189,
-        "y": 5.529415121255349
+        "x": 2.7840085592011405,
+        "y": 5.490599144079885
       },
       "prevControl": {
-        "x": 2.9392724679029953,
-        "y": 5.76231098430813
+        "x": 2.991027104136947,
+        "y": 5.723495007132667
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,38 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "EVENT",
+      "name": "hood",
       "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "extend intake",
+      "waypointRelativePos": 0.23767724510465288,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "intake fuel",
+      "waypointRelativePos": 0.39702903443618826,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "shoot",
+      "waypointRelativePos": 0.7535449020931848,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "index",
+      "waypointRelativePos": 0.9020931802835872,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "move roller",
+      "waypointRelativePos": 0.9047940580688608,
       "endWaypointRelativePos": null,
       "command": null
     }
