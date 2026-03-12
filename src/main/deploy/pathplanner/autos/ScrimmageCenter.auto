@@ -5,15 +5,41 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "extend intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Center-aim@hub"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center-aim@hub"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "extend intake"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 2.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop intake extend"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -24,6 +50,12 @@
                 "type": "named",
                 "data": {
                   "name": "index"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake fuel"
                 }
               },
               {
@@ -48,37 +80,6 @@
                 "type": "named",
                 "data": {
                   "name": "hub lock"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "stop roller"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "stop shoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "stop index"
                 }
               }
             ]

@@ -24,7 +24,7 @@ public class Climber extends SubsystemBase {
 
     private final RelativeEncoder encoder = climber.getEncoder();
 
-    private final DigitalInput limit = new DigitalInput(Constants.ClimberConstants.limitChannel);
+    //private final DigitalInput limit = new DigitalInput(Constants.ClimberConstants.limitChannel);
 
     private final PIDController climbPid = new PIDController(Constants.ClimberConstants.kP, Constants.ClimberConstants.kI, Constants.ClimberConstants.kD);
 

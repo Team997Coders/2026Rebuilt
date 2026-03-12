@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Depot-aim@Hub"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -21,9 +15,53 @@
                 }
               },
               {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.67
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop intake extend"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Outpost-aim@Hub"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
                 "type": "named",
                 "data": {
-                  "name": "shoot"
+                  "name": "move roller"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hub lock"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake fuel"
                 }
               },
               {
@@ -35,7 +73,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "move roller"
+                  "name": "shoot"
                 }
               },
               {
@@ -51,7 +89,13 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 3.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop shoot"
                       }
                     },
                     {
@@ -69,13 +113,19 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop shoot"
+                        "name": "stop hood"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop hood"
+                        "name": "stop intake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop hub lock"
                       }
                     }
                   ]
@@ -87,32 +137,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot-goToMid-Trench"
+            "pathName": "Outpost-goToMid-Trench"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SwipeMid"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "intake fuel"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SwipeMidBottom"
                 }
               }
             ]
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "stop intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Return(Trench)-from(mid)"
+            "pathName": "CenterField(Outpost)ReturnTrench"
           }
         },
         {
@@ -122,13 +178,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "extend intake"
+                  "name": "move roller"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shoot"
+                  "name": "hub lock"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake fuel"
                 }
               },
               {
@@ -140,7 +202,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "move roller"
+                  "name": "shoot"
                 }
               },
               {
@@ -156,7 +218,13 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 10.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop shoot"
                       }
                     },
                     {
@@ -174,13 +242,19 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop shoot"
+                        "name": "stop hood"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop hood"
+                        "name": "stop hub lock"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop intake"
                       }
                     }
                   ]

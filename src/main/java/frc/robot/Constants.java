@@ -36,7 +36,7 @@ public final class Constants {
     public static final double flywheelReverseVelocity = 0;
 
     public static final double hoodTopLimit = 75; //degrees 
-    public static final double hoodBottomLimit = 0; 
+    public static final double hoodBottomLimit = -50; //This is wrong but just so I can back the hood into the right spot 
 
     public static final double hoodGearRatio = 3.5*(300/28)/35*20;
 
@@ -75,7 +75,7 @@ public final class Constants {
   public static final int disiredUnstickTime = 25;
 
   public final static double defaultVolts = 10;
-  public final static double reverseVolts = -2;
+  public final static double reverseVolts = -7;
   }
 
   public static final class ClimberConstants {
@@ -221,13 +221,11 @@ public final class Constants {
 
     public static final double spinVoltage = 1;
 
-    public static final double p = 1.2;
-    public static final double i = 0.1;
-    public static final double d = 0;
+    public static final double p = 2;
+    public static final double i = 0.0;
+    public static final double d = 0.1;
     public static final double extendedPosition = -11.42;
   }
-
-
 
 public static double airTime = 1;
 }

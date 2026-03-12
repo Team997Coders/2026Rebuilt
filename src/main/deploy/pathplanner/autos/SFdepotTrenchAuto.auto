@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Depot-aim@Hub"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -21,9 +15,47 @@
                 }
               },
               {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 2.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop intake extend"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Depot-aim@Hub"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
                 "type": "named",
                 "data": {
-                  "name": "shoot"
+                  "name": "move roller"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake fuel"
                 }
               },
               {
@@ -35,7 +67,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "move roller"
+                  "name": "shoot"
                 }
               },
               {
@@ -45,13 +77,25 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "hub lock"
+                }
+              },
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 2.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop shoot"
                       }
                     },
                     {
@@ -69,13 +113,19 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop shoot"
+                        "name": "stop hood"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop hood"
+                        "name": "stop intake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop hub lock"
                       }
                     }
                   ]
@@ -91,22 +141,28 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SwipeMid"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "intake fuel"
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SwipeMid"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop intake"
           }
         },
         {
@@ -122,13 +178,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "extend intake"
+                  "name": "move roller"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shoot"
+                  "name": "intake fuel"
                 }
               },
               {
@@ -140,7 +196,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "move roller"
+                  "name": "shoot"
                 }
               },
               {
@@ -150,13 +206,25 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "hub lock"
+                }
+              },
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 10.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop shoot"
                       }
                     },
                     {
@@ -174,13 +242,19 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop shoot"
+                        "name": "stop hood"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop hood"
+                        "name": "stop intake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop hub lock"
                       }
                     }
                   ]
