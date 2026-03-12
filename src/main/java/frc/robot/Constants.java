@@ -93,6 +93,10 @@ public final class Constants {
     public static final double loweredPos = 0;
   }
 
+  public static final class AutoDriveConstants {
+      public static final double distance = 1;
+    }
+
   public static final class DriveConstants {
     public static final double deadband = 0.02;
     public static final int currentLimit = 40;

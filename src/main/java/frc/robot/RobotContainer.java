@@ -6,46 +6,33 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
-import frc.robot.commands.HubLock;
+import frc.robot.commands.OdometryTest;
 import frc.robot.commands.Unstick;
-import frc.robot.commands.PlayMusic;
-import frc.robot.commands.clumpLock;
-import frc.robot.commands.goToLocation;
-import frc.robot.commands.objectLock;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
-import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
-import frc.robot.subsystems.vision.ObjectCamera;
-import frc.robot.subsystems.vision.PAVController;
 import frc.robot.subsystems.vision.CameraBlock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.jar.Attributes.Name;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.reduxrobotics.canand.CanandEventLoop;
-import com.reduxrobotics.sensors.canandcolor.DigoutChannel.Index;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.kinematics.Odometry;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -64,90 +51,55 @@ public class RobotContainer {
   private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
 
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
-  private  XboxController driveStick = new XboxController(0);
-  private  CommandXboxController c_driveStick = new CommandXboxController(0);
-  
-  // Pathplanner autoChooser
+  private static XboxController driveStick = new XboxController(0);
+  private static CommandXboxController c_driveStick = new CommandXboxController(0);
+
+  // private static Shooter shooter = new Shooter();
+
+  //Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
-  //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
-  private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
-
-  //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
+  private static final Camera frontCamera = new Camera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
+  //private static final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera));
-  private final CameraBlock cameraBlock = new CameraBlock(cameraList);
+  private static final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(frontCamera));
+  private static final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-  private final HubLock hubLock = new HubLock(drivebase, () -> getScaledXY());
-
-  private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
-  private final Climber climber = new Climber();
-  private final Shooter shooter = new Shooter(pav, hubLock);
-  private final Roller roller = new Roller();
-  private final Hood hood = new Hood(pav, hubLock);
-  
-  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
+  private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
 
   private final Unstick unstick = new Unstick(indexer);
-  
-  public final Intake m_intake;
 
+  //
+  private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
+
+  // public final Intake m_intake;
+  // public final IntakeCommand IntakeCommandExtend;
+  // public final IntakeCommand IntakeCommandRetract;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the trigger bindings
-     drivebase.setDefaultCommand(
+    drivebase.setDefaultCommand(
         new Drive(
-             drivebase,
-           () -> getScaledXY(),
-           () -> scaleRotationAxis(driveStick.getRawAxis(4))));
-
-    m_intake = new Intake();
-
-    NamedCommands.registerCommand("move roller and index", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller and index", roller.stopRoller());
-    //NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
-    // NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
-    // NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
-    // NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
-    // NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
-
-    NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
-    NamedCommands.registerCommand("return intake", m_intake.returnIntake());
-    NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
-    NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
-    NamedCommands.registerCommand("hub lock", hubLock);
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand());
-    NamedCommands.registerCommand("hood", hood.PAVcommand());
-    NamedCommands.registerCommand("index", indexer.startIndexer());
-    NamedCommands.registerCommand("stop index", indexer.stopIndexer());
-    NamedCommands.registerCommand("move roller", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller", roller.stopRoller());
-
-    NamedCommands.registerCommand("stop shoot", shooter.runFlywheelVolt(0));
-
-    NamedCommands.registerCommand("raise climber", climber.raise());
-    NamedCommands.registerCommand("lower climber", climber.lower());
-    
-    configureBindings();
-    resetGyro();
+            drivebase,
+            () -> getScaledXY(),
+            () -> scaleRotationAxis(driveStick.getRawAxis(4))));
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
     SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
 
-    
-    // NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
-    // NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
-    
-    
+    // m_intake = new Intake();
+    // IntakeCommandExtend = new IntakeCommand(m_intake, true);
+    // IntakeCommandRetract = new IntakeCommand(m_intake, false);
+
+    configureBindings();
   }
 
   /**
@@ -200,22 +152,22 @@ public class RobotContainer {
     return Math.copySign(input * input * input, input);
   }
 
-   @SuppressWarnings("unused")
-   private double scaleTranslationAxis(double input) {
-     return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
-   }
-
-   private double scaleRotationAxis(double input) {
-     return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
+  @SuppressWarnings("unused")
+  private double scaleTranslationAxis(double input) {
+    return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
   }
 
-   public void resetGyro() {
-    gyro.setYaw(0);
-   }
+  private double scaleRotationAxis(double input) {
+    return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
+  }
 
-   public double getGyroYaw() {
-     return -gyro.getYaw();
-   }
+  public void resetGyro() {
+    gyro.setYaw(0);
+  }
+
+  public double getGyroYaw() {
+    return -gyro.getYaw();
+  }
 
   public boolean onBlueAlliance() {
     var alliance = DriverStation.getAlliance();
@@ -240,32 +192,37 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
-    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    // c_driveStick.rightTrigger().onTrue(shooter.moveRoller().alongWith(shooter.runFlywheel()));
+    // c_driveStick.rightTrigger().onFalse((shooter.stopRoller().alongWith(shooter.stopRoller())));
 
-    c_driveStick.leftTrigger().whileTrue(hubLock.alongWith(shooter.PAVcontrollerCommand()).alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).onFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
+    // c_driveStick.povUp().onTrue(shooter.hoodUp());
+    // c_driveStick.povDown().onTrue((shooter.hoodDown()));
 
-    //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
-    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
-    c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
-    c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
-    c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
-    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
-    c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
-    c_driveStick.povUp().whileTrue(hood.hoodUp());
-    c_driveStick.povDown().whileTrue(hood.hoodDown());    
+    // // Gyro Reset
+    // //c_driveStick.povUp().onTrue(Comands.runOnce(gyro::reset));
     
+    // //When holding x robot goes to closest location in potential locations
+    // //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
+    // c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
+    // c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
+    // c_driveStick.a().whileTrue(m_intake.intakeFuel());
+    
+
+    // c_driveStick.rightTrigger().whileTrue(indexer.startIdexCommand());
+
+    // unstickTrigger.whileTrue(unstick);
+
+
   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+   // return autoChooser.getSelected();
+
+     return new OdometryTest(drivebase, 0, 0);
   }
 }
