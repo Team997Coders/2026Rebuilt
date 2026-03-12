@@ -66,6 +66,7 @@ public class SwerveModule {
 
     this.pidController = new PIDController(SwervePID.p, SwervePID.i, SwervePID.d);
     this.absoluteEncoder =  new Canandmag(encoderId);
+    //this.absoluteEncoder.setAbsPosition(0);
 
     this.maxVelocity = maxVelocity;
     this.maxVoltage = maxVoltage;

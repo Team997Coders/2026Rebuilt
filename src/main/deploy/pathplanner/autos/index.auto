@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "index"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Leave"
+            "pathName": "path1"
           }
         }
       ]

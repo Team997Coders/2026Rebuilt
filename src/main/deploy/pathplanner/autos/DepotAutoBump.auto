@@ -13,43 +13,61 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot-goToMid-Bump"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SwipeAll"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost-MiddletoDepot-Middle"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Return(Bump)-from(top)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot-climb"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "object lock set true"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TestDepot-goToMid-Trench"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TestSwipeMid"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TestDepotSwipe"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "object lock set false"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TestReturn(Trench)-from(top)"
+            "name": null
           }
         }
       ]

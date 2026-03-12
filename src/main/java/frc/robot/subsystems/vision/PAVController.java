@@ -19,12 +19,22 @@ public class PAVController {
         {
             targetAngle = 25;
         }
-        else if (distance < 2.66){}
+        else if (distance < 2.66){
+            if (targetAngle == 40)
+            {
+                targetAngle = 35;
+            }
+        }
         else if (distance >= 2.66 && distance <= 3.6)
         {
             targetAngle = 35;
         }
-        else if (distance > 3.6 && distance < 4){}
+        else if (distance > 3.6 && distance < 4){
+            if (targetAngle == 25)
+            {
+                targetAngle = 35;
+            }
+        }
         else 
         {
             targetAngle = 40;
@@ -46,7 +56,7 @@ public class PAVController {
         }
         else //40
         {
-            velocity = 7.3463 + .9521 * distance;
+            velocity = 7.3463 + .9521 * distance + 0.2;
         }
     }
 
@@ -57,6 +67,6 @@ public class PAVController {
 
     public double getVelocity()
     {
-        return velocity;
+        return velocity - 0.15;
     }
 }

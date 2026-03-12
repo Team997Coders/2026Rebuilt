@@ -15,9 +15,11 @@ import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
     private final SparkMax spinMotor;
-    private final SparkMax extendMotor;
+    private final SparkMax extendMotorRight;
+    private final SparkMax extendMotorLeft;
     private final SparkMaxConfig spinConfig;
-    private final SparkMaxConfig extendConfig;
+    private final SparkMaxConfig extendConfigRight;
+    private final SparkMaxConfig extendConfigLeft;
 
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
     private double goal = 0;    
@@ -25,13 +27,17 @@ public class Intake extends SubsystemBase {
                     
     public Intake(){
         spinMotor = new SparkMax(Constants.IntakeConstants.spinMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-        extendMotor = new SparkMax(Constants.IntakeConstants.extendMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+        extendMotorRight = new SparkMax(Constants.IntakeConstants.extendMotorIDright, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+        extendMotorLeft = new SparkMax(Constants.IntakeConstants.extendMotorIDleft, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
         spinConfig = new SparkMaxConfig();
-        extendConfig = new SparkMaxConfig();
+        extendConfigRight = new SparkMaxConfig();
+        extendConfigLeft = new SparkMaxConfig();
                     
         spinMotor.configure(spinConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        extendMotor.configure(extendConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        encoder = extendMotor.getEncoder();     
+        extendMotorRight.configure(extendConfigRight, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        extendMotorLeft.configure(extendConfigLeft, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+        encoder = extendMotorLeft.getEncoder();     
         encoder.setPosition(0);
     }
 
@@ -59,21 +65,69 @@ public class Intake extends SubsystemBase {
     {
         return this.runOnce(() -> decreaseGoal());
     }
+
+    public void maxStow()
+    {
+        extendMotorLeft.set(1);
+    }
+
+    public Command maxSpeedStow()
+    {
+        return this.runOnce(() -> maxStow());
+    }
+
+    public void stopExtendoMotor()
+    {
+        extendMotorLeft.set(0);
+    }
+
+    public Command stopExtendo()
+    {
+        return this.runOnce(() -> stopExtendoMotor());
+    }
             
     public void spin(double voltage) {
-        spinMotor.setVoltage(voltage);
+
+        spinMotor.set(voltage);
+    }
+
+    public void output()
+    {
+        spinMotor.set(1.0);
     }
             
     public void runExtendMotor(double voltage) {
-        extendMotor.setVoltage(voltage);
+        SmartDashboard.putNumber("intake extendo voltage", voltage);
+        extendMotorLeft.setVoltage(voltage);
+    }
+
+    double Kg = 8;
+    public void runExtendWithGravity()
+    {
+        double voltage = pid.calculate(getEncoderPosition(), goal);
+        if (getEncoderPosition() > goal && getEncoderPosition() < 0)
+        {
+            voltage += Kg;
+        }
+        runExtendMotor(voltage);
     }
             
     public double getEncoderPosition(){
         return encoder.getPosition();
     }
+
+    public Command runFull()
+    {
+        return this.runOnce(() -> output());
+    }
     
     public Command intakeFuel(){
         return this.runOnce(() -> spin(Constants.IntakeConstants.spinVoltage));
+    }
+
+    public Command intakeFull()
+    {
+        return this.runOnce(() -> output());
     }
 
     public Command stopIntake()
@@ -91,10 +145,33 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> setGoal(0));
     }
 
+    public void toggleIntake()
+    {
+        if (goal == 0)
+        {
+            setGoal(Constants.IntakeConstants.extendedPosition);
+        }
+        else
+        {
+            setGoal(0);
+        }
+    }
+
+    public Command toggleIntakeCommand()
+    {
+        return this.runOnce(() -> toggleIntake());
+    }
+
+    public Command reverse()
+    {
+        return this.runOnce(() -> spin(-8));
+    }
+
     @Override
     public void periodic()
     {
         runExtendMotor(pid.calculate(getEncoderPosition(), goal));
+        //runExtendWithGravity();
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());
     }

@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -31,16 +32,20 @@ public class Climber extends SubsystemBase {
         config.inverted(Constants.ClimberConstants.inverted);
 
         climber.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+        encoder.setPosition(0);
     }
 
     double goalPos;
     @Override
     public void periodic() {
-        if(limit.get()) {
-            resetEncoder();
-        }
+        // if(limit.get()) {
+        //     resetEncoder();
+        // }
+
+        SmartDashboard.putNumber("climber pos", encoder.getPosition());
     
-        setClimberVolts(climbPid.calculate(getPosition(), goalPos));
+        //setClimberVolts(climbPid.calculate(getPosition(), goalPos));
 
     }
 
@@ -68,6 +73,11 @@ public class Climber extends SubsystemBase {
 
     public void manualDown() {
         goalPos-=1;
+    }
+
+    public Command climberVoltsCommand(double volts)
+    {
+        return this.runOnce(() -> setClimberVolts(volts));
     }
 
 
