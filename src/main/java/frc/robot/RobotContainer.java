@@ -252,7 +252,7 @@ public class RobotContainer {
     c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown());    
-
+    
   }
 
   /**

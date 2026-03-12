@@ -38,11 +38,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Hood extends SubsystemBase {
-    
+    public DigitalInput hoodSwitch;
+
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushed);
     public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
     public SparkMaxConfig hoodConfig = new SparkMaxConfig();
+
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
     private double goalAngle;
@@ -60,8 +62,8 @@ public class Hood extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
+        setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
         SmartDashboard.putNumber("hood angle", getHoodAngle());
 
@@ -99,6 +101,7 @@ public class Hood extends SubsystemBase {
         setGoalAngle(goalAngle-1);
     } 
     }
+
 
     //lil commands
     //hood
