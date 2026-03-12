@@ -95,6 +95,8 @@ public final class Constants {
 
   public static final class AutoDriveConstants {
       public static final double distance = 1;
+      public static final double wheelRadius = 4;
+      public static final double conversionFactor = Math.PI;
     }
 
   public static final class DriveConstants {
