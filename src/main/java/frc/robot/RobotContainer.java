@@ -20,6 +20,7 @@ import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
 import frc.robot.commands.SubsystemCommands.PavShooter;
 import frc.robot.commands.SubsystemCommands.RollerCommand;
+import frc.robot.commands.SubsystemCommands.stupidIntake;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -77,19 +78,20 @@ public class RobotContainer {
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
   private  XboxController driveStick = new XboxController(0);
   private  CommandXboxController c_driveStick = new CommandXboxController(0);
+  private  CommandXboxController c_operator = new CommandXboxController(1);
   
   // Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
   //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
-  //private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
+  private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
   private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
 
   //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera));
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
@@ -117,6 +119,7 @@ public class RobotContainer {
   private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
   private PasHood m_PasHood = new PasHood(hood);
   private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
+  private stupidIntake m_StupidIntake = new stupidIntake(m_intake);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -129,7 +132,9 @@ public class RobotContainer {
            () -> getScaledXY(),
            () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
 
-    NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
+    NamedCommands.registerCommand("extend intake", m_StupidIntake);
+    NamedCommands.registerCommand("stop intake extend", m_StupidIntake.finishCommand());
+
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
     NamedCommands.registerCommand("intake fuel", m_IntakeFuel);
     NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
@@ -272,7 +277,7 @@ public class RobotContainer {
     c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
    // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
-    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
@@ -280,7 +285,11 @@ public class RobotContainer {
     c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
     c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
     c_driveStick.povUp().whileTrue(hood.hoodUp());
-    c_driveStick.povDown().whileTrue(hood.hoodDown());    
+    c_driveStick.povDown().whileTrue(hood.hoodDown()); 
+    
+    c_operator.x().onTrue(m_intake.manualUp()).onFalse(m_intake.stopExtendo());
+    c_operator.a().onTrue(m_intake.manualDown()).onFalse(m_intake.stopExtendo());
+    
 
   }
 

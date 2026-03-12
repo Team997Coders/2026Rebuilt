@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
     private final SparkMaxConfig spinConfig;
     private final SparkMaxConfig extendConfigRight;
     private final SparkMaxConfig extendConfigLeft;
-    private double tolerence = 0.25;
+    private double tolerence = 0.4;
 
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
     private double goal = 0.25;    
@@ -105,6 +105,13 @@ public class Intake extends SubsystemBase {
         extendMotorLeft.setVoltage(voltage);
         }
     }
+
+    public void runExtendMotorManual(double voltage) {
+        SmartDashboard.putNumber("intake extendo voltage", voltage);
+        
+        extendMotorLeft.setVoltage(voltage);
+        
+    }
             
     public double getEncoderPosition(){
         return encoder.getPosition();
@@ -161,14 +168,24 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> spin(8));
     }
 
+    public Command manualDown()
+    {
+        return this.runOnce(() -> runExtendMotorManual(-2));
+    }
+
+    public Command manualUp()
+    {
+        return this.runOnce(() -> runExtendMotorManual(10));
+    }
+
     @Override
     public void periodic()
     {
-        double pidOutput = pid.calculate(getEncoderPosition(), goal);
-        runExtendMotor(pidOutput);
+        //double pidOutput = pid.calculate(getEncoderPosition(), goal);
+        //runExtendMotor(pidOutput);
         //runExtendWithGravity();
-        SmartDashboard.putNumber("intake extension pid output", pidOutput);
-        SmartDashboard.putNumber("intake extension goal", goal);
-        SmartDashboard.putNumber("intake extension current", getEncoderPosition());
+        //SmartDashboard.putNumber("intake extension pid output", pidOutput);
+        //SmartDashboard.putNumber("intake extension goal", goal);
+        //SmartDashboard.putNumber("intake extension current", getEncoderPosition());
     }
 }

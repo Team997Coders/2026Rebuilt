@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "extend intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Depot-aim@Hub"
@@ -17,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "extend intake"
+                  "name": "intake fuel"
                 }
               },
               {
@@ -51,7 +57,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 5.0
+                        "waitTime": 10.0
                       }
                     },
                     {
@@ -76,6 +82,12 @@
                       "type": "named",
                       "data": {
                         "name": "stop hood"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stop intake"
                       }
                     }
                   ]
