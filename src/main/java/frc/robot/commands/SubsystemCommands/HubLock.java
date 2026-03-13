@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.SubsystemCommands;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -14,11 +14,13 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.DARE;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 
@@ -32,6 +34,7 @@ public class HubLock extends Command {
     9, 2, 0, THETA_CONSTRAINTS);
   private Double[] pidValues = new Double[]{9.0, 2.0, 0.0};
   private double thetaTollerance = 2;
+  private boolean finished = false;
 
   /** Creates a new Drive. */
   public HubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
@@ -44,12 +47,13 @@ public class HubLock extends Command {
     SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(this.drivebase);
+    addRequirements(drivebase);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    finished = false;
     thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
   }
 
@@ -57,26 +61,27 @@ public class HubLock extends Command {
   {
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Red))
     {
-      //10
-      Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-    }
-    else if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
-    {
-      //26
-      Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-      goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
-    }
-    else 
-    {
-      if (drivebase.getPose().getX() > 16.53)
+      if (drivebase.getPose().getX() < 11.901424)
       {
-        Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
-        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+        goalPose = new Pose2d(drivebase.getShooterPose().getX() - 1, drivebase.getShooterPose().getY(), new Rotation2d());
       }
       else 
       {
+        //10
         Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
+        goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+      }
+    }
+    else if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
+    {
+      if (drivebase.getPose().getX() > 4.611624)
+      {
+        goalPose = new Pose2d(drivebase.getShooterPose().getX() + 1, drivebase.getShooterPose().getY(), new Rotation2d());
+      }
+      else
+      {
+        //26
+        Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
         goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
       }
     }
@@ -117,16 +122,14 @@ public class HubLock extends Command {
 
     Pose2d robotPose = drivebase.getShooterPose();
     
-    // thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-    //       /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - Math.PI/2);
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
     {
-      thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
+        thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY()) 
           /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
     } else
     {
-      thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) + (Math.PI/2));
+        thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
+          /(goalPose.getX() - robotPose.getX())) + (Math.PI/2));      
     }
     
     SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
@@ -138,17 +141,16 @@ public class HubLock extends Command {
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
     SmartDashboard.putBoolean("at goal", thetaController.atGoal());
 
-    if (Math.abs(thetaSpeed) < 0.04 || Math.abs(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - robotPose.getRotation().getRadians()) < 0.05)
+    if (Math.abs(thetaSpeed) < 0.04 || Math.abs(Math.atan((goalPose.getY() - robotPose.getY())
+          /(goalPose.getX() - robotPose.getX())) - robotPose.getRotation().getRadians()) < 0.05)
     {
       thetaSpeed = 0;
     }
-    
 
-    drivebase.defaultDrive(-xy[1], -xy[0], thetaSpeed);
+    drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
     SmartDashboard.putNumber("x speed", -xy[1]);
     SmartDashboard.putNumber("y speed", -xy[0]);
-    SmartDashboard.putNumber("theta speed", thetaSpeed);
+    SmartDashboard.putNumber("theta speed", -thetaSpeed);
   }
 
 
@@ -161,6 +163,16 @@ public class HubLock extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return finished;
   }
+
+  public void finish()
+    {
+        finished = true;
+    }
+
+  public Command finishCommand()
+    {
+        return Commands.runOnce(() -> finish());
+    }
 }

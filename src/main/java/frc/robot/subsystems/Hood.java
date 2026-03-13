@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.commands.HubLock;
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -49,13 +48,11 @@ public class Hood extends SubsystemBase {
     public PIDController PIDHoodController = new PIDController(Constants.ShooterConstants.hoodPID.kp, Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
     private double goalAngle;
-    private PAVController pav;
-    private HubLock hubLock;
 
+    private DigitalInput magnet = new DigitalInput(0);
 
-    public Hood(PAVController pav, HubLock hubLock) {
-        this.pav = pav;
-        this.hubLock = hubLock;
+    public Hood() {
+
         //hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -73,6 +70,12 @@ public class Hood extends SubsystemBase {
         SmartDashboard.putNumber("hood angle", getHoodAngle());
 
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
+
+          if(!magnet.get()) {
+            hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+        }
+
+        SmartDashboard.putBoolean("magnet", magnet.get());
     }
 
     //Hood
@@ -117,15 +120,4 @@ public class Hood extends SubsystemBase {
     public Command hoodDown() {
         return this.run(() -> moveHoodDownManual());
     }
-
-    public void PAVcontrollerAngle() {
-    
-        pav.update(hubLock.getDistanceFromTarget(hubLock.getGoalPose()));
-        this.setGoalAngle(pav.getAngle());
-
-    }
-    public Command PAVcommand() {
-        return this.run(() -> PAVcontrollerAngle());
-    }
-
 }

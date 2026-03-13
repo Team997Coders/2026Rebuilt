@@ -7,17 +7,38 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.commands.OdometryTest;
+import frc.robot.commands.SubsystemCommands.HubLock;
+import frc.robot.commands.SubsystemCommands.IndexerCommand;
+import frc.robot.commands.SubsystemCommands.IntakeFuel;
+import frc.robot.commands.SubsystemCommands.PasHood;
+import frc.robot.commands.SubsystemCommands.PasShooter;
+import frc.robot.commands.SubsystemCommands.PassLock;
+import frc.robot.commands.SubsystemCommands.PavHood;
 import frc.robot.commands.Unstick;
+import frc.robot.commands.PlayMusic;
+import frc.robot.commands.clumpLock;
+import frc.robot.commands.goToLocation;
+import frc.robot.commands.objectLock;
+import frc.robot.commands.SubsystemCommands.PavShooter;
+import frc.robot.commands.SubsystemCommands.RollerCommand;
+import frc.robot.commands.SubsystemCommands.stupidIntake;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
+import frc.robot.subsystems.vision.PAVController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.EventMarker;
 import com.reduxrobotics.canand.CanandEventLoop;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
@@ -33,6 +54,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -51,12 +74,11 @@ public class RobotContainer {
   private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
 
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
-  private static XboxController driveStick = new XboxController(0);
-  private static CommandXboxController c_driveStick = new CommandXboxController(0);
-
-  // private static Shooter shooter = new Shooter();
-
-  //Pathplanner autoChooser
+  private  XboxController driveStick = new XboxController(0);
+  private  CommandXboxController c_driveStick = new CommandXboxController(0);
+  private  CommandXboxController c_operator = new CommandXboxController(1);
+  
+  // Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
@@ -68,13 +90,31 @@ public class RobotContainer {
   private static final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
+
+  private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
-  private Trigger unstickTrigger = new Trigger(() ->indexer.unstickFuel()) ;
+  private final Climber climber = new Climber();
+  private final Shooter shooter = new Shooter();
+  private final Roller roller = new Roller();
+  private final Hood hood = new Hood();
+  
+  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
 
   private final Unstick unstick = new Unstick(indexer);
+  
+  public final Intake m_intake = new Intake();
 
-  //
-  private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
+  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY());
+  private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
+  private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
+  private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
+  private RollerCommand m_RollerCommand = new RollerCommand(roller);
+  private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intake);
+  private Trigger passing = new Trigger(() -> passToAlliance());
+  private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
+  private PasHood m_PasHood = new PasHood(hood);
+  private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
+  private stupidIntake m_StupidIntake = new stupidIntake(m_intake);
 
   // public final Intake m_intake;
   // public final IntakeCommand IntakeCommandExtend;
@@ -86,20 +126,51 @@ public class RobotContainer {
     // Configure the trigger bindings
     drivebase.setDefaultCommand(
         new Drive(
-            drivebase,
-            () -> getScaledXY(),
-            () -> scaleRotationAxis(driveStick.getRawAxis(4))));
+             drivebase,
+           () -> getScaledXY(),
+           () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
+
+    NamedCommands.registerCommand("extend intake", m_StupidIntake);
+    NamedCommands.registerCommand("stop intake extend", m_StupidIntake.finishCommand());
+
+    NamedCommands.registerCommand("return intake", m_intake.returnIntake());
+    NamedCommands.registerCommand("intake fuel", m_IntakeFuel);
+    NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
+
+    NamedCommands.registerCommand("index", m_IndexerCommand);
+    NamedCommands.registerCommand("stop index", m_IndexerCommand.finishCommand());
+    NamedCommands.registerCommand("move roller", m_RollerCommand);
+    NamedCommands.registerCommand("stop roller", m_RollerCommand.finishCommand());
+    NamedCommands.registerCommand("shoot", m_PavShooter);
+    NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());
+    NamedCommands.registerCommand("hub lock", m_HubLock);
+    NamedCommands.registerCommand("stop hub lock", m_HubLock.finishCommand());
+    NamedCommands.registerCommand("hood", m_PavHood);
+    NamedCommands.registerCommand("stop hood", m_PavHood.finishCommand());
+
+    NamedCommands.registerCommand("raise climber", climber.raise());
+    NamedCommands.registerCommand("lower climber", climber.lower());
+
+    // new EventTrigger("shoot").whileTrue(m_PavShooter);
+    // new EventTrigger("index").whileTrue(m_IndexerCommand);
+    // new EventTrigger("extend intake").whileTrue(m_intake.extendIntake());
+    // new EventTrigger("hood").whileTrue(m_PavHood);
+    // new EventTrigger("move roller").whileTrue(m_RollerCommand);
+    // new EventTrigger("intake fuel").whileTrue(m_IntakeFuel);
+    
+    configureBindings();
+    resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
     SmartDashboard.putData("Auto Choser", autoChooser);
 
     CanandEventLoop.getInstance();
+  }
 
-    // m_intake = new Intake();
-    // IntakeCommandExtend = new IntakeCommand(m_intake, true);
-    // IntakeCommandRetract = new IntakeCommand(m_intake, false);
-
-    configureBindings();
+  private boolean passToAlliance()
+  {
+    return (DriverStation.getAlliance().orElseThrow().equals(Alliance.Blue) && drivebase.getPose().getX() > 4.611624) || 
+           (DriverStation.getAlliance().orElseThrow().equals(Alliance.Red) && drivebase.getPose().getX() < 11.901424);
   }
 
   /**
@@ -115,8 +186,8 @@ public class RobotContainer {
 
   private double[] getXY() {
     double[] xy = new double[2];
-    xy[0] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
-    xy[1] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+    xy[0] = -deadband(driveStick.getLeftX(), DriveConstants.deadband);
+    xy[1] = -deadband(driveStick.getLeftY(), DriveConstants.deadband);
     return xy;
   }
 
@@ -192,26 +263,32 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // c_driveStick.rightTrigger().onTrue(shooter.moveRoller().alongWith(shooter.runFlywheel()));
-    // c_driveStick.rightTrigger().onFalse((shooter.stopRoller().alongWith(shooter.stopRoller())));
+    //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
+    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    //c_driveStick.leftBumper().whileTrue(m_intake.extendManual(0.5));
+    // c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
+    //   .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
 
-    // c_driveStick.povUp().onTrue(shooter.hoodUp());
-    // c_driveStick.povDown().onTrue((shooter.hoodDown()));
-
-    // // Gyro Reset
-    // //c_driveStick.povUp().onTrue(Comands.runOnce(gyro::reset));
+    c_driveStick.leftTrigger().and(passing.negate()).whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+    c_driveStick.leftTrigger().and(passing).whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
     
-    // //When holding x robot goes to closest location in potential locations
-    // //c_driveStick.x().whileTrue(new goToLocation(drivebase, potentialLocations));
-    // c_driveStick.leftBumper().onTrue(IntakeCommandExtend);
-    // c_driveStick.rightBumper().onTrue(IntakeCommandRetract);
-    // c_driveStick.a().whileTrue(m_intake.intakeFuel());
+    c_driveStick.rightTrigger().whileTrue(m_IndexerCommand); //.alongWith(m_RollerCommand));
+    c_driveStick.leftBumper().whileTrue(m_RollerCommand);
+    //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
+   // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
+    c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
+    c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
+    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
+    c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
+    c_driveStick.povUp().whileTrue(hood.hoodUp());
+    c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
-
-    // c_driveStick.rightTrigger().whileTrue(indexer.startIdexCommand());
-
-    // unstickTrigger.whileTrue(unstick);
-
+    c_operator.x().onTrue(m_intake.manualUp()).onFalse(m_intake.stopExtendo());
+    c_operator.a().onTrue(m_intake.manualDown()).onFalse(m_intake.stopExtendo());
+    
 
   }
 
