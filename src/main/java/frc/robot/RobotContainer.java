@@ -134,12 +134,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("stop intake extend", m_StupidIntake.finishCommand());
 
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
-    NamedCommands.registerCommand("intake fuel", m_IntakeFuel);
+    NamedCommands.registerCommand("intake", m_IntakeFuel);
     NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
 
     NamedCommands.registerCommand("index", m_IndexerCommand);
     NamedCommands.registerCommand("stop index", m_IndexerCommand.finishCommand());
-    NamedCommands.registerCommand("move roller", m_RollerCommand);
+    NamedCommands.registerCommand("roller", m_RollerCommand);
     NamedCommands.registerCommand("stop roller", m_RollerCommand.finishCommand());
     NamedCommands.registerCommand("shoot", m_PavShooter);
     NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());

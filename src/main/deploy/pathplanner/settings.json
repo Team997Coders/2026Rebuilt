@@ -2,8 +2,12 @@
   "robotWidth": 0.6,
   "robotLength": 0.6,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "DepotTrench"
+  ],
+  "autoFolders": [
+    "Case autos"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 540.0,
