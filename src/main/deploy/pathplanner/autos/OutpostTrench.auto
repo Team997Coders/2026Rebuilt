@@ -162,12 +162,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 4.0
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [

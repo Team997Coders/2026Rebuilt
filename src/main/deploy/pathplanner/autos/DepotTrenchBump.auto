@@ -5,15 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "named",
+          "data": {
+            "name": "extend intake"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "extend intake"
-                }
-              },
               {
                 "type": "sequential",
                 "data": {
@@ -41,18 +41,6 @@
                       "type": "path",
                       "data": {
                         "pathName": "DepotTrench-Middle"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake extend"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake"
                       }
                     }
                   ]
@@ -149,7 +137,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -179,18 +167,6 @@
                       "type": "path",
                       "data": {
                         "pathName": "DepotBumpShoot-Middle"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake extend"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake"
                       }
                     }
                   ]

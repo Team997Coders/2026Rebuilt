@@ -13,12 +13,24 @@ public class IndexerCommand extends Command{
 
     private Indexer m_indexer;
     private Boolean finished = false;
+    private double IndexerSpeed = 0.6;
 
     public IndexerCommand(Indexer indexer)
     {
         m_indexer = indexer;
 
         addRequirements(m_indexer);
+    }
+
+    public void setIndexerSpeed() {
+
+        if (IndexerSpeed == .6) {
+
+            IndexerSpeed = .3;
+        } else {
+
+            IndexerSpeed =.6;
+        }
     }
 
     @Override
@@ -30,7 +42,12 @@ public class IndexerCommand extends Command{
     @Override
     public void execute()
     {
-        m_indexer.setIndexerMotor(1);
+        m_indexer.setIndexerMotor(IndexerSpeed);
+    }
+
+    public Command toggleSpeed()
+    {
+        return this.m_indexer.runOnce(() -> setIndexerSpeed());
     }
 
     @Override
