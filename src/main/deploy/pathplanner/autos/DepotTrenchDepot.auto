@@ -271,6 +271,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Case autos",
+  "folder": null,
   "choreoAuto": false
 }
