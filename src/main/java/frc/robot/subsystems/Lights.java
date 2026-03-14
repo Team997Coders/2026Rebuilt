@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -58,6 +59,36 @@ public class Lights extends SubsystemBase {
                 setState(2);
             }
         });
+    }
+
+    public Command statusByRobotState(BooleanSupplier onBlueAlliance, BooleanSupplier isDisabled) {
+        return new CommandBase() {
+            {
+                addRequirements(Lights.this);
+            }
+
+            @Override
+            public void execute() {
+                if (isDisabled.getAsBoolean()) {
+                    if (onBlueAlliance.getAsBoolean()) {
+                        setState(1);
+                    } else {
+                        setState(0);
+                    }
+                } else {
+                    if (onBlueAlliance.getAsBoolean()) {
+                        setState(3);
+                    } else {
+                        setState(2);
+                    }
+                }
+            }
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        };
     }
 
     public Command statusPassing() {

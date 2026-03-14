@@ -159,7 +159,7 @@ public class RobotContainer {
     // new EventTrigger("intake fuel").whileTrue(m_IntakeFuel);
     
     configureBindings();
-    lights.setDefaultCommand(lights.statusActiveAlliance(this::onBlueAlliance));
+    lights.setDefaultCommand(lights.statusByRobotState(this::onBlueAlliance, DriverStation::isDisabled));
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
