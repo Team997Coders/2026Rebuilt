@@ -21,6 +21,12 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class LightsConstants {
+    public static final int dio0Pin = 9;
+    public static final int dio1Pin = 8;
+    public static final int dio2Pin = 7;
+  }
+
   public static final int gyroID = 46;
 
   public static class ShooterConstants {
