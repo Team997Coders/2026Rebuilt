@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.285,
-        "y": 7.431
+        "x": 3.224,
+        "y": 7.496
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.155105656292269,
-        "y": 7.651776900349011
+        "x": 4.09410565629227,
+        "y": 7.716776900349012
       },
       "isLocked": false,
       "linkedName": null
@@ -83,7 +83,7 @@
   "folder": "DepotTrench",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.8090548686439363
+    "rotation": -163.74
   },
   "useDefaultConstraints": true
 }

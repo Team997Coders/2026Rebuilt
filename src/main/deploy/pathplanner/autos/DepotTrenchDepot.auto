@@ -153,22 +153,9 @@
           "data": {
             "commands": [
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "intake"
-                      }
-                    }
-                  ]
+                  "pathName": "DepotTrench-Depot"
                 }
               },
               {
@@ -176,21 +163,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "wait",
                       "data": {
-                        "pathName": "DepotTrenchShoot-Middle"
+                        "waitTime": 1.0
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop intake extend"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake"
+                        "name": "intake"
                       }
                     }
                   ]
@@ -206,7 +187,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle-DepotTrench"
+                  "pathName": "Depot-DepotTrench"
                 }
               },
               {

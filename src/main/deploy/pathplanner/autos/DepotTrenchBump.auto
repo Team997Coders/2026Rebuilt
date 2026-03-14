@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle-DepotTrench"
+                  "pathName": "Middle-DepotBumpShoot"
                 }
               },
               {
@@ -178,7 +178,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "DepotTrenchShoot-Middle"
+                        "pathName": "DepotBumpShoot-Middle"
                       }
                     },
                     {
@@ -206,7 +206,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle-DepotTrench"
+                  "pathName": "MiddleHub-DepotBumpShoot"
                 }
               },
               {
