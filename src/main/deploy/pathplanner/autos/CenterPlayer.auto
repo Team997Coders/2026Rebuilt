@@ -5,70 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "extend intake"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "intake"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "DepotTrench-Middle"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake extend"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle-DepotTrench"
+                  "pathName": "Center-CenterShoot"
                 }
               },
               {
@@ -78,7 +21,13 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.5
+                        "waitTime": 0.6
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "extend intake"
                       }
                     },
                     {
@@ -100,26 +49,74 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "intake"
-                      }
-                    }
-                  ]
+                  "name": "shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "index"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hood"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "roller"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hub lock"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterShoot-Player"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Player-PlayerShoot"
                 }
               },
               {
@@ -127,27 +124,21 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "wait",
                       "data": {
-                        "pathName": null
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "DepotTrench-Middle"
+                        "waitTime": 0.6
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop intake extend"
+                        "name": "shoot"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop intake"
+                        "name": "hood"
                       }
                     }
                   ]
@@ -169,19 +160,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "index"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "hub lock"
+                  "name": "intake"
                 }
               },
               {
@@ -197,9 +182,15 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "hub lock"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 8.0
                 }
               }
             ]
