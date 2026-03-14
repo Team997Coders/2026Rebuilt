@@ -160,7 +160,9 @@ public class RobotContainer {
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
+    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
     SmartDashboard.putData("Auto Choser", autoChooser);
+    
 
     CanandEventLoop.getInstance();
   }
@@ -299,8 +301,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   return autoChooser.getSelected();
-
-    // return new OdometryTest(drivebase, 0, 0);
+    return autoChooser.getSelected();
+    
   }
 }
