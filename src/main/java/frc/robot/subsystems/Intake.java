@@ -181,11 +181,11 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic()
     {
-        //double pidOutput = pid.calculate(getEncoderPosition(), goal);
-        //runExtendMotor(pidOutput);
+        double pidOutput = pid.calculate(getEncoderPosition(), goal);
+        runExtendMotor(pidOutput);
         //runExtendWithGravity();
-        //SmartDashboard.putNumber("intake extension pid output", pidOutput);
-        //SmartDashboard.putNumber("intake extension goal", goal);
-        //SmartDashboard.putNumber("intake extension current", getEncoderPosition());
+        SmartDashboard.putNumber("intake extension pid output", pidOutput);
+        SmartDashboard.putNumber("intake extension goal", goal);
+        SmartDashboard.putNumber("intake extension current", getEncoderPosition());
     }
 }

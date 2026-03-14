@@ -277,7 +277,7 @@ public class RobotContainer {
     c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
    // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
-    //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
@@ -287,8 +287,8 @@ public class RobotContainer {
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
-    c_operator.x().onTrue(m_intake.manualUp()).onFalse(m_intake.stopExtendo());
-    c_operator.a().onTrue(m_intake.manualDown()).onFalse(m_intake.stopExtendo());
+   // c_operator.x().onTrue(m_intake.manualUp()).onFalse(m_intake.stopExtendo());
+   // c_operator.a().onTrue(m_intake.manualDown()).onFalse(m_intake.stopExtendo());
     
 
   }
