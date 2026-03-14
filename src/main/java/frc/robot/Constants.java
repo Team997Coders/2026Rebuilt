@@ -25,6 +25,7 @@ public final class Constants {
     public static final int dio0Pin = 9;
     public static final int dio1Pin = 8;
     public static final int dio2Pin = 7;
+    public static final int dio3Pin = 6;
   }
 
   public static final int gyroID = 46;

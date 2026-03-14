@@ -1,45 +1,82 @@
+package frc.robot.subsystems;
+
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Lights {
+import java.util.function.BooleanSupplier;
+
+public class Lights extends SubsystemBase {
     private final DigitalOutput dio0 = new DigitalOutput(Constants.LightsConstants.dio0Pin);
     private final DigitalOutput dio1 = new DigitalOutput(Constants.LightsConstants.dio1Pin);
     private final DigitalOutput dio2 = new DigitalOutput(Constants.LightsConstants.dio2Pin);
+    private final DigitalOutput dio3 = new DigitalOutput(Constants.LightsConstants.dio3Pin);
 
-    private void setState(int state = 0) {
-        private String strstate = Integer.toBinaryString(state);
+    private int currentState = 0;
 
-        dio0.set(Integer.parseInt(strstate.charAt(0)));
-        dio1.set(Integer.parseInt(strstate.charAt(1)));
-        dio2.set(Integer.parseInt(strstate.charAt(2)));
+    public void setState(int state) {
+        int clamped = Math.max(0, Math.min(15, state));
+        currentState = clamped;
+
+        // DIO0 is LSB, DIO3 is MSB.
+        dio0.set((clamped & 0x1) != 0);
+        dio1.set((clamped & 0x2) != 0);
+        dio2.set((clamped & 0x4) != 0);
+        dio3.set((clamped & 0x8) != 0);
     }
 
-    public void status_idleRed() {
-        setState(0);
+    public int getState() {
+        return currentState;
     }
-    public void status_idleBlue() {
-        setState(1);
+
+    public Command holdState(int state) {
+        return this.run(() -> setState(state));
     }
-    public void status_activeRed() {
-        setState(2);
+
+    public Command statusIdleRed() {
+        return holdState(0);
     }
-    public void status_activeBlue() {
-        setState(3);
+
+    public Command statusIdleBlue() {
+        return holdState(1);
     }
-    public void status_targetSearch() {
-        setState(4);
+
+    public Command statusActiveRed() {
+        return holdState(2);
     }
-    public void status_targetLocked() {
-        setState(5);
+
+    public Command statusActiveBlue() {
+        return holdState(3);
     }
-    public void status_shoot() {
-        setState(6);
+
+    public Command statusActiveAlliance(BooleanSupplier onBlueAlliance) {
+        return this.run(() -> {
+            if (onBlueAlliance.getAsBoolean()) {
+                setState(3);
+            } else {
+                setState(2);
+            }
+        });
     }
-    public void status_climbing() {
-        setState(7);
+
+    public Command statusPassing() {
+        return holdState(4);
     }
-    public void status_climbed() {
-        setState(8);
+
+    public Command statusTargetLocked() {
+        return holdState(5);
     }
-    
+
+    public Command statusShoot() {
+        return holdState(6);
+    }
+
+    public Command statusIntaking() {
+        return holdState(7);
+    }
+
+    public Command statusPurge() {
+        return holdState(8);
+    }
 }
