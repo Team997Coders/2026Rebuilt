@@ -5,19 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "extend intake"
-          }
-        },
-        {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "OutpostTrench-Middle"
+                  "name": "extend intake"
                 }
               },
               {
@@ -33,7 +27,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop intake extend"
+                        "name": "intake"
                       }
                     }
                   ]
@@ -68,17 +62,17 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "pathName": "Middle-DepotTrench"
+                  "pathName": "Middle-DepotBumpShoot"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
@@ -106,118 +100,19 @@
           }
         },
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop shoot"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "pathName": null
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "DepotTrench-Middle"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop hood"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop hub lock"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "intake fuel"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SwipeMid"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stop intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Return(Trench)-from(mid)"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "move roller"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake fuel"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "hood"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
                 }
               },
               {
@@ -233,37 +128,63 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "hood"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "roller"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 10.0
+                        "waitTime": 2.0
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop shoot"
+                        "name": "intake"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "DepotBumpShoot-Middle"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop index"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop roller"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop hood"
+                        "name": "stop intake extend"
                       }
                     },
                     {
@@ -271,14 +192,95 @@
                       "data": {
                         "name": "stop intake"
                       }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "MiddleHub-DepotBumpShoot"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 3.5
+                      }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "stop hub lock"
+                        "name": "shoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "hood"
                       }
                     }
                   ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "index"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hub lock"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hood"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "roller"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
                 }
               }
             ]
