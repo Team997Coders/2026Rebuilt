@@ -5,13 +5,19 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "named",
+          "data": {
+            "name": "extend intake"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "extend intake"
+                  "pathName": "OutpostTrench-Middle"
                 }
               },
               {
@@ -28,31 +34,6 @@
                       "type": "named",
                       "data": {
                         "name": "intake"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "OutpostTrench-Middle"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake extend"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "stop intake"
                       }
                     }
                   ]

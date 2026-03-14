@@ -25,21 +25,28 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "parallel",
                       "data": {
-                        "name": "extend intake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "shoot"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "hood"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "extend intake"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "shoot"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "hood"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]

@@ -130,9 +130,7 @@ public class RobotContainer {
            () -> getScaledXY(),
            () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
 
-    NamedCommands.registerCommand("extend intake", m_StupidIntake);
-    NamedCommands.registerCommand("stop intake extend", m_StupidIntake.finishCommand());
-
+    NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
     NamedCommands.registerCommand("intake", m_IntakeFuel);
     NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
@@ -272,6 +270,8 @@ public class RobotContainer {
     c_driveStick.leftTrigger().and(passing.negate()).whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
     c_driveStick.leftTrigger().and(passing).whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
     
+
+    c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.rightTrigger().whileTrue(m_IndexerCommand); //.alongWith(m_RollerCommand));
     c_driveStick.leftBumper().whileTrue(m_RollerCommand);
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
@@ -298,8 +298,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   // return autoChooser.getSelected();
+   return autoChooser.getSelected();
 
-     return new OdometryTest(drivebase, 0, 0);
+    // return new OdometryTest(drivebase, 0, 0);
   }
 }
