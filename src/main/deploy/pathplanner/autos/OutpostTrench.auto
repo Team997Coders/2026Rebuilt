@@ -40,7 +40,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "DepotTrench-Middle"
+                        "pathName": "OutpostTrench-Middle"
                       }
                     },
                     {
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle-DepotTrench"
+                  "pathName": "Middle-OutpostTrenchShoot"
                 }
               },
               {
@@ -94,6 +94,55 @@
                       }
                     }
                   ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "index"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hub lock"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "hood"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "roller"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
                 }
               }
             ]
@@ -129,13 +178,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": null
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "DepotTrench-Middle"
+                        "pathName": "OutpostTrenchShoot-HubMiddle"
                       }
                     },
                     {
@@ -148,6 +191,44 @@
                       "type": "named",
                       "data": {
                         "name": "stop intake"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HubMiddle-OutpostTrenchShoot"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 3.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "hood"
                       }
                     }
                   ]

@@ -3,10 +3,11 @@
   "robotLength": 0.6,
   "holonomicMode": true,
   "pathFolders": [
-    "DepotTrench"
+    "DepotTrench",
+    "OutpostTrench"
   ],
   "autoFolders": [
-    "Case autos"
+    "CAIS autos"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 5.0,
