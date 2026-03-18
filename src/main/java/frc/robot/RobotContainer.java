@@ -105,7 +105,7 @@ public class RobotContainer {
 
   private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY());
   private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
-    private final Hood hood = new Hood(pav, m_HubLock);
+  private final Hood hood = new Hood(pav, m_HubLock);
   private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
   private RollerCommand m_RollerCommand = new RollerCommand(roller);

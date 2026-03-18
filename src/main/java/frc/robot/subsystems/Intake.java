@@ -28,6 +28,8 @@ public class Intake extends SubsystemBase {
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
     private double goal = 0.25;    
     private AbsoluteEncoder encoder; 
+    private double encoderOffset = 0;
+
                     
     public Intake(){
         spinMotor = new SparkMax(Constants.IntakeConstants.spinMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
@@ -41,8 +43,7 @@ public class Intake extends SubsystemBase {
         extendMotorRight.configure(extendConfigRight, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         extendMotorLeft.configure(extendConfigLeft, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
-        encoder = extendMotorLeft.getAbsoluteEncoder();    
-        
+        encoder = extendMotorLeft.getAbsoluteEncoder();         
     }
 
     public void setGoal(double goal)
@@ -117,7 +118,7 @@ public class Intake extends SubsystemBase {
     }
             
     public double getEncoderPosition(){
-        return encoder.getPosition() - Constants.IntakeConstants.encoderOffset;
+        return encoder.getPosition() - encoderOffset;
     }
 
     public Command runFull()
@@ -184,11 +185,19 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic()
     {
+
+        if (encoderOffset == 0){
+            encoderOffset = encoder.getPosition();
+        }
+        
         double pidOutput = pid.calculate(getEncoderPosition(), goal);
         runExtendMotor(pidOutput);
         //runExtendWithGravity();
         SmartDashboard.putNumber("intake extension pid output", pidOutput);
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());
+
+        
+        
     }
 }
