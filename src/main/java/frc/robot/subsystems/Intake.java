@@ -28,7 +28,6 @@ public class Intake extends SubsystemBase {
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
     private double goal = 0.25;    
     private AbsoluteEncoder encoder; 
-    private double encoderOffset = 0;
 
                     
     public Intake(){
@@ -118,7 +117,7 @@ public class Intake extends SubsystemBase {
     }
             
     public double getEncoderPosition(){
-        return encoder.getPosition() - encoderOffset;
+        return encoder.getPosition() - Constants.IntakeConstants.encoderOffset;
     }
 
     public Command runFull()
@@ -186,10 +185,6 @@ public class Intake extends SubsystemBase {
     public void periodic()
     {
 
-        if (encoderOffset == 0){
-            encoderOffset = encoder.getPosition();
-        }
-        
         double pidOutput = pid.calculate(getEncoderPosition(), goal);
         runExtendMotor(pidOutput);
         //runExtendWithGravity();

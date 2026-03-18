@@ -231,6 +231,8 @@ public final class Constants {
     public static final double d = 0.1;
     public static final double extendedPosition = -10.2;
 
+    public static double encoderOffset = 0.0;
+
   }
 
 public static double airTime = 1;
