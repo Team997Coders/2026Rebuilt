@@ -34,7 +34,7 @@ public class HubLock extends Command {
     9, 2, 0, THETA_CONSTRAINTS);
   private Double[] pidValues = new Double[]{9.0, 2.0, 0.0};
   private double thetaTollerance = 2;
-  private double Kh = 1;
+  private double Kh = 0.1;
   private boolean finished = false;
 
   /** Creates a new Drive. */
@@ -138,7 +138,7 @@ public class HubLock extends Command {
         goal += (Math.PI/2);  
         shootOnMoveGoal += (Math.PI/2);
     }
-    thetaController.setGoal(goal);
+    thetaController.setGoal(shootOnMoveGoal);
     
     SmartDashboard.putNumber("hub lock goal: ", goal);
     SmartDashboard.putNumber("hub lock shoot on move goal", shootOnMoveGoal);
@@ -148,11 +148,12 @@ public class HubLock extends Command {
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
     SmartDashboard.putNumber("hub lock pid output", thetaSpeed);
 
-    if (Math.abs(thetaSpeed) < 0.04 || //The theta speed is under 0.04 meters per second
-        (goal - robotPose.getRotation().getRadians()) < 0.05) //The goal is within 0.05 radians of the goal
+    if (Math.abs(thetaSpeed) < 0.15) //|| //The theta speed is under 0.04 meters per second
+        //(goal - robotPose.getRotation().getRadians()) < 0.05) //The goal is within 0.05 radians of the goal
     {
       thetaSpeed = 0;
     }
+    SmartDashboard.putNumber("hub lock Theta speed", thetaSpeed);
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
   }

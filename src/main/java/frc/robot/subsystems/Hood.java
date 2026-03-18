@@ -41,7 +41,7 @@ public class Hood extends SubsystemBase {
     public DigitalInput hoodSwitch;
 
     public SparkMax hood = new SparkMax(Constants.ShooterConstants.hoodMotor, MotorType.kBrushed);
-    public AbsoluteEncoder hoodAbsoluteEncoder = hood.getAbsoluteEncoder();
+    public RelativeEncoder hoodRelativeEncoder = hood.getEncoder();
 
     public SparkMaxConfig hoodConfig = new SparkMaxConfig();
 
@@ -56,9 +56,7 @@ public class Hood extends SubsystemBase {
         //hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
-        //setHoodAnglePos(25); //angle from horizontal to top of hood 
-
-        //hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+        hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         goalAngle = 25;
     }
 
@@ -71,9 +69,9 @@ public class Hood extends SubsystemBase {
 
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
-        //   if(!magnet.get()) {
-        //     hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
-        // }
+        if(!magnet.get()) {
+            hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+        }
 
         SmartDashboard.putBoolean("magnet", magnet.get());
     }
@@ -84,7 +82,7 @@ public class Hood extends SubsystemBase {
     }
 
     public double getHoodAngle () { //degrees
-        return hoodAbsoluteEncoder.getPosition()*360/Constants.ShooterConstants.hoodGearRatio;
+        return hoodRelativeEncoder.getPosition()*360/Constants.ShooterConstants.hoodGearRatio;
     }
 
     public void setHoodMotorVoltage(double volts) {
