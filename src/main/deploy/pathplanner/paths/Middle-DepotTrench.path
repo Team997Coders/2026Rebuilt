@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.488188302425106,
-        "y": 7.366704707560627
+        "x": 5.887759036144579,
+        "y": 7.204036144578313
       },
       "prevControl": {
-        "x": 6.060624729159936,
-        "y": 7.1877971918677686
+        "x": 6.460195462879408,
+        "y": 7.025128628885454
       },
       "nextControl": {
-        "x": 5.05607533723572,
-        "y": 7.501755961272194
+        "x": 5.455646070955193,
+        "y": 7.339087398289879
       },
       "isLocked": false,
       "linkedName": null
@@ -46,11 +46,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.6377616403246464,
+      "waypointRelativePos": 1.5486381322957279,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 1.8462195642887653,
+      "waypointRelativePos": 1.9066147859922136,
       "rotationDegrees": 180.0
     }
   ],
@@ -73,7 +73,7 @@
   "folder": "DepotTrench",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -105.09710336213682
+    "rotation": -105.097
   },
   "useDefaultConstraints": true
 }
