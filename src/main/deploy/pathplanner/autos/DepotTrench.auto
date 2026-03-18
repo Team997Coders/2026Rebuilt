@@ -141,12 +141,6 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "DepotTrenchShoot-Middle"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
@@ -164,6 +158,19 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "DepotTrenchShoot-MiddleHub"
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -175,7 +182,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle-DepotTrench"
+                  "pathName": "MiddleHub-DepotTrench"
                 }
               },
               {
