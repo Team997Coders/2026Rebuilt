@@ -34,6 +34,7 @@ public class HubLock extends Command {
     9, 2, 0, THETA_CONSTRAINTS);
   private Double[] pidValues = new Double[]{9.0, 2.0, 0.0};
   private double thetaTollerance = 2;
+  private double Kh = 1;
   private boolean finished = false;
 
   /** Creates a new Drive. */
@@ -121,36 +122,39 @@ public class HubLock extends Command {
     goalPose = getGoalPose();
 
     Pose2d robotPose = drivebase.getShooterPose();
-    
+
+    double distance = getDistance();
+    double goal = Math.atan((goalPose.getY() - robotPose.getY()) 
+                        /(goalPose.getX() - robotPose.getX()));
+    double shootOnMoveGoal = Math.atan(((goalPose.getY() - robotPose.getY()) + (vy * distance * Kh))
+                                      /((goalPose.getX() - robotPose.getX()) + (vx * distance * Kh)));                        
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
     {
-        thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY()) 
-          /(goalPose.getX() - robotPose.getX())) - (Math.PI/2));
+        goal -= (Math.PI/2);
+        shootOnMoveGoal -= (Math.PI/2);
+        
     } else
     {
-        thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) + (Math.PI/2));      
+        goal += (Math.PI/2);  
+        shootOnMoveGoal += (Math.PI/2);
     }
+    thetaController.setGoal(goal);
     
-    SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
-
-    SmartDashboard.putNumber("goal: ", Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)));
-    SmartDashboard.putNumber("measered value: ", robotPose.getRotation().getRadians());
+    SmartDashboard.putNumber("hub lock goal: ", goal);
+    SmartDashboard.putNumber("hub lock shoot on move goal", shootOnMoveGoal);
+    SmartDashboard.putNumber("hub lock difference (shoot on move vs. static)", goal - shootOnMoveGoal);
+    SmartDashboard.putNumber("hub lock measered value: ", robotPose.getRotation().getRadians());
 
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
-    SmartDashboard.putBoolean("at goal", thetaController.atGoal());
+    SmartDashboard.putNumber("hub lock pid output", thetaSpeed);
 
-    if (Math.abs(thetaSpeed) < 0.04 || Math.abs(Math.atan((goalPose.getY() - robotPose.getY())
-          /(goalPose.getX() - robotPose.getX())) - robotPose.getRotation().getRadians()) < 0.05)
+    if (Math.abs(thetaSpeed) < 0.04 || //The theta speed is under 0.04 meters per second
+        (goal - robotPose.getRotation().getRadians()) < 0.05) //The goal is within 0.05 radians of the goal
     {
       thetaSpeed = 0;
     }
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
-    SmartDashboard.putNumber("x speed", -xy[1]);
-    SmartDashboard.putNumber("y speed", -xy[0]);
-    SmartDashboard.putNumber("theta speed", -thetaSpeed);
   }
 
 
