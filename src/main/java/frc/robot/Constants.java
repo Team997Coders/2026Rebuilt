@@ -22,10 +22,10 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
   public static final class LightsConstants {
-    public static final int dio0Pin = 9;
-    public static final int dio1Pin = 8;
-    public static final int dio2Pin = 7;
-    public static final int dio3Pin = 6;
+    public static final int dio0Pin = 11;
+    public static final int dio1Pin = 13;
+    public static final int dio2Pin = 15;
+    public static final int dio3Pin = 17;
   }
 
   public static final int gyroID = 46;
