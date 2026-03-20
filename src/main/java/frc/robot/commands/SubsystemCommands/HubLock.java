@@ -126,8 +126,12 @@ public class HubLock extends Command {
     double distance = getDistance();
     double goal = Math.atan((goalPose.getY() - robotPose.getY()) 
                         /(goalPose.getX() - robotPose.getX()));
+    // double shootOnMoveGoal = Math.atan(((goalPose.getY() - robotPose.getY()) + (vy * distance * Kh))
+    //                                   /((goalPose.getX() - robotPose.getX()) + (vx * distance * Kh)));    
+    
     double shootOnMoveGoal = Math.atan(((goalPose.getY() - robotPose.getY()) + (vy * distance * Kh))
-                                      /((goalPose.getX() - robotPose.getX()) + (vx * distance * Kh)));                        
+                                      /((goalPose.getX() - robotPose.getX()) + (vx * distance * Kh)));
+    
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
     {
         goal -= (Math.PI/2);
