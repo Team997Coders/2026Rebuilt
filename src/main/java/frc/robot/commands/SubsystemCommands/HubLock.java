@@ -34,7 +34,7 @@ public class HubLock extends Command {
     9, 2, 0, THETA_CONSTRAINTS);
   private Double[] pidValues = new Double[]{9.0, 2.0, 0.0};
   private double thetaTollerance = 2;
-  private double Kh = 0.1;
+  private double Kh = 0.4;
   private boolean finished = false;
 
   /** Creates a new Drive. */
@@ -138,8 +138,11 @@ public class HubLock extends Command {
         goal += (Math.PI/2);  
         shootOnMoveGoal += (Math.PI/2);
     }
-    thetaController.setGoal(shootOnMoveGoal);
+    thetaController.setGoal(goal);
     
+    SmartDashboard.putNumber("vy chassis speeds", vy);
+    SmartDashboard.putNumber("vx chassis speeds", vx);
+
     SmartDashboard.putNumber("hub lock goal: ", goal);
     SmartDashboard.putNumber("hub lock shoot on move goal", shootOnMoveGoal);
     SmartDashboard.putNumber("hub lock difference (shoot on move vs. static)", goal - shootOnMoveGoal);

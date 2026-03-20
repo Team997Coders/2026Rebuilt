@@ -188,4 +188,12 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());
     }
+
+    public Command resetTopCommand() {
+        return this.runOnce(() -> encoder.setPosition(0));
+    }
+
+    public Command resetBottomCommand() {
+        return this.runOnce(() -> encoder.setPosition(Constants.IntakeConstants.extendedPosition + 0.25));
+    }
 }

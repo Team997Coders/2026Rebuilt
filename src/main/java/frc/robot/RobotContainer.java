@@ -289,6 +289,9 @@ public class RobotContainer {
     //c_operator.a().onTrue(m_intake.manualDown()).onFalse(m_intake.stopExtendo());
 
     c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
+
+    c_operator.y().onTrue(m_intake.resetTopCommand());
+    c_operator.b().onTrue(m_intake.resetBottomCommand());
     
 
   }
