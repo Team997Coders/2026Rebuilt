@@ -90,12 +90,8 @@ public class Lights extends SubsystemBase {
         return this.run(() -> setState(state));
     }
 
-    public Command statusIdleRed() {
+    public Command statusIdle() {
         return holdState(0);
-    }
-
-    public Command statusIdleBlue() {
-        return holdState(1);
     }
 
     public Command statusActiveRed() {
