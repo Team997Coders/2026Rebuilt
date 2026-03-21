@@ -217,6 +217,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("Scaled_X", getScaledXY()[0]);
     SmartDashboard.putNumber("Scaled_Y", getScaledXY()[1]);
     SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
+
+    SmartDashboard.putData("command scheduler", CommandScheduler.getInstance());
   }
 
   @SuppressWarnings("unused")
@@ -278,8 +280,8 @@ public class RobotContainer {
     
 
     c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
-    c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand)
-      .alongWith(lights.statusShoot()));
+    c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
+      // .alongWith(lights.statusShoot()));
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
    // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
