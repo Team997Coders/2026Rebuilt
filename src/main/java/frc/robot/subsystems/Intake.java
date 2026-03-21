@@ -147,14 +147,16 @@ public class Intake extends SubsystemBase {
     }
 
     public void toggleIntake()
-    {
-        if (goal == 0.25)
+    { boolean up = true;
+        if (up == true)
         {
-            setGoal(Constants.IntakeConstants.extendedPosition);
+            setGoal(getEncoderPosition() - 10);
+            up = false;
         }
         else
         {
-            setGoal(0.25);
+            setGoal(getEncoderPosition() + 10);
+            up = true;
         }
     }
 
