@@ -265,33 +265,54 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
-    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull().alongWith(lights.statusIntaking()))
-      .onFalse(m_intake.stopIntake());
+    Trigger intakeTrigger = c_driveStick.rightBumper();
+    Trigger targetLockTrigger = c_driveStick.leftTrigger().and(passing.negate());
+    Trigger passingTrigger = c_driveStick.leftTrigger().and(passing);
+    Trigger shootTrigger = c_driveStick.rightTrigger();
+    Trigger flywheelTrigger = c_driveStick.y();
+    Trigger purgeIndexerTrigger = c_driveStick.b();
+    Trigger purgeIntakeTrigger = c_driveStick.a();
+
+    intakeTrigger.whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
     //c_driveStick.leftBumper().whileTrue(m_intake.extendManual(0.5));
     // c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
     //   .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
 
-    c_driveStick.leftTrigger().and(passing.negate()).whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood)
-      .alongWith(lights.statusTargetLocked()));
-    c_driveStick.leftTrigger().and(passing).whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood)
-      .alongWith(lights.statusPassing()));
+    targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+    targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
+
+    passingTrigger.whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
+    passingTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, false)));
     
 
     c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
-    c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand)
-      .alongWith(lights.statusShoot()));
+    shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
+    shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
    // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
-    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand().alongWith(lights.statusShoot()))
+    flywheelTrigger.whileTrue(shooter.moveFlywheelDashboardCommand())
       .onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.b().whileTrue(indexer.reverseIndexer().alongWith(lights.statusPurge()))
+    flywheelTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
+
+    purgeIndexerTrigger.whileTrue(indexer.reverseIndexer())
       .onFalse(indexer.stopIndexer());
-    c_driveStick.a().whileTrue(m_intake.reverse().alongWith(lights.statusPurge()))
+    purgeIndexerTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
+
+    purgeIntakeTrigger.whileTrue(m_intake.reverse())
       .onFalse(m_intake.stopIntake());
+    purgeIntakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
