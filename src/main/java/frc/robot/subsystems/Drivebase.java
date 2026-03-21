@@ -216,8 +216,8 @@ public class Drivebase extends SubsystemBase {
   public Pose2d getShooterPose()
   {
     Pose2d robotPose = getPose();
-    return new Pose2d(robotPose.getX() - Units.inchesToMeters(10) * robotPose.getRotation().getCos(),
-                      robotPose.getY() - Units.inchesToMeters(10) * robotPose.getRotation().getSin(), 
+    return new Pose2d(robotPose.getX() - Units.inchesToMeters(21) * robotPose.getRotation().getCos(),
+                      robotPose.getY() - Units.inchesToMeters(21) * robotPose.getRotation().getSin(), 
                       robotPose.getRotation());
   }
 

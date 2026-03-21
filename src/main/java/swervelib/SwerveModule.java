@@ -33,9 +33,9 @@ public class SwerveModule {
   private TalonFXConfiguration speedConfig;
   private TalonFXConfiguration turnConfig;
 
- private double driveReduction = 1.0 / 6.75;
+ private double driveReduction = 5.45;
  private double WHEEL_DIAMETER = 0.1016;
- private double rotationsToDistance = driveReduction * WHEEL_DIAMETER * Math.PI;
+ private double rotationsToDistance = (WHEEL_DIAMETER * Math.PI) / driveReduction;
 
  private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constants;
 

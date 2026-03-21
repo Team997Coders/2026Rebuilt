@@ -3,58 +3,63 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.198,
-        "y": 2.439
+        "x": 3.224,
+        "y": 7.496
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.117698795180723,
-        "y": 1.0735903614457833
+        "x": 1.5462079281848362,
+        "y": 7.477347751667112
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.4945903614457823,
-        "y": 0.49442168674698794
+        "x": 0.506804564907275,
+        "y": 7.327888730385164
       },
       "prevControl": {
-        "x": 1.8772891566265053,
-        "y": 0.5818433734939752
+        "x": 0.7460915789555942,
+        "y": 7.83795137152398
       },
       "nextControl": {
-        "x": 4.450165889330071,
-        "y": 0.4427689555099996
+        "x": 0.27838144625157346,
+        "y": 6.8409834979300275
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.2865060240963855,
-        "y": 0.84410843373494
+        "x": 0.506804564907275,
+        "y": 5.641373493975904
       },
       "prevControl": {
-        "x": 7.00135874575709,
-        "y": 0.84410843373494
+        "x": 0.6195172864676436,
+        "y": 5.864523314496681
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
+  "rotationTargets": [],
+  "constraintZones": [
     {
-      "waypointRelativePos": 1.103734439834031,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 1.4356846473029057,
-      "rotationDegrees": 0.0
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.28551724137931,
+      "maxWaypointRelativePos": 1.9907502569373074,
+      "constraints": {
+        "maxVelocity": 0.6,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
     }
   ],
-  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -67,13 +72,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 68.45902408146168
+    "rotation": -110.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "DepotTrench",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 47.05237416317796
+    "rotation": -163.74
   },
   "useDefaultConstraints": true
 }

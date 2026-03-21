@@ -52,7 +52,7 @@ public class PAVController {
         }
         else if (targetAngle == 35)
         {
-            velocity = 7.8625 + .7724 * distance;
+            velocity = 7.8625 + (.7724 + 0.15) * distance;
         }
         else //40
         {
