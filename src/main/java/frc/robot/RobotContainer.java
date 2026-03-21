@@ -280,10 +280,7 @@ public class RobotContainer {
     intakeTrigger.whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
     intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
-    //c_driveStick.leftBumper().whileTrue(m_intake.extendManual(0.5));
-    // c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
-    //   .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
-
+ 
     targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
     targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
@@ -297,8 +294,7 @@ public class RobotContainer {
     shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
     shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
-    //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
-   // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    
     c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
@@ -320,8 +316,6 @@ public class RobotContainer {
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
-    //c_operator.x().onTrue(m_intake.manualUp()).onFalse(m_intake.stopExtendo());
-    //c_operator.a().onTrue(m_intake.manualDown()).onFalse(m_intake.stopExtendo());
 
     c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
 
