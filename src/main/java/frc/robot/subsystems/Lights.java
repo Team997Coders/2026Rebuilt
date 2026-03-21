@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -34,7 +35,8 @@ public class Lights extends SubsystemBase {
         }
     }
 
-    private final EnumMap<RequestedState, Integer> requestCounts = new EnumMap<>(RequestedState.class);
+    private final EnumMap<RequestedState, ArrayList<BooleanSupplier>> requestSuppliers =
+        new EnumMap<>(RequestedState.class);
 
     public void setState(int state) {
         int clamped = Math.max(0, Math.min(15, state));
@@ -51,17 +53,21 @@ public class Lights extends SubsystemBase {
         return currentState;
     }
 
-    public void setRequestActive(RequestedState request, boolean active) {
-        int count = requestCounts.getOrDefault(request, 0);
-        if (active) {
-            requestCounts.put(request, count + 1);
-        } else if (count > 0) {
-            requestCounts.put(request, count - 1);
-        }
+    public void addRequestSupplier(RequestedState request, BooleanSupplier supplier) {
+        requestSuppliers.computeIfAbsent(request, key -> new ArrayList<>()).add(supplier);
     }
 
     private boolean isRequestActive(RequestedState request) {
-        return requestCounts.getOrDefault(request, 0) > 0;
+        ArrayList<BooleanSupplier> suppliers = requestSuppliers.get(request);
+        if (suppliers == null) {
+            return false;
+        }
+        for (BooleanSupplier supplier : suppliers) {
+            if (supplier.getAsBoolean()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int resolveState(BooleanSupplier onBlueAlliance, BooleanSupplier isDisabled) {
