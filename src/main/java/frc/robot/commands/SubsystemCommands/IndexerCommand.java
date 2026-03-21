@@ -13,7 +13,7 @@ public class IndexerCommand extends Command{
 
     private Indexer m_indexer;
     private Boolean finished = false;
-    private double IndexerSpeed = 0.6;
+    private double IndexerSpeed = 0.8;
 
     public IndexerCommand(Indexer indexer)
     {
@@ -24,12 +24,12 @@ public class IndexerCommand extends Command{
 
     public void setIndexerSpeed() {
 
-        if (IndexerSpeed == .6) {
+        if (IndexerSpeed == .8) {
 
-            IndexerSpeed = .3;
+            IndexerSpeed = .4;
         } else {
 
-            IndexerSpeed =.6;
+            IndexerSpeed =.8;
         }
     }
 

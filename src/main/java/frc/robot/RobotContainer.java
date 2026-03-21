@@ -106,7 +106,7 @@ public class RobotContainer {
   
   public final Intake m_intake = new Intake();
 
-  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY());
+  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter);
   private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
   private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
@@ -163,7 +163,9 @@ public class RobotContainer {
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
+    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
     SmartDashboard.putData("Auto Choser", autoChooser);
+    
 
     CanandEventLoop.getInstance();
   }
@@ -217,6 +219,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("Scaled_X", getScaledXY()[0]);
     SmartDashboard.putNumber("Scaled_Y", getScaledXY()[1]);
     SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
+
+    SmartDashboard.putData("command scheduler", CommandScheduler.getInstance());
   }
 
   @SuppressWarnings("unused")
@@ -282,10 +286,7 @@ public class RobotContainer {
     lights.addRequestSupplier(Lights.RequestedState.PURGE, purgeIntakeTrigger::getAsBoolean);
 
     intakeTrigger.whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
-    //c_driveStick.leftBumper().whileTrue(m_intake.extendManual(0.5));
-    // c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
-    //   .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
-
+    
     targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
 
     passingTrigger.whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
@@ -293,9 +294,8 @@ public class RobotContainer {
 
     c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
     shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
-    //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
-   // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
-    //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+ 
+    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
@@ -310,10 +310,11 @@ public class RobotContainer {
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
-    //c_operator.x().onTrue(m_intake.manualUp()).onFalse(m_intake.stopExtendo());
-    //c_operator.a().onTrue(m_intake.manualDown()).onFalse(m_intake.stopExtendo());
 
     c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
+
+    c_operator.y().onTrue(m_intake.resetTopCommand());
+    c_operator.b().onTrue(m_intake.resetBottomCommand());
     
 
   }
@@ -324,8 +325,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   return autoChooser.getSelected();
-
-    // return new OdometryTest(drivebase, 0, 0);
+    return autoChooser.getSelected();
+    
   }
 }

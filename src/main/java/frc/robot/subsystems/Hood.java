@@ -56,8 +56,6 @@ public class Hood extends SubsystemBase {
         //hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
-        //setHoodAnglePos(25); //angle from horizontal to top of hood 
-
         hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         goalAngle = 25;
     }
@@ -71,7 +69,7 @@ public class Hood extends SubsystemBase {
 
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
-          if(!magnet.get()) {
+        if(!magnet.get()) {
             hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         }
 
@@ -81,6 +79,7 @@ public class Hood extends SubsystemBase {
     //Hood
     public void setGoalAngle(double angle) {
         goalAngle = angle;
+
     }
 
     public double getHoodAngle () { //degrees
