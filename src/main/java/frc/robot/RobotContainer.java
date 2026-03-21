@@ -29,6 +29,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
 import frc.robot.subsystems.vision.PAVController;
@@ -97,6 +98,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Roller roller = new Roller();
   private final Hood hood = new Hood();
+  private final Lights lights = new Lights();
   
   private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
 
@@ -157,6 +159,7 @@ public class RobotContainer {
     // new EventTrigger("intake fuel").whileTrue(m_IntakeFuel);
     
     configureBindings();
+    lights.setDefaultCommand(lights.statusByRobotState(this::onBlueAlliance, DriverStation::isDisabled));
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
@@ -264,26 +267,34 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
-    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull().alongWith(lights.statusIntaking()))
+      .onFalse(m_intake.stopIntake());
     //c_driveStick.leftBumper().whileTrue(m_intake.extendManual(0.5));
     // c_driveStick.leftTrigger().whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood))
     //   .onFalse(m_HubLock.finishCommand().alongWith(m_PavShooter.finishCommand().alongWith(m_PavHood.finishCommand())));
 
-    c_driveStick.leftTrigger().and(passing.negate()).whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
-    c_driveStick.leftTrigger().and(passing).whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
+    c_driveStick.leftTrigger().and(passing.negate()).whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood)
+      .alongWith(lights.statusTargetLocked()));
+    c_driveStick.leftTrigger().and(passing).whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood)
+      .alongWith(lights.statusPassing()));
     
 
     c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
+    c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand)
+        .alongWith(lights.statusShoot()));
     c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
    // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
-    //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
-    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
-    c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
+    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand().alongWith(lights.statusShoot()))
+      .onFalse(shooter.moveFlywheelCommand(0));
+    c_driveStick.b().whileTrue(indexer.reverseIndexer().alongWith(lights.statusPurge()))
+      .onFalse(indexer.stopIndexer());
+    c_driveStick.a().whileTrue(m_intake.reverse().alongWith(lights.statusPurge()))
+      .onFalse(m_intake.stopIntake());
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
