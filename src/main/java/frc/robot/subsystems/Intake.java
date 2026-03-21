@@ -147,14 +147,14 @@ public class Intake extends SubsystemBase {
     }
 
     public void toggleIntake()
-    {
-        if (goal == 0.25)
-        {
-            setGoal(Constants.IntakeConstants.extendedPosition);
+    { 
+        if (getEncoderPosition() >= -5) {
+
+            setGoal(getEncoderPosition() - 10);
         }
         else
         {
-            setGoal(0.25);
+            setGoal(getEncoderPosition() + 11);
         }
     }
 
@@ -187,5 +187,14 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("intake extension pid output", pidOutput);
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());
+        SmartDashboard.putNumber("intake encoder position", getEncoderPosition());
+    }
+
+    public Command resetTopCommand() {
+        return this.runOnce(() -> encoder.setPosition(0));
+    }
+
+    public Command resetBottomCommand() {
+        return this.runOnce(() -> encoder.setPosition(Constants.IntakeConstants.extendedPosition + 0.25));
     }
 }

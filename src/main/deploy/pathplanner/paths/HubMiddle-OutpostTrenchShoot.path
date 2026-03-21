@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.618,
-        "y": 4.365
+        "x": 7.745,
+        "y": 4.068
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.128448701710326,
-        "y": 2.8311552625466305
+        "x": 7.428566265060241,
+        "y": 2.734602409638553
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.618,
-        "y": 0.6386019971469341
+        "x": 6.477855421686746,
+        "y": 0.6146265060240967
       },
       "prevControl": {
-        "x": 5.938234049250924,
-        "y": 0.627195848415877
+        "x": 6.798089470937669,
+        "y": 0.6032203572930397
       },
       "nextControl": {
-        "x": 1.6811365254003543,
-        "y": 0.778825844143179
+        "x": 2.5409919470871,
+        "y": 0.7548503530203416
       },
       "isLocked": false,
       "linkedName": null
@@ -69,7 +69,7 @@
   "folder": "OutpostTrench",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 101.7
+    "rotation": 70.0
   },
   "useDefaultConstraints": true
 }

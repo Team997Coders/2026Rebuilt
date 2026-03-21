@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.wpilibj2.command.Subsystem;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -121,6 +123,7 @@ public class Lights extends SubsystemBase {
             @Override
             public Set<Subsystem> getRequirements() {
                 return Set.of(Lights.this);
+
             }
 
             @Override
