@@ -79,6 +79,7 @@ public class Hood extends SubsystemBase {
     //Hood
     public void setGoalAngle(double angle) {
         goalAngle = angle;
+
     }
 
     public double getHoodAngle () { //degrees
