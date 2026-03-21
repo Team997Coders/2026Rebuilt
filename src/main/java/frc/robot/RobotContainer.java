@@ -279,7 +279,8 @@ public class RobotContainer {
 
     c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand)
-      .alongWith(lights.statusShoot()));
+        .alongWith(lights.statusShoot()));
+    c_driveStick.rightTrigger().whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
    // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
