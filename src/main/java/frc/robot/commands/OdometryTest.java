@@ -18,7 +18,7 @@ public class OdometryTest extends Command{
     private Drivebase drivebase;
     private double startPos;
     private double error;
-    private PIDController pid = new PIDController(1.5, 0, 0);
+    private PIDController pid = new PIDController(1, 0, 0);
 
   /** Creates a new Drive. */
   public OdometryTest(Drivebase drivebase, double startPos, double error) {
@@ -38,7 +38,7 @@ public class OdometryTest extends Command{
   public void initialize() {
     startPos = drivebase.getPositions()[0].distanceMeters; 
     pid.reset();
-    pid.setSetpoint(Constants.AutoDriveConstants.distance);
+    pid.setSetpoint(drivebase.getPositions()[0].distanceMeters - Constants.AutoDriveConstants.distance);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,8 +48,8 @@ public class OdometryTest extends Command{
     double deltaPos = currentPos - startPos;
     double error = Constants.AutoDriveConstants.distance - deltaPos;
     SmartDashboard.putNumber("auto error", error);
-    drivebase.defaultDrive(pid.calculate(deltaPos), 0, 0);
-    SmartDashboard.putNumber("pid output auto", pid.calculate(deltaPos));
+    drivebase.defaultDrive(-pid.calculate(drivebase.getPositions()[0].distanceMeters), 0, 0);
+    SmartDashboard.putNumber("pid output auto", pid.calculate(drivebase.getPositions()[0].distanceMeters));
   }
 
   // Called once the command ends or is interrupted.

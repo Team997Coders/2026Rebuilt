@@ -163,7 +163,9 @@ public class RobotContainer {
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
+    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
     SmartDashboard.putData("Auto Choser", autoChooser);
+    
 
     CanandEventLoop.getInstance();
   }
@@ -284,7 +286,7 @@ public class RobotContainer {
       // .alongWith(lights.statusShoot()));
     //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
    // c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
-    //c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
+    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
@@ -314,8 +316,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   return autoChooser.getSelected();
-
-    // return new OdometryTest(drivebase, 0, 0);
+    return autoChooser.getSelected();
+    
   }
 }
