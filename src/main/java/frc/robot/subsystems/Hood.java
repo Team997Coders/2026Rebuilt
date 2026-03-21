@@ -58,7 +58,7 @@ public class Hood extends SubsystemBase {
 
         //setHoodAnglePos(25); //angle from horizontal to top of hood 
 
-        //hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+        hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         goalAngle = 25;
     }
 

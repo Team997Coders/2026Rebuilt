@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.9114389032512875,
-        "y": 6.4849613937093284
+        "x": 7.199084337349397,
+        "y": 6.865277108433736
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.887759036144579,
-        "y": 7.204036144578313
+        "x": 6.324867469879519,
+        "y": 7.378879518072289
       },
       "prevControl": {
-        "x": 6.173835160562211,
-        "y": 7.075282978637409
+        "x": 7.843819277108432,
+        "y": 7.061975903614457
       },
       "nextControl": {
-        "x": 5.103696270218377,
-        "y": 7.556916216674112
+        "x": 5.483177578701469,
+        "y": 7.554483883857637
       },
       "isLocked": false,
       "linkedName": null
@@ -72,7 +72,7 @@
   "reversed": false,
   "folder": "DepotTrench",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": -105.097
   },
   "useDefaultConstraints": true
