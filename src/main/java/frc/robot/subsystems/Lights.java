@@ -69,11 +69,7 @@ public class Lights extends SubsystemBase {
             @Override
             public void execute() {
                 if (isDisabled.getAsBoolean()) {
-                    if (onBlueAlliance.getAsBoolean()) {
-                        setState(1);
-                    } else {
-                        setState(0);
-                    }
+                    setState(0);
                 } else {
                     if (onBlueAlliance.getAsBoolean()) {
                         setState(3);
