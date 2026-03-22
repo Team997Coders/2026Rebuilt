@@ -36,10 +36,10 @@ import frc.robot.subsystems.vision.PAVController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.EventMarker;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.auto.NamedCommands;
+// import com.pathplanner.lib.events.EventTrigger;
+// import com.pathplanner.lib.path.EventMarker;
 import com.reduxrobotics.canand.CanandEventLoop;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
@@ -132,6 +132,7 @@ public class RobotContainer {
            () -> getScaledXY(),
            () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
 
+           /*
     NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
     NamedCommands.registerCommand("intake", m_IntakeFuel);
@@ -151,6 +152,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("raise climber", climber.raise());
     NamedCommands.registerCommand("lower climber", climber.lower());
 
+    */
     // new EventTrigger("shoot").whileTrue(m_PavShooter);
     // new EventTrigger("index").whileTrue(m_IndexerCommand);
     // new EventTrigger("extend intake").whileTrue(m_intake.extendIntake());
@@ -162,9 +164,9 @@ public class RobotContainer {
     lights.setDefaultCommand(lights.statusByRobotState(this::onBlueAlliance, DriverStation::isDisabled));
     resetGyro();
 
-    autoChooser = AutoBuilder.buildAutoChooser("moveForward");
-    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
-    SmartDashboard.putData("Auto Choser", autoChooser);
+    //autoChooser = AutoBuilder.buildAutoChooser("moveForward");
+    //autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
+    //SmartDashboard.putData("Auto Choser", autoChooser);
     
 
     CanandEventLoop.getInstance();

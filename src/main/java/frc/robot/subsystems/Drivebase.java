@@ -11,10 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.config.PIDConstants;
+// import com.pathplanner.lib.config.RobotConfig;
+// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
 import swervelib.SwerveModule;
@@ -90,6 +90,7 @@ public class Drivebase extends SubsystemBase {
 
     //ModuleConfig ModuleConfig = new ModuleConfig(WHEEL_DIAMETER/2, 3, WHEEL_DIAMETER, DCMotor.getNEO(2), 1.8, 0);
     //RobotConfig config = new RobotConfig(15, 11.25, ModuleConfig, 0.66);
+    /*
     RobotConfig config;
      try{
        config = RobotConfig.fromGUISettings();
@@ -119,7 +120,7 @@ public class Drivebase extends SubsystemBase {
             },
             this // Reference to this subsystem to set requirements
     );
-
+*/
     SmartDashboard.putData("Field", field);
 
     SmartDashboard.putData("Swerve Drive", new Sendable() {
