@@ -4,22 +4,14 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.DARE;
+  import java.util.function.Supplier; // kept for usage in the class
+  // removed unused imports: DoubleSupplier, SignalMeasurement, AprilTagFieldLayout, AprilTagFields, DARE
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+// removed unused imports: Pose2d, DriverStation, Constants
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.vision.ObjectCamera;
 

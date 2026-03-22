@@ -6,7 +6,7 @@ package swervelib;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.CANcoder;
+// removed unused import: CANcoder
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -16,11 +16,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
+// removed unused imports: Units, Talon, SmartDashboard
 import frc.robot.Constants.DriveConstants.SwervePID;
+// removed unused import: frc.robot.Constants
 
 /** Add your docs here. */
 public class SwerveModule {
@@ -29,7 +27,6 @@ public class SwerveModule {
   private PIDController pidController;
   private Canandmag absoluteEncoder;
   private double maxVelocity;
-  private double maxVoltage;
   private TalonFXConfiguration speedConfig;
   private TalonFXConfiguration turnConfig;
 
@@ -69,7 +66,6 @@ public class SwerveModule {
     //this.absoluteEncoder.setAbsPosition(0);
 
     this.maxVelocity = maxVelocity;
-    this.maxVoltage = maxVoltage;
 
     this.pidController.enableContinuousInput(0, 360);
   }

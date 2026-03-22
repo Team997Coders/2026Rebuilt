@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.commands.HubLock;
+import frc.robot.commands.hubLock;
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -29,7 +29,7 @@ public class Shooter extends SubsystemBase {
     private SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0.1, 0.11/2/Math.PI, 0);
 
     private PAVController pav;
-    private HubLock hubLock;
+    private hubLock hubLock;
 
     /**
      * The shooter subsystem of the robot, contains both flywheels and velocity control for shooter
@@ -37,7 +37,7 @@ public class Shooter extends SubsystemBase {
      * @param hubLock The temporary SwerveDrivePoseEstimator without the swerve, just uses camera for localization.
      * We used this to get the actual distance from the hub and update the location on the field.
      */
-    public Shooter(PAVController pav, HubLock hubLock) {
+    public Shooter(PAVController pav, hubLock hubLock) {
         this.hubLock = hubLock;
         this.pav = pav;
         shooterPID.reset();

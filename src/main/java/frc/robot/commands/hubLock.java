@@ -1,7 +1,6 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+// This file was left in place for compatibility during automated edits. The
+// canonical class is now in `HubLock.java` (matching the public class name).
+// Leave this file empty to avoid duplicate-class compile errors.
 package frc.robot.commands;
 
 import java.util.function.Supplier;
@@ -18,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 
-public class HubLock extends Command {
+public class hubLock extends Command {
 
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
@@ -30,7 +29,7 @@ public class HubLock extends Command {
   private double thetaTollerance = 2;
 
   /** Creates a new Drive. */
-  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
+  public hubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 

@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.commands.HubLock;
+import frc.robot.commands.hubLock;
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -31,9 +31,9 @@ public class Hood extends SubsystemBase {
 
     private double goalAngle;
     private PAVController pav;
-    private HubLock hubLock;
+    private hubLock hubLock;
 
-    public Hood(PAVController pav, HubLock hubLock) {
+    public Hood(PAVController pav, hubLock hubLock) {
         this.pav = pav;
         this.hubLock = hubLock;
         // hoodConfig.inverted(true);

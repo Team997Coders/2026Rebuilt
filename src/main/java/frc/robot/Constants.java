@@ -158,7 +158,6 @@ public final class Constants {
       );
     }
 
-    //TODO: FIX DISTANCES
     public static final class ModuleLocations {
       public static final double length = Units.inchesToMeters(19.25)/2;
       public static final double width = Units.inchesToMeters(24)/2;

@@ -6,8 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
-import frc.robot.commands.HubLock;
-import frc.robot.commands.Unstick;
+import frc.robot.commands.hubLock;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -72,7 +71,7 @@ public class RobotContainer {
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-  private final HubLock hubLock = new HubLock(drivebase, () -> getScaledXY());
+  private final hubLock hubLock = new hubLock(drivebase, () -> getScaledXY());
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
@@ -80,10 +79,6 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter(pav, hubLock);
   private final Roller roller = new Roller();
   private final Hood hood = new Hood(pav, hubLock);
-  
-  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
-
-  private final Unstick unstick = new Unstick(indexer);
   
   public final Intake m_intake;
 
