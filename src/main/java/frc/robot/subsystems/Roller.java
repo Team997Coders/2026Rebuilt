@@ -35,6 +35,7 @@ public class Roller extends SubsystemBase {
     
     //make sure to ramp up the wheels when running
     public SparkMax roller = new SparkMax(Constants.ShooterConstants.rollerMotor, MotorType.kBrushless);
+    private double lastRollerOutput = 0.0;
 
     public Roller() {}
 
@@ -44,6 +45,7 @@ public class Roller extends SubsystemBase {
     
     //Roller
     public void setRollerVoltage (double volts) {
+        lastRollerOutput = volts;
         roller.setVoltage(volts);
     }
 
@@ -61,7 +63,16 @@ public class Roller extends SubsystemBase {
     }
 
     public void setRollerMotor(double setpoint) {
+        lastRollerOutput = setpoint;
         roller.set(setpoint);
+    }
+
+    public boolean isRollingForward() {
+        return lastRollerOutput > 0.05;
+    }
+
+    public boolean isRollingReverse() {
+        return lastRollerOutput < -0.05;
     }
 
 }

@@ -277,13 +277,15 @@ public class RobotContainer {
     Trigger purgeIndexerTrigger = c_driveStick.b();
     Trigger purgeIntakeTrigger = c_driveStick.a();
 
-    lights.addRequestSupplier(Lights.RequestedState.INTAKING, intakeTrigger::getAsBoolean);
-    lights.addRequestSupplier(Lights.RequestedState.TARGET_LOCKED, targetLockTrigger::getAsBoolean);
-    lights.addRequestSupplier(Lights.RequestedState.PASSING, passingTrigger::getAsBoolean);
-    lights.addRequestSupplier(Lights.RequestedState.SHOOT, shootTrigger::getAsBoolean);
-    lights.addRequestSupplier(Lights.RequestedState.SHOOT, flywheelTrigger::getAsBoolean);
-    lights.addRequestSupplier(Lights.RequestedState.PURGE, purgeIndexerTrigger::getAsBoolean);
-    lights.addRequestSupplier(Lights.RequestedState.PURGE, purgeIntakeTrigger::getAsBoolean);
+    lights.addRequestSupplier(Lights.RequestedState.INTAKING, m_intake::isIntaking);
+    lights.addRequestSupplier(Lights.RequestedState.TARGET_LOCKED,
+      () -> CommandScheduler.getInstance().isScheduled(m_HubLock));
+    lights.addRequestSupplier(Lights.RequestedState.PASSING,
+      () -> CommandScheduler.getInstance().isScheduled(m_PassLock));
+    lights.addRequestSupplier(Lights.RequestedState.SHOOT,
+      () -> indexer.isIndexingForward() || roller.isRollingForward());
+    lights.addRequestSupplier(Lights.RequestedState.PURGE,
+      () -> indexer.isIndexingReverse() || roller.isRollingReverse() || m_intake.isPurging());
 
     intakeTrigger.whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
     

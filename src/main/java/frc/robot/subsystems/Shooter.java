@@ -67,6 +67,10 @@ public class Shooter extends SubsystemBase {
 
        SmartDashboard.putNumber("volts", shooterVolts);
     }
+
+    public boolean isFlywheelActive() {
+        return shooterVolts > 0.2;
+    }
     
     /**
      * @return the current rotational velocity of the flywheels in radians/second

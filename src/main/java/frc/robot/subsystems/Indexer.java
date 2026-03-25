@@ -11,6 +11,7 @@ import frc.robot.Constants;
 public class Indexer extends SubsystemBase{
 
    private final SparkMax indexMotor; 
+   private double lastIndexerOutput = 0.0;
 
 
    public Indexer() {
@@ -19,11 +20,13 @@ public class Indexer extends SubsystemBase{
    }
 
    public void spinIndexerMotor(double voltage){
+    lastIndexerOutput = voltage;
     indexMotor.setVoltage(voltage);
    } 
 
    public void setIndexerMotor(double setpoint)
    {
+      lastIndexerOutput = setpoint;
       indexMotor.set(setpoint);
    }
 
@@ -41,6 +44,14 @@ public class Indexer extends SubsystemBase{
 
    public double getIndexVoltage(){
       return indexMotor.getAppliedOutput() * indexMotor.getBusVoltage();
+   }
+
+   public boolean isIndexingForward(){
+      return lastIndexerOutput > 0.05;
+   }
+
+   public boolean isIndexingReverse(){
+      return lastIndexerOutput < -0.05;
    }
 
    public boolean unstickFuel(){

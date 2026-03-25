@@ -25,6 +25,7 @@ public class Intake extends SubsystemBase {
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
     private double goal = 0.25;    
     private RelativeEncoder encoder; 
+    private double lastSpinOutput = 0.0;
                     
     public Intake(){
         spinMotor = new SparkMax(Constants.IntakeConstants.spinMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
@@ -88,13 +89,13 @@ public class Intake extends SubsystemBase {
     }
             
     public void spin(double voltage) {
-
+        lastSpinOutput = voltage;
         spinMotor.set(voltage);
     }
 
     public void output()
     {
-        spinMotor.set(-1.0);
+        spin(-1.0);
     }
             
     public void runExtendMotor(double voltage) {
@@ -134,6 +135,16 @@ public class Intake extends SubsystemBase {
     public Command stopIntake()
     {
         return this.runOnce(() -> spin(0));
+    }
+
+    public boolean isIntaking()
+    {
+        return lastSpinOutput < -0.05;
+    }
+
+    public boolean isPurging()
+    {
+        return lastSpinOutput > 0.05;
     }
 
     public Command extendIntake()
