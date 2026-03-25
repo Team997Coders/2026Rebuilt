@@ -6,7 +6,26 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+<<<<<<< HEAD
 import frc.robot.commands.hubLock;
+=======
+import frc.robot.commands.OdometryTest;
+import frc.robot.commands.SubsystemCommands.HubLock;
+import frc.robot.commands.SubsystemCommands.IndexerCommand;
+import frc.robot.commands.SubsystemCommands.IntakeFuel;
+import frc.robot.commands.SubsystemCommands.PasHood;
+import frc.robot.commands.SubsystemCommands.PasShooter;
+import frc.robot.commands.SubsystemCommands.PassLock;
+import frc.robot.commands.SubsystemCommands.PavHood;
+import frc.robot.commands.Unstick;
+import frc.robot.commands.PlayMusic;
+import frc.robot.commands.clumpLock;
+import frc.robot.commands.goToLocation;
+import frc.robot.commands.objectLock;
+import frc.robot.commands.SubsystemCommands.PavShooter;
+import frc.robot.commands.SubsystemCommands.RollerCommand;
+import frc.robot.commands.SubsystemCommands.stupidIntake;
+>>>>>>> dev
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -14,21 +33,32 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.vision.Camera;
+<<<<<<< HEAD
 import frc.robot.subsystems.vision.PAVController;
+=======
+>>>>>>> dev
 import frc.robot.subsystems.vision.CameraBlock;
+import frc.robot.subsystems.vision.PAVController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.EventMarker;
 import com.reduxrobotics.canand.CanandEventLoop;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,6 +66,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+<<<<<<< HEAD
+=======
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+>>>>>>> dev
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -55,84 +90,111 @@ public class RobotContainer {
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
   private  XboxController driveStick = new XboxController(0);
   private  CommandXboxController c_driveStick = new CommandXboxController(0);
+  private  CommandXboxController c_operator = new CommandXboxController(1);
   
   // Pathplanner autoChooser
   private SendableChooser<Command> autoChooser;
 
   //Cameras - pineapple is front facing camera
-  //private final Camera frontCamera = new ObjectCamera("pineapple", new Transform3d(new Translation3d(0.34, 0.025, 0.013), new Rotation3d(0, 0, 0)));
   private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
   private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
-
-  //private final Camera backCamera = new Camera("dragonfruit", new Transform3d(new Translation3d(-0.254, 0, 0.1524), new Rotation3d(Math.PI, -0.785, 0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
   private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
+<<<<<<< HEAD
   private final hubLock hubLock = new hubLock(drivebase, () -> getScaledXY());
+=======
+>>>>>>> dev
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
   private final Climber climber = new Climber();
-  private final Shooter shooter = new Shooter(pav, hubLock);
+  private final Shooter shooter = new Shooter();
   private final Roller roller = new Roller();
-  private final Hood hood = new Hood(pav, hubLock);
+  private final Hood hood = new Hood();
+  private final Lights lights = new Lights();
   
+<<<<<<< HEAD
   public final Intake m_intake;
+=======
+  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
 
+  private final Unstick unstick = new Unstick(indexer);
+  
+  public final Intake m_intake = new Intake();
+>>>>>>> dev
+
+  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter);
+  private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
+  private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
+  private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
+  private RollerCommand m_RollerCommand = new RollerCommand(roller);
+  private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intake);
+  private Trigger passing = new Trigger(() -> passToAlliance());
+  private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
+  private PasHood m_PasHood = new PasHood(hood);
+  private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
+  private stupidIntake m_StupidIntake = new stupidIntake(m_intake);
+
+  // public final Intake m_intake;
+  // public final IntakeCommand IntakeCommandExtend;
+  // public final IntakeCommand IntakeCommandRetract;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the trigger bindings
-     drivebase.setDefaultCommand(
+    drivebase.setDefaultCommand(
         new Drive(
              drivebase,
            () -> getScaledXY(),
-           () -> scaleRotationAxis(driveStick.getRawAxis(4))));
-
-    m_intake = new Intake();
-
-    NamedCommands.registerCommand("move roller and index", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller and index", roller.stopRoller());
-    //NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
-    // NamedCommands.registerCommand("move roller and index", roller.moveRoller().alongWith(indexer.startIndexer()));
-    // NamedCommands.registerCommand("stop roller and index", roller.stopRoller().alongWith(indexer.stopIndexer()));
-    // NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand().alongWith(hood.PAVcommand()).alongWith(hubLock));
-    // NamedCommands.registerCommand("stop shooting", shooter.moveFlywheelCommand(0));
+           () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
 
     NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
     NamedCommands.registerCommand("return intake", m_intake.returnIntake());
-    NamedCommands.registerCommand("intake fuel", m_intake.intakeFuel());
-    NamedCommands.registerCommand("stop intake", m_intake.stopIntake());
-    NamedCommands.registerCommand("hub lock", hubLock);
-    NamedCommands.registerCommand("shoot", shooter.PAVcontrollerCommand());
-    NamedCommands.registerCommand("hood", hood.PAVcommand());
-    NamedCommands.registerCommand("index", indexer.startIndexer());
-    NamedCommands.registerCommand("stop index", indexer.stopIndexer());
-    NamedCommands.registerCommand("move roller", roller.moveRoller());
-    NamedCommands.registerCommand("stop roller", roller.stopRoller());
+    NamedCommands.registerCommand("intake", m_IntakeFuel);
+    NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
 
-    NamedCommands.registerCommand("stop shoot", shooter.runFlywheelVolt(0));
+    NamedCommands.registerCommand("index", m_IndexerCommand);
+    NamedCommands.registerCommand("stop index", m_IndexerCommand.finishCommand());
+    NamedCommands.registerCommand("roller", m_RollerCommand);
+    NamedCommands.registerCommand("stop roller", m_RollerCommand.finishCommand());
+    NamedCommands.registerCommand("shoot", m_PavShooter);
+    NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());
+    NamedCommands.registerCommand("hub lock", m_HubLock);
+    NamedCommands.registerCommand("stop hub lock", m_HubLock.finishCommand());
+    NamedCommands.registerCommand("hood", m_PavHood);
+    NamedCommands.registerCommand("stop hood", m_PavHood.finishCommand());
 
     NamedCommands.registerCommand("raise climber", climber.raise());
     NamedCommands.registerCommand("lower climber", climber.lower());
+
+    // new EventTrigger("shoot").whileTrue(m_PavShooter);
+    // new EventTrigger("index").whileTrue(m_IndexerCommand);
+    // new EventTrigger("extend intake").whileTrue(m_intake.extendIntake());
+    // new EventTrigger("hood").whileTrue(m_PavHood);
+    // new EventTrigger("move roller").whileTrue(m_RollerCommand);
+    // new EventTrigger("intake fuel").whileTrue(m_IntakeFuel);
     
     configureBindings();
+    lights.setDefaultCommand(lights.statusByRobotState(this::onBlueAlliance, DriverStation::isDisabled));
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
+    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
     SmartDashboard.putData("Auto Choser", autoChooser);
+    
 
     CanandEventLoop.getInstance();
+  }
 
-    
-    // NamedCommands.registerCommand("object lock set true", drivebase.setObjectLockDriveTrueCommand());
-    // NamedCommands.registerCommand("object lock set false", drivebase.setObjectLockDriveFalseCommand());
-    
-    
+  private boolean passToAlliance()
+  {
+    return (DriverStation.getAlliance().orElseThrow().equals(Alliance.Blue) && drivebase.getPose().getX() > 4.611624) || 
+           (DriverStation.getAlliance().orElseThrow().equals(Alliance.Red) && drivebase.getPose().getX() < 11.901424);
   }
 
   /**
@@ -148,8 +210,8 @@ public class RobotContainer {
 
   private double[] getXY() {
     double[] xy = new double[2];
-    xy[0] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
-    xy[1] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+    xy[0] = -deadband(driveStick.getLeftX(), DriveConstants.deadband);
+    xy[1] = -deadband(driveStick.getLeftY(), DriveConstants.deadband);
     return xy;
   }
 
@@ -178,6 +240,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("Scaled_X", getScaledXY()[0]);
     SmartDashboard.putNumber("Scaled_Y", getScaledXY()[1]);
     SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
+
+    SmartDashboard.putData("command scheduler", CommandScheduler.getInstance());
   }
 
   @SuppressWarnings("unused")
@@ -185,22 +249,22 @@ public class RobotContainer {
     return Math.copySign(input * input * input, input);
   }
 
-   @SuppressWarnings("unused")
-   private double scaleTranslationAxis(double input) {
-     return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
-   }
-
-   private double scaleRotationAxis(double input) {
-     return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
+  @SuppressWarnings("unused")
+  private double scaleTranslationAxis(double input) {
+    return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
   }
 
-   public void resetGyro() {
-    gyro.setYaw(0);
-   }
+  private double scaleRotationAxis(double input) {
+    return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
+  }
 
-   public double getGyroYaw() {
-     return -gyro.getYaw();
-   }
+  public void resetGyro() {
+    gyro.setYaw(0);
+  }
+
+  public double getGyroYaw() {
+    return -gyro.getYaw();
+  }
 
   public boolean onBlueAlliance() {
     var alliance = DriverStation.getAlliance();
@@ -226,31 +290,69 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
-    c_driveStick.rightBumper().whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    Trigger intakeTrigger = c_driveStick.rightBumper();
+    Trigger targetLockTrigger = c_driveStick.leftTrigger().and(passing.negate());
+    Trigger passingTrigger = c_driveStick.leftTrigger().and(passing);
+    Trigger shootTrigger = c_driveStick.rightTrigger();
+    Trigger flywheelTrigger = c_driveStick.y();
+    Trigger purgeIndexerTrigger = c_driveStick.b();
+    Trigger purgeIntakeTrigger = c_driveStick.a();
 
-    c_driveStick.leftTrigger().whileTrue(hubLock.alongWith(shooter.PAVcontrollerCommand()).alongWith(hood.PAVcommand())).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.rightTrigger().whileTrue(indexer.startIndexer().alongWith(roller.moveRoller())).onFalse(roller.stopRoller().alongWith(indexer.stopIndexer()));
+    intakeTrigger.whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
+ 
+    targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+    targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
 
-    //c_driveStick.x().toggleOnTrue(m_intake.extendIntake()).toggleOnFalse(m_intake.returnIntake());
+    passingTrigger.whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
+    passingTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, false)));
+    
+
+    c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
+    shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
+    shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
+    
     c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
-    c_driveStick.y().whileTrue(shooter.moveFlywheelDashboardCommand()).onFalse(shooter.moveFlywheelCommand(0));
-    c_driveStick.b().whileTrue(indexer.reverseIndexer()).onFalse(indexer.stopIndexer());
-    c_driveStick.a().whileTrue(m_intake.reverse()).onFalse(m_intake.stopIntake());
+    flywheelTrigger.whileTrue(shooter.moveFlywheelDashboardCommand())
+      .onFalse(shooter.moveFlywheelCommand(0));
+    flywheelTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
+
+    purgeIndexerTrigger.whileTrue(indexer.reverseIndexer())
+      .onFalse(indexer.stopIndexer());
+    purgeIndexerTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
+
+    purgeIntakeTrigger.whileTrue(m_intake.reverse())
+      .onFalse(m_intake.stopIntake());
+    purgeIntakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
+      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
     c_driveStick.povUp().whileTrue(hood.hoodUp());
-    c_driveStick.povDown().whileTrue(hood.hoodDown());    
+    c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
+
+    c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
+
+    c_operator.y().onTrue(m_intake.resetTopCommand());
+    c_operator.b().onTrue(m_intake.resetBottomCommand());
+    
+
   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
+    
   }
 }

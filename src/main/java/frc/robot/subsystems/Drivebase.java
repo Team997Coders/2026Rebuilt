@@ -97,8 +97,8 @@ public class Drivebase extends SubsystemBase {
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(1.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(5, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -207,8 +207,8 @@ public class Drivebase extends SubsystemBase {
   public Pose2d getShooterPose()
   {
     Pose2d robotPose = getPose();
-    return new Pose2d(robotPose.getX() - Units.inchesToMeters(10) * robotPose.getRotation().getCos(),
-                      robotPose.getY() - Units.inchesToMeters(10) * robotPose.getRotation().getSin(), 
+    return new Pose2d(robotPose.getX() - Units.inchesToMeters(21) * robotPose.getRotation().getCos(),
+                      robotPose.getY() - Units.inchesToMeters(21) * robotPose.getRotation().getSin(), 
                       robotPose.getRotation());
   }
 

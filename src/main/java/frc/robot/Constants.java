@@ -21,6 +21,13 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class LightsConstants {
+    public static final int dio0Pin = 11;
+    public static final int dio1Pin = 13;
+    public static final int dio2Pin = 15;
+    public static final int dio3Pin = 17;
+  }
+
   public static final int gyroID = 46;
 
   public static class ShooterConstants {
@@ -36,7 +43,7 @@ public final class Constants {
     public static final double flywheelReverseVelocity = 0;
 
     public static final double hoodTopLimit = 75; //degrees 
-    public static final double hoodBottomLimit = 0; 
+    public static final double hoodBottomLimit = -50; //This is wrong but just so I can back the hood into the right spot 
 
     public static final double hoodGearRatio = 3.5*(300/28)/35*20;
 
@@ -74,8 +81,8 @@ public final class Constants {
   public static final double speedToUnstick = -1; 
   public static final int disiredUnstickTime = 25;
 
-  public final static double defaultVolts = 10;
-  public final static double reverseVolts = -2;
+  public final static double defaultVolts = 6; //10;
+  public final static double reverseVolts = -7;
   }
 
   public static final class ClimberConstants {
@@ -92,6 +99,11 @@ public final class Constants {
     public static final double raisedPos = 0;
     public static final double loweredPos = 0;
   }
+
+  public static final class AutoDriveConstants {
+      public static final double distance = 1;
+      public static final double conversionFactor = (Math.PI*Units.inchesToMeters(4.0)) / (1.0/6.75);
+    }
 
   public static final class DriveConstants {
     public static final double deadband = 0.02;
@@ -221,12 +233,10 @@ public final class Constants {
     public static final double spinVoltage = 1;
 
     public static final double p = 1.2;
-    public static final double i = 0.1;
-    public static final double d = 0;
-    public static final double extendedPosition = -11.42;
+    public static final double i = 0.0;
+    public static final double d = 0.1;
+    public static final double extendedPosition = -13;
   }
-
-
 
 public static double airTime = 1;
 }

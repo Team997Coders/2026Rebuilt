@@ -21,6 +21,10 @@ public class Climber extends SubsystemBase {
 
     private final RelativeEncoder encoder = climber.getEncoder();
 
+    //private final DigitalInput limit = new DigitalInput(Constants.ClimberConstants.limitChannel);
+
+    private final PIDController climbPid = new PIDController(Constants.ClimberConstants.kP, Constants.ClimberConstants.kI, Constants.ClimberConstants.kD);
+
     public Climber () {
         config.inverted(Constants.ClimberConstants.inverted);
 
@@ -41,8 +45,6 @@ public class Climber extends SubsystemBase {
         //setClimberVolts(climbPid.calculate(getPosition(), goalPos));
 
     }
-
-
 
     public void setClimberVolts(double volts) {
         climber.setVoltage(volts);

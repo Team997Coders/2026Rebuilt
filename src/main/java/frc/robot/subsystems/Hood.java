@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+<<<<<<< HEAD
 import frc.robot.commands.hubLock;
+=======
+>>>>>>> dev
 import frc.robot.subsystems.vision.PAVController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -30,18 +33,16 @@ public class Hood extends SubsystemBase {
             Constants.ShooterConstants.hoodPID.ki, Constants.ShooterConstants.hoodPID.kd);
 
     private double goalAngle;
-    private PAVController pav;
-    private hubLock hubLock;
 
-    public Hood(PAVController pav, hubLock hubLock) {
-        this.pav = pav;
-        this.hubLock = hubLock;
-        // hoodConfig.inverted(true);
+
+    private DigitalInput magnet = new DigitalInput(0);
+
+    public Hood() {
+
+        //hoodConfig.inverted(true);
         hood.configure(hoodConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
-        // setHoodAnglePos(25); //angle from horizontal to top of hood
-
-        hoodRelativeEncoder.setPosition(25.0 * Constants.ShooterConstants.hoodGearRatio / 360);
+        hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
         goalAngle = 25;
     }
 
@@ -50,13 +51,21 @@ public class Hood extends SubsystemBase {
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
         SmartDashboard.putNumber("hood angle", getHoodAngle());
-        SmartDashboard.putNumber("hood pid output", PIDHoodController.calculate(getHoodAngle(), goalAngle));
-        SmartDashboard.putBoolean("Hood Zeroed?", hoodZeroed);
+
+
+        SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
+
+        if(!magnet.get()) {
+            hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+        }
+
+        SmartDashboard.putBoolean("magnet", magnet.get());
     }
 
     // Hood
     public void setGoalAngle(double angle) {
         goalAngle = angle;
+
     }
 
     public double getHoodAngle() { // degrees
@@ -94,15 +103,4 @@ public class Hood extends SubsystemBase {
     public Command hoodDown() {
         return this.run(() -> moveHoodDownManual());
     }
-
-    public void PAVcontrollerAngle() {
-        pav.update(hubLock.getDistanceFromTarget(hubLock.getGoalPose()));
-        this.setGoalAngle(pav.getAngle());
-
-    }
-
-    public Command PAVcommand() {
-        return this.run(() -> PAVcontrollerAngle());
-    }
-
 }

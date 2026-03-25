@@ -44,6 +44,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
    // m_robotContainer.resetGyro();
+   SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
   }
 
   /**

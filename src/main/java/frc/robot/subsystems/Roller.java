@@ -38,4 +38,8 @@ public class Roller extends SubsystemBase {
         return this.runOnce(() -> setRollerVoltage(0));
     }
 
+    public void setRollerMotor(double setpoint) {
+        roller.set(setpoint);
+    }
+
 }

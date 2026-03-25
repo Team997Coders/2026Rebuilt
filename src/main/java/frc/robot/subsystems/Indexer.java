@@ -21,6 +21,11 @@ public class Indexer extends SubsystemBase{
     indexMotor.setVoltage(voltage);
    } 
 
+   public void setIndexerMotor(double setpoint)
+   {
+      indexMotor.set(setpoint);
+   }
+
    public Command startIndexer(){
       return this.run(() -> spinIndexerMotor(Constants.IndexerConstants.defaultVolts));
    }
@@ -30,7 +35,7 @@ public class Indexer extends SubsystemBase{
    }
 
    public Command stopIndexer() {
-      return this.run(() -> spinIndexerMotor(0));
+      return this.runOnce(() -> spinIndexerMotor(0));
    }
 
    public double getIndexVoltage(){
