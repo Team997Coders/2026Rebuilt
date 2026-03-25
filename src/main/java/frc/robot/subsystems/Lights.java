@@ -94,32 +94,6 @@ public class Lights extends SubsystemBase {
         return onBlueAlliance.getAsBoolean() ? 3 : 2;
     }
 
-    public Command holdState(int state) {
-        return this.run(() -> setState(state));
-    }
-
-    public Command statusIdle() {
-        return holdState(0);
-    }
-
-    public Command statusActiveRed() {
-        return holdState(2);
-    }
-
-    public Command statusActiveBlue() {
-        return holdState(3);
-    }
-
-    public Command statusActiveAlliance(BooleanSupplier onBlueAlliance) {
-        return this.run(() -> {
-            if (onBlueAlliance.getAsBoolean()) {
-                setState(3);
-            } else {
-                setState(2);
-            }
-        });
-    }
-
     public Command statusByRobotState(BooleanSupplier onBlueAlliance, BooleanSupplier isDisabled) {
         return new Command() {
             @Override
@@ -143,25 +117,5 @@ public class Lights extends SubsystemBase {
                 return true;
             }
         };
-    }
-
-    public Command statusPassing() {
-        return holdState(4);
-    }
-
-    public Command statusTargetLocked() {
-        return holdState(5);
-    }
-
-    public Command statusShoot() {
-        return holdState(6);
-    }
-
-    public Command statusIntaking() {
-        return holdState(7);
-    }
-
-    public Command statusPurge() {
-        return holdState(8);
     }
 }
