@@ -312,10 +312,10 @@ public class RobotContainer {
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
     
 
-    c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
+    // c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
 
-    c_operator.y().onTrue(m_intakeExtendo.resetTopCommand());
-    c_operator.b().onTrue(m_intakeExtendo.resetBottomCommand());
+    // c_operator.y().onTrue(m_intakeExtendo.resetTopCommand());
+    // c_operator.b().onTrue(m_intakeExtendo.resetBottomCommand());
   }
 
   /**

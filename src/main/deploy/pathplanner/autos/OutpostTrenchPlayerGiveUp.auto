@@ -11,7 +11,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "OutpostTrench-Middle"
+                  "pathName": "OutpostTrench-MiddleGiveUp"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -38,25 +57,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.4
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "intake"
-                      }
-                    }
-                  ]
-                }
               }
             ]
           }
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle-OutpostTrenchShoot"
+                  "pathName": "MiddleGiveUp-OutpostTrenchShoot"
                 }
               },
               {
@@ -78,7 +78,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.5
+                        "waitTime": 2.0
                       }
                     },
                     {
@@ -142,10 +142,22 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.0
+                  "waitTime": 5.0
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OutpostTrenchShoot-Player"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.15
           }
         },
         {
@@ -155,7 +167,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "OutpostTrenchShoot-SecondPass"
+                  "pathName": "Player-PlayerShoot"
                 }
               },
               {
@@ -166,25 +178,6 @@
                       "type": "wait",
                       "data": {
                         "waitTime": 1.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "intake"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 7.0
                       }
                     },
                     {
