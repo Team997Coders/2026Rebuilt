@@ -13,11 +13,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Intake extends SubsystemBase {
-    private final SparkMax spinMotor;
+public class IntakeExtendo extends SubsystemBase {
     private final SparkMax extendMotorRight;
     private final SparkMax extendMotorLeft;
-    private final SparkMaxConfig spinConfig;
     private final SparkMaxConfig extendConfigRight;
     private final SparkMaxConfig extendConfigLeft;
     private double tolerence = 0.4;
@@ -26,15 +24,12 @@ public class Intake extends SubsystemBase {
     private double goal = 0.25;    
     private RelativeEncoder encoder; 
                     
-    public Intake(){
-        spinMotor = new SparkMax(Constants.IntakeConstants.spinMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    public IntakeExtendo(){
         extendMotorRight = new SparkMax(Constants.IntakeConstants.extendMotorIDright, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
         extendMotorLeft = new SparkMax(Constants.IntakeConstants.extendMotorIDleft, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-        spinConfig = new SparkMaxConfig();
         extendConfigRight = new SparkMaxConfig();
         extendConfigLeft = new SparkMaxConfig();
                     
-        spinMotor.configure(spinConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         extendMotorRight.configure(extendConfigRight, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         extendMotorLeft.configure(extendConfigLeft, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -87,16 +82,6 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> stopExtendoMotor());
     }
             
-    public void spin(double voltage) {
-
-        spinMotor.set(voltage);
-    }
-
-    public void output()
-    {
-        spinMotor.set(-1.0);
-    }
-            
     public void runExtendMotor(double voltage) {
         SmartDashboard.putNumber("intake extendo voltage", voltage);
         if (Math.abs(goal - getEncoderPosition()) < tolerence) {
@@ -115,25 +100,6 @@ public class Intake extends SubsystemBase {
             
     public double getEncoderPosition(){
         return encoder.getPosition();
-    }
-
-    public Command runFull()
-    {
-        return this.runOnce(() -> output());
-    }
-    
-    public Command intakeFuel(){
-        return this.runOnce(() -> spin(Constants.IntakeConstants.spinVoltage));
-    }
-
-    public Command intakeFull()
-    {
-        return this.runOnce(() -> output());
-    }
-
-    public Command stopIntake()
-    {
-        return this.runOnce(() -> spin(0));
     }
 
     public Command extendIntake()
@@ -161,11 +127,6 @@ public class Intake extends SubsystemBase {
     public Command toggleIntakeCommand()
     {
         return this.runOnce(() -> toggleIntake());
-    }
-
-    public Command reverse()
-    {
-        return this.runOnce(() -> spin(8));
     }
 
     public Command manualDown()

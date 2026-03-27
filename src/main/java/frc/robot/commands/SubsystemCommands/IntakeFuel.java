@@ -3,20 +3,15 @@ package frc.robot.commands.SubsystemCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Roller;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.vision.PAVController;
+
+import frc.robot.subsystems.IntakeSpinny;
 
 public class IntakeFuel extends Command{
 
-    private Intake m_intake;
+    private IntakeSpinny m_intake;
     private Boolean finished = false;
 
-    public IntakeFuel(Intake intake)
+    public IntakeFuel(IntakeSpinny intake)
     {
         m_intake = intake;
 

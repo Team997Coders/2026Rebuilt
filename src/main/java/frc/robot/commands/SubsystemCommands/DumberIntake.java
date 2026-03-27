@@ -1,12 +1,12 @@
 package frc.robot.commands.SubsystemCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeExtendo;
 
 public class DumberIntake extends Command {
-    private final Intake intake;
+    private final IntakeExtendo intake;
 
-    public DumberIntake(Intake intake) {
+    public DumberIntake(IntakeExtendo intake) {
         this.intake = intake;
     }
 

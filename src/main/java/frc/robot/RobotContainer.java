@@ -21,11 +21,11 @@ import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
 import frc.robot.commands.SubsystemCommands.PavShooter;
 import frc.robot.commands.SubsystemCommands.RollerCommand;
-import frc.robot.commands.SubsystemCommands.stupidIntake;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeExtendo;
+import frc.robot.subsystems.IntakeSpinny;
 import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
@@ -104,23 +104,20 @@ public class RobotContainer {
 
   private final Unstick unstick = new Unstick(indexer);
   
-  public final Intake m_intake = new Intake();
+  public final IntakeExtendo m_intakeExtendo = new IntakeExtendo();
+  public final IntakeSpinny m_intakeSpinny = new IntakeSpinny();
 
   private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter);
   private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
   private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
   private RollerCommand m_RollerCommand = new RollerCommand(roller);
-  private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intake);
+  private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intakeSpinny);
   private Trigger passing = new Trigger(() -> passToAlliance());
   private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
   private PasHood m_PasHood = new PasHood(hood);
   private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
-  private stupidIntake m_StupidIntake = new stupidIntake(m_intake);
 
-  // public final Intake m_intake;
-  // public final IntakeCommand IntakeCommandExtend;
-  // public final IntakeCommand IntakeCommandRetract;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -132,8 +129,8 @@ public class RobotContainer {
            () -> getScaledXY(),
            () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
 
-    NamedCommands.registerCommand("extend intake", m_intake.extendIntake());
-    NamedCommands.registerCommand("return intake", m_intake.returnIntake());
+    NamedCommands.registerCommand("extend intake", m_intakeExtendo.extendIntake());
+    NamedCommands.registerCommand("return intake", m_intakeExtendo.returnIntake());
     NamedCommands.registerCommand("intake", m_IntakeFuel);
     NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
 
@@ -277,7 +274,7 @@ public class RobotContainer {
     Trigger purgeIndexerTrigger = c_driveStick.b();
     Trigger purgeIntakeTrigger = c_driveStick.a();
 
-    intakeTrigger.whileTrue(m_intake.intakeFull()).onFalse(m_intake.stopIntake());
+    intakeTrigger.whileTrue(m_intakeSpinny.intakeFuel()).onFalse(m_intakeSpinny.stopIntake());
     intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
  
@@ -288,14 +285,12 @@ public class RobotContainer {
     passingTrigger.whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
     passingTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, false)));
-    
 
-    c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand()).onFalse(m_intake.resetToggleCommand());
+    c_driveStick.leftBumper().onTrue(m_intakeExtendo.toggleIntakeCommand()).onFalse(m_intakeExtendo.resetToggleCommand());
     shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
     shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
     
-    c_driveStick.x().onTrue(m_intake.toggleIntakeCommand());
     c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
@@ -309,8 +304,8 @@ public class RobotContainer {
     purgeIndexerTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
 
-    purgeIntakeTrigger.whileTrue(m_intake.reverse())
-      .onFalse(m_intake.stopIntake());
+    purgeIntakeTrigger.whileTrue(m_intakeSpinny.reverse())
+      .onFalse(m_intakeSpinny.stopIntake());
     purgeIntakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
     c_driveStick.povUp().whileTrue(hood.hoodUp());
@@ -319,10 +314,8 @@ public class RobotContainer {
 
     c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
 
-    c_operator.y().onTrue(m_intake.resetTopCommand());
-    c_operator.b().onTrue(m_intake.resetBottomCommand());
-    
-
+    c_operator.y().onTrue(m_intakeExtendo.resetTopCommand());
+    c_operator.b().onTrue(m_intakeExtendo.resetBottomCommand());
   }
 
   /**

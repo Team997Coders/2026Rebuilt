@@ -5,15 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "extend intake"
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DepotTrench-Middle"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -21,7 +21,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 1.5
                       }
                     },
                     {
@@ -38,9 +38,21 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "wait",
                       "data": {
-                        "pathName": "DepotTrench-Middle"
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "extend intake"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 10.0
                       }
                     }
                   ]
@@ -130,7 +142,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 4.0
                 }
               }
             ]
@@ -140,6 +152,12 @@
           "type": "race",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DepotTrenchShoot-MiddleHub"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -164,47 +182,21 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "DepotTrenchShoot-MiddleHub"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "MiddleHub-DepotTrench"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "shoot"
+                        "waitTime": 7.0
                       }
                     },
                     {
                       "type": "named",
                       "data": {
                         "name": "hood"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shoot"
                       }
                     }
                   ]
@@ -266,6 +258,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "CAIS autos",
   "choreoAuto": false
 }
