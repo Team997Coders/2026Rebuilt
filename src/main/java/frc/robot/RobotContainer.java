@@ -290,7 +290,7 @@ public class RobotContainer {
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, false)));
     
 
-    c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand());
+    c_driveStick.leftBumper().onTrue(m_intake.toggleIntakeCommand()).onFalse(m_intake.resetToggleCommand());
     shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
     shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));

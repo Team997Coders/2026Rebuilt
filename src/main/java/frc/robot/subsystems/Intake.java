@@ -150,11 +150,11 @@ public class Intake extends SubsystemBase {
     { 
         if (getEncoderPosition() >= -5) {
 
-            setGoal(getEncoderPosition() - 10);
+            setGoal(getEncoderPosition() - 13);
         }
         else
         {
-            setGoal(getEncoderPosition() + 11);
+            setGoal(getEncoderPosition() + 15);
         }
     }
 
@@ -191,10 +191,29 @@ public class Intake extends SubsystemBase {
     }
 
     public Command resetTopCommand() {
-        return this.runOnce(() -> encoder.setPosition(0));
+        return this.runOnce(() -> encoder.setPosition(0)).andThen(this.runOnce(() -> setGoal(0)));
     }
 
     public Command resetBottomCommand() {
-        return this.runOnce(() -> encoder.setPosition(Constants.IntakeConstants.extendedPosition + 0.25));
+        return this.runOnce(() -> encoder.setPosition(Constants.IntakeConstants.extendedPosition + 0.25)).andThen(this.runOnce(() -> setGoal(Constants.IntakeConstants.extendedPosition + 0.25)));
+    }
+
+    public void resetToggle()
+    {
+        if (goal > -5) {
+
+            encoder.setPosition(0);
+            setGoal(0);
+        }
+        else 
+        {
+            encoder.setPosition(Constants.IntakeConstants.extendedPosition);
+            setGoal(Constants.IntakeConstants.extendedPosition);
+        }
+    }
+
+    public Command resetToggleCommand()
+    {
+        return this.runOnce(() -> resetToggle());
     }
 }
