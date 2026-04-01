@@ -29,7 +29,7 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.PAVController;
 
-public class HubLock extends Command {
+public class ShootOnMove extends Command {
 
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
@@ -48,7 +48,7 @@ public class HubLock extends Command {
   private PAVController m_pav;
 
   /** Creates a new Drive. */
-  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter, PAVController pav) {
+  public ShootOnMove(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter, PAVController pav) {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 
@@ -60,7 +60,7 @@ public class HubLock extends Command {
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
+    SmartDashboard.putNumberArray("Shoot on the move PID constants", new Double[]{9.0, 2.0, 0.0});
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivebase);
@@ -120,6 +120,7 @@ public class HubLock extends Command {
   private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
   public double updatingGoal = 0;
+
   @Override
   public void execute() {
      var xy = speedXY.get();
@@ -127,7 +128,7 @@ public class HubLock extends Command {
     double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
 
 
-    var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
+    var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Shoot on the move PID constants", pidValues);
     if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))
     {
       pidValues = valuesFromSmartDashbord;
@@ -139,42 +140,54 @@ public class HubLock extends Command {
     }
 
     Pose2d robotPose = drivebase.getShooterPose();
+    double distance = getDistanceFromTarget(robotPose);
     goalPose = getGoalPose();
 
-    double goal = Math.atan((goalPose.getY() - robotPose.getY()) 
-                        /(goalPose.getX() - robotPose.getX()));
+    double shootSpeed = m_pav.getVelocity()*Math.cos(Units.degreesToRadians(m_pav.getAngle()));
+    double shotTime = distance / shootSpeed;
+
     
-     updatingGoal = goal;
+    Translation2d robotVel = new Translation2d(vx, vy);  
+    Translation2d displacement = robotVel.times(shotTime);
+    Translation2d adjustedGoal = goalPose.getTranslation().minus(displacement);
+
+    Translation2d robotToGoal = adjustedGoal.minus(robotPose.getTranslation());
+
+    Rotation2d targetAngle = robotToGoal.getAngle();
+
+
+    double shootOnMoveGoal = targetAngle.getRadians();
+    
+    updatingGoal = shootOnMoveGoal;
+    
 
 
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
     {
-        goal -= (Math.PI/2);
+        shootOnMoveGoal -= (Math.PI/2);
         
     } else
     {
-        goal += (Math.PI/2);  
-
+        shootOnMoveGoal += (Math.PI/2);
     }
-    thetaController.setGoal(goal);
+
+    thetaController.setGoal(shootOnMoveGoal);
     
     SmartDashboard.putNumber("vy chassis speeds", vy);
     SmartDashboard.putNumber("vx chassis speeds", vx);
 
-    SmartDashboard.putNumber("hub lock goal: ", goal);
+    SmartDashboard.putNumber("shoot on the move goal", shootOnMoveGoal);
 
-   
-    SmartDashboard.putNumber("hub lock measered value: ", robotPose.getRotation().getRadians());
 
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
-    SmartDashboard.putNumber("hub lock pid output", thetaSpeed);
+    SmartDashboard.putNumber("shoot on the move pid output", thetaSpeed);
 
     if (Math.abs(thetaSpeed) < 0.15) //|| //The theta speed is under 0.04 meters per second
         //(goal - robotPose.getRotation().getRadians()) < 0.05) //The goal is within 0.05 radians of the goal
     {
       thetaSpeed = 0;
     }
-    SmartDashboard.putNumber("hub lock Theta speed", thetaSpeed);
+    SmartDashboard.putNumber("shoot on the move Theta speed", thetaSpeed);
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
 

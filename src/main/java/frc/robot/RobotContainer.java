@@ -21,6 +21,7 @@ import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
 import frc.robot.commands.SubsystemCommands.PavShooter;
 import frc.robot.commands.SubsystemCommands.RollerCommand;
+import frc.robot.commands.SubsystemCommands.ShootOnMove;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -57,6 +58,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -108,6 +110,7 @@ public class RobotContainer {
   public final IntakeSpinny m_intakeSpinny = new IntakeSpinny();
 
   private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter, pav);
+  private ShootOnMove m_ShootOnMove = new ShootOnMove(drivebase, () -> getScaledXY(), hood, shooter, pav);
   private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
   private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
@@ -218,6 +221,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
 
     SmartDashboard.putData("command scheduler", CommandScheduler.getInstance());
+
+     SmartDashboard.putNumber("hub lock difference (shoot on move vs. static)", m_HubLock.updatingGoal - m_ShootOnMove.updatingGoal);
   }
 
   @SuppressWarnings("unused")
@@ -264,6 +269,21 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+   
+
+
+  Boolean hublockEnabled = false;
+
+  public boolean getHublockEnabled() {
+    return hublockEnabled;
+  }
+  
+  private void toggleHublock () {
+    hublockEnabled = !hublockEnabled;
+  }
+
+  Command toggleHublockCommand = Commands.runOnce(() -> toggleHublock());
+
   private void configureBindings() {
     //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
     Trigger intakeTrigger = c_driveStick.rightBumper();
@@ -274,11 +294,20 @@ public class RobotContainer {
     Trigger purgeIndexerTrigger = c_driveStick.b();
     Trigger purgeIntakeTrigger = c_driveStick.a();
 
+    Trigger hublockTrigger = new Trigger(() -> getHublockEnabled());
+
+    Trigger shootModeTrigger = c_operator.rightBumper();
+
+    shootModeTrigger.onTrue(toggleHublockCommand);
+
     intakeTrigger.whileTrue(m_intakeSpinny.intakeFuel()).onFalse(m_intakeSpinny.stopIntake());
     intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
  
-    targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+    // targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+
+    targetLockTrigger.and(shootModeTrigger).whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+    targetLockTrigger.and(shootModeTrigger.negate()).whileTrue(m_ShootOnMove.alongWith(m_PavShooter).alongWith(m_PavHood));
     targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
 
