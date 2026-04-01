@@ -27,6 +27,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.vision.PAVController;
 
 public class HubLock extends Command {
 
@@ -44,13 +45,17 @@ public class HubLock extends Command {
   private double Kh = 0.4;
   private boolean finished = false;
 
+  private PAVController m_pav;
+
   /** Creates a new Drive. */
-  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter) {
+  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter, PAVController pav) {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 
     this.m_hood = hood;
     this.m_shooter = shooter;
+
+    this.m_pav = pav;
 
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -110,7 +115,6 @@ public class HubLock extends Command {
   }
 
 
-
   private double thetaSpeed;
   private Pose2d goalPose;
   private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
@@ -119,9 +123,7 @@ public class HubLock extends Command {
      var xy = speedXY.get();
     double vx = drivebase.getCurrentSpeeds().vxMetersPerSecond;
     double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
-  
 
-   
 
     var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
     if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))
@@ -138,11 +140,25 @@ public class HubLock extends Command {
     double distance = getDistanceFromTarget(robotPose);
     goalPose = getGoalPose();
 
+    double shootSpeed = m_pav.getVelocity()*Math.cos(Units.degreesToRadians(m_pav.getAngle()));
+    double shotTime = distance / shootSpeed;
+
+    
+    Translation2d robotVel = new Translation2d(vx, vy);  
+    Translation2d displacement = robotVel.times(shotTime);
+    Translation2d adjustedGoal = goalPose.getTranslation().minus(displacement);
+
+    Translation2d robotToGoal = adjustedGoal.minus(robotPose.getTranslation());
+
+    Rotation2d targetAngle = robotToGoal.getAngle();
+
 
     double goal = Math.atan((goalPose.getY() - robotPose.getY()) 
                         /(goalPose.getX() - robotPose.getX()));
-    double shootOnMoveGoal = Math.atan(((goalPose.getY() - robotPose.getY()) + (vy * distance * Kh))
-                                      /((goalPose.getX() - robotPose.getX()) + (vx * distance * Kh)));    
+    // double shootOnMoveGoal = Math.atan(((goalPose.getY() - robotPose.getY()) + (vy * distance * Kh))
+    //                                   /((goalPose.getX() - robotPose.getX()) + (vx * distance * Kh)));    
+
+    double shootOnMoveGoal = targetAngle.getRadians();
     
 
 

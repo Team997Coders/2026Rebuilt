@@ -107,7 +107,7 @@ public class RobotContainer {
   public final IntakeExtendo m_intakeExtendo = new IntakeExtendo();
   public final IntakeSpinny m_intakeSpinny = new IntakeSpinny();
 
-  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter);
+  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter, pav);
   private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
   private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
