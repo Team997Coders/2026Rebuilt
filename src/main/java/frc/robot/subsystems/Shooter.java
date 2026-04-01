@@ -95,6 +95,7 @@ public class Shooter extends SubsystemBase {
 
         voltage += ff;
 
+
         SmartDashboard.putNumber("ff value", ff);
         SmartDashboard.putNumber("actual set voltage", voltage);
         SmartDashboard.putNumber("requested velocity", flywheelVel);
@@ -111,6 +112,8 @@ public class Shooter extends SubsystemBase {
         moveFlywheel(SmartDashboard.getNumber("shooter velocity setpoint", 0.0) / Constants.ShooterConstants.flywheelRadius);
     }
 
+
+
     public Command runFlywheelVolt(double volts) {
         return this.runOnce(() -> setFlywheelVoltage(volts));
     }
@@ -124,4 +127,5 @@ public class Shooter extends SubsystemBase {
     {
         return this.run(() -> flywheelWithDashboard());
     }
+    
 }

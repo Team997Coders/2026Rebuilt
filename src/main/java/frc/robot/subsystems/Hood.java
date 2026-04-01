@@ -119,4 +119,8 @@ public class Hood extends SubsystemBase {
     public Command hoodDown() {
         return this.run(() -> moveHoodDownManual());
     }
+
+    public Command hoodBackup() {
+        return this.runOnce(() -> setGoalAngle(25));
+    }
 }

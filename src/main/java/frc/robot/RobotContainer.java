@@ -21,6 +21,7 @@ import frc.robot.commands.goToLocation;
 import frc.robot.commands.objectLock;
 import frc.robot.commands.SubsystemCommands.PavShooter;
 import frc.robot.commands.SubsystemCommands.RollerCommand;
+import frc.robot.subsystems.BackupToggle;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -117,6 +118,7 @@ public class RobotContainer {
   private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
   private PasHood m_PasHood = new PasHood(hood);
   private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
+  private BackupToggle m_backupToggle = new BackupToggle(m_HubLock, m_PavShooter, m_PavHood, hood, shooter);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -273,12 +275,13 @@ public class RobotContainer {
     Trigger flywheelTrigger = c_driveStick.y();
     Trigger purgeIndexerTrigger = c_driveStick.b();
     Trigger purgeIntakeTrigger = c_driveStick.a();
+    Trigger backupShootingTrigger = c_operator.x();
 
     intakeTrigger.whileTrue(m_intakeSpinny.intakeFuel()).onFalse(m_intakeSpinny.stopIntake());
     intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
  
-    targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+    targetLockTrigger.whileTrue(m_backupToggle.shootingCommand());
     targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
 
@@ -310,9 +313,11 @@ public class RobotContainer {
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
-    
+
+     backupShootingTrigger.toggleOnTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
 
     // c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
+    //c_operator.x().onTrue(m_backupToggle.toggleShooterCommand());
 
     // c_operator.y().onTrue(m_intakeExtendo.resetTopCommand());
     // c_operator.b().onTrue(m_intakeExtendo.resetBottomCommand());
