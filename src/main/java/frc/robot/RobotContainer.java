@@ -108,9 +108,12 @@ public class RobotContainer {
   public final IntakeExtendo m_intakeExtendo = new IntakeExtendo();
   public final IntakeSpinny m_intakeSpinny = new IntakeSpinny();
 
-  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter);
-  private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
-  private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
+
+  private BackupToggle m_backupToggle = new BackupToggle();
+  
+  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter, m_backupToggle);
+  private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav, m_backupToggle);
+  private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav, m_backupToggle);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
   private RollerCommand m_RollerCommand = new RollerCommand(roller);
   private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intakeSpinny);
@@ -118,8 +121,6 @@ public class RobotContainer {
   private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
   private PasHood m_PasHood = new PasHood(hood);
   private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
-  private BackupToggle m_backupToggle = new BackupToggle(m_HubLock, m_PavShooter, m_PavHood, hood, shooter);
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -281,7 +282,7 @@ public class RobotContainer {
     intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
  
-    targetLockTrigger.whileTrue(m_backupToggle.shootingCommand());
+    targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavHood).alongWith(m_PavShooter));
     targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
 

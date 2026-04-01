@@ -24,17 +24,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.subsystems.BackupToggle;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 
 public class HubLock extends Command {
-
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
 
   private final Hood m_hood;
   private final Shooter m_shooter;
+  private final BackupToggle m_BackupToggle;
 
   private static TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
   private ProfiledPIDController thetaController = new ProfiledPIDController(
@@ -45,12 +46,14 @@ public class HubLock extends Command {
   private boolean finished = false;
 
   /** Creates a new Drive. */
-  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter) {
+  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter, BackupToggle backupToggle) {
+  
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 
     this.m_hood = hood;
     this.m_shooter = shooter;
+    this.m_BackupToggle = backupToggle;
 
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -59,13 +62,18 @@ public class HubLock extends Command {
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivebase);
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    finished = false;
-    thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
+    
+    if (!m_BackupToggle.getState()) {
+      finished = false;
+      thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
+    }
+   
   }
 
   public Pose2d getGoalPose()
@@ -116,6 +124,7 @@ public class HubLock extends Command {
   private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
   @Override
   public void execute() {
+     if (!m_BackupToggle.getState()) {
      var xy = speedXY.get();
     double vx = drivebase.getCurrentSpeeds().vxMetersPerSecond;
     double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
@@ -177,7 +186,7 @@ public class HubLock extends Command {
     SmartDashboard.putNumber("hub lock Theta speed", thetaSpeed);
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
-
+  }
     
   }
 
@@ -203,4 +212,7 @@ public class HubLock extends Command {
     {
         return Commands.runOnce(() -> finish());
     }
-}
+
+  }
+
+
