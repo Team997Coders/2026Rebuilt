@@ -315,10 +315,9 @@ public class RobotContainer {
     c_driveStick.povUp().whileTrue(hood.hoodUp());
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
 
-     backupShootingTrigger.toggleOnTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+     backupShootingTrigger.onTrue(m_backupToggle.toggleShooterCommand());
 
     // c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
-    //c_operator.x().onTrue(m_backupToggle.toggleShooterCommand());
 
     // c_operator.y().onTrue(m_intakeExtendo.resetTopCommand());
     // c_operator.b().onTrue(m_intakeExtendo.resetBottomCommand());
