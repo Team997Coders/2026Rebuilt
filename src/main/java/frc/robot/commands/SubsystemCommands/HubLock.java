@@ -4,37 +4,25 @@
 
 package frc.robot.commands.SubsystemCommands;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
-import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.DARE;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Shooter;
 
 public class HubLock extends Command {
 
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
-
-  private final Hood m_hood;
-  private final Shooter m_shooter;
 
   private static TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
   private ProfiledPIDController thetaController = new ProfiledPIDController(
@@ -45,12 +33,9 @@ public class HubLock extends Command {
   private boolean finished = false;
 
   /** Creates a new Drive. */
-  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter) {
+  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY) {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
-
-    this.m_hood = hood;
-    this.m_shooter = shooter;
 
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);

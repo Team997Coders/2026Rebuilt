@@ -9,9 +9,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,8 +22,6 @@ public class Climber extends SubsystemBase {
     private final RelativeEncoder encoder = climber.getEncoder();
 
     //private final DigitalInput limit = new DigitalInput(Constants.ClimberConstants.limitChannel);
-
-    private final PIDController climbPid = new PIDController(Constants.ClimberConstants.kP, Constants.ClimberConstants.kI, Constants.ClimberConstants.kD);
 
     public Climber () {
         config.inverted(Constants.ClimberConstants.inverted);

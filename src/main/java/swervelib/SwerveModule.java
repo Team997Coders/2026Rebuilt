@@ -10,16 +10,11 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.reduxrobotics.sensors.canandmag.Canandmag;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants.SwervePID;
 
 /** Add your docs here. */
@@ -29,7 +24,6 @@ public class SwerveModule {
   private PIDController pidController;
   private CANcoder absoluteEncoder;
   private double maxVelocity;
-  private double maxVoltage;
   private TalonFXConfiguration speedConfig;
   private TalonFXConfiguration turnConfig;
 
@@ -41,7 +35,7 @@ public class SwerveModule {
 
   public SwerveModule(int angleMotorId, int speedMotorId, int encoderId, boolean driveMotorReversed, boolean angleMotorReversed,
       boolean angleEncoderReversed, double angleEncoderConversionFactor, double angleEncoderOffset,
-      double maxVelocity, double maxVoltage) {
+      double maxVelocity) {
 
         constants = new SwerveModuleConstants<>();
     this.angleMotor = new TalonFX(angleMotorId);
@@ -69,7 +63,6 @@ public class SwerveModule {
     //this.absoluteEncoder.setAbsPosition(0);
 
     this.maxVelocity = maxVelocity;
-    this.maxVoltage = maxVoltage;
 
     this.pidController.enableContinuousInput(0, 360);
   }
@@ -83,8 +76,7 @@ public class SwerveModule {
         config.angleEncoderReversed,
         config.angleEncoderConversionFactor,
         config.angleEncoderOffset,
-        maxVelocity,
-        maxVoltage);
+        maxVelocity);
   }
 
   /**

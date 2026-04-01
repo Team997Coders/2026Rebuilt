@@ -1,30 +1,21 @@
 package frc.robot.commands;
 
-
-import static edu.wpi.first.units.Units.Revolution;
-
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
-import swervelib.SwerveModule;
 
 public class OdometryTest extends Command{
 
     private Drivebase drivebase;
     private double startPos;
-    private double error;
     private PIDController pid = new PIDController(1, 0, 0);
 
   /** Creates a new Drive. */
-  public OdometryTest(Drivebase drivebase, double startPos, double error) {
+  public OdometryTest(Drivebase drivebase, double startPos) {
     this.drivebase = drivebase;
     this.startPos = startPos;
-    this.error = error;
 
 
     // Use addRequirements() here to declare subsystem dependencies.

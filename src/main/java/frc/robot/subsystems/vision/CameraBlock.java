@@ -1,9 +1,6 @@
 package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

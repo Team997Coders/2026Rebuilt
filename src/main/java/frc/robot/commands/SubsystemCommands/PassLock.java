@@ -4,24 +4,16 @@
 
 package frc.robot.commands.SubsystemCommands;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.DARE;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 
 public class PassLock extends Command {
@@ -58,12 +50,9 @@ public class PassLock extends Command {
   }
 
   private double thetaSpeed;
-  private Pose2d goalPose;
   @Override
   public void execute() {
     var xy = speedXY.get();
-    double vx = drivebase.getCurrentSpeeds().vxMetersPerSecond;
-    double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
 
     var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
     if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))

@@ -5,13 +5,10 @@
 package frc.robot.commands;
 
 import java.util.List;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.traits.CommonDevice;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;

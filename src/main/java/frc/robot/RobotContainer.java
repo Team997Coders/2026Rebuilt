@@ -14,14 +14,8 @@ import frc.robot.commands.SubsystemCommands.PasHood;
 import frc.robot.commands.SubsystemCommands.PasShooter;
 import frc.robot.commands.SubsystemCommands.PassLock;
 import frc.robot.commands.SubsystemCommands.PavHood;
-import frc.robot.commands.Unstick;
-import frc.robot.commands.PlayMusic;
-import frc.robot.commands.clumpLock;
-import frc.robot.commands.goToLocation;
-import frc.robot.commands.objectLock;
 import frc.robot.commands.SubsystemCommands.PavShooter;
 import frc.robot.commands.SubsystemCommands.RollerCommand;
-import frc.robot.commands.SubsystemCommands.stupidIntake;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
@@ -38,16 +32,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.EventMarker;
 import com.reduxrobotics.canand.CanandEventLoop;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
@@ -58,7 +48,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -100,13 +89,9 @@ public class RobotContainer {
   private final Hood hood = new Hood();
   private final Lights lights = new Lights();
   
-  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
-
-  private final Unstick unstick = new Unstick(indexer);
-  
   public final Intake m_intake = new Intake();
 
-  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter);
+  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY());
   private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav);
   private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav);
   private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
@@ -116,7 +101,6 @@ public class RobotContainer {
   private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
   private PasHood m_PasHood = new PasHood(hood);
   private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
-  private stupidIntake m_StupidIntake = new stupidIntake(m_intake);
 
   // public final Intake m_intake;
   // public final IntakeCommand IntakeCommandExtend;
@@ -163,7 +147,7 @@ public class RobotContainer {
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
-    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
+    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0));
     SmartDashboard.putData("Auto Choser", autoChooser);
     
 
