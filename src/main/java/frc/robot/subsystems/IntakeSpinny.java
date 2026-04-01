@@ -32,7 +32,7 @@ public class IntakeSpinny extends SubsystemBase {
 
     public void output()
     {
-        spinMotor.set(-1.0);
+        spinMotor.set(-0.997);    
     }
 
     public Command intakeFuel()
