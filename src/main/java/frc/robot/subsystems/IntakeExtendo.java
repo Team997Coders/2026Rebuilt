@@ -116,11 +116,11 @@ public class IntakeExtendo extends SubsystemBase {
     { 
         if (getEncoderPosition() >= -5) {
 
-            setGoal(getEncoderPosition() - 13);
+            setGoal(getEncoderPosition() - 22);
         }
         else
         {
-            setGoal(getEncoderPosition() + 15);
+            setGoal(getEncoderPosition() + 25);
         }
     }
 
