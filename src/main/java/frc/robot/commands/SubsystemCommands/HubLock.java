@@ -69,10 +69,11 @@ public class HubLock extends Command {
   @Override
   public void initialize() {
     
-    if (!m_BackupToggle.getState()) {
+
       finished = false;
+      if (!m_BackupToggle.getState()) {
       thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
-    }
+      }
    
   }
 

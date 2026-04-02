@@ -74,7 +74,7 @@ public final class Constants {
 
     public static final double flywheelVoltage = 10.8;
 
-    public static final double backupVoltage = 7.0164;
+    public static final double backupVoltage = 8;
   }
 
   public static final class IndexerConstants {
