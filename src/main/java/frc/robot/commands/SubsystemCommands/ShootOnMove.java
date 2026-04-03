@@ -140,29 +140,38 @@ public class ShootOnMove extends Command {
     }
 
     Pose2d robotPose = drivebase.getShooterPose();
-    double distance = getDistanceFromTarget(robotPose);
+    double distance = getDistance();
     goalPose = getGoalPose();
 
-    double shootSpeed = m_pav.getVelocity()*Math.cos(Units.degreesToRadians(m_pav.getAngle()));
-    double shotTime = distance / shootSpeed;
+    m_pav.update(distance);
 
+    double shootOnMoveGoal = 0;
+    double shootSpeed = 0;
+    double shotTime = 0;
+    double hoodAngle = 25;
+    double shooterVel = 0;
     
-    Translation2d robotVel = new Translation2d(vx, vy);  
-    Translation2d displacement = robotVel.times(shotTime);
-    Translation2d adjustedGoal = goalPose.getTranslation().minus(displacement);
+    for (int i = 0; i < 20; i++){
+      shooterVel = m_pav.getVelocity();
+      hoodAngle = m_pav.getAngle();
+      shootSpeed = shooterVel*Math.sin(Units.degreesToRadians(hoodAngle));
+      shotTime = distance / shootSpeed;
+      Translation2d robotVel = new Translation2d(vx, vy);  
+      Translation2d displacement = robotVel.times(shotTime);
+      Translation2d adjustedGoal = goalPose.getTranslation().plus(displacement);
+      Translation2d robotToGoal = adjustedGoal.minus(robotPose.getTranslation());
+      Rotation2d targetAngle = robotToGoal.getAngle();
+      shootOnMoveGoal = targetAngle.getRadians();
 
-    Translation2d robotToGoal = adjustedGoal.minus(robotPose.getTranslation());
+      m_pav.update(robotToGoal.getDistance(robotPose.getTranslation()));
+    }
 
-    Rotation2d targetAngle = robotToGoal.getAngle();
-
-
-    double shootOnMoveGoal = targetAngle.getRadians();
+    SmartDashboard.putNumber("estimated shot time", shotTime);
     
     updatingGoal = shootOnMoveGoal;
-    
 
 
-    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
+    if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Red))
     {
         shootOnMoveGoal -= (Math.PI/2);
         
@@ -173,8 +182,8 @@ public class ShootOnMove extends Command {
 
     thetaController.setGoal(shootOnMoveGoal);
     
-    SmartDashboard.putNumber("vy chassis speeds", vy);
-    SmartDashboard.putNumber("vx chassis speeds", vx);
+    SmartDashboard.putNumber("Shoot on move vy chassis speeds", vy);
+    SmartDashboard.putNumber("Shoot on move vx chassis speeds", vx);
 
     SmartDashboard.putNumber("shoot on the move goal", shootOnMoveGoal);
 
@@ -190,11 +199,9 @@ public class ShootOnMove extends Command {
     SmartDashboard.putNumber("shoot on the move Theta speed", thetaSpeed);
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
-
-    
+    m_shooter.moveFlywheel(shooterVel);
+    m_hood.setGoalAngle(hoodAngle);
   }
-
-
 
   // Called once the command ends or is interrupted.
   @Override

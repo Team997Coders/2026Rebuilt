@@ -96,7 +96,7 @@ public class RobotContainer {
 
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
-  private final Climber climber = new Climber();
+  //private final Climber climber = new Climber();
   private final Shooter shooter = new Shooter();
   private final Roller roller = new Roller();
   private final Hood hood = new Hood();
@@ -148,8 +148,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("hood", m_PavHood);
     NamedCommands.registerCommand("stop hood", m_PavHood.finishCommand());
 
-    NamedCommands.registerCommand("raise climber", climber.raise());
-    NamedCommands.registerCommand("lower climber", climber.lower());
+    // NamedCommands.registerCommand("raise climber", climber.raise());
+    // NamedCommands.registerCommand("lower climber", climber.lower());
 
     // new EventTrigger("shoot").whileTrue(m_PavShooter);
     // new EventTrigger("index").whileTrue(m_IndexerCommand);
@@ -272,7 +272,7 @@ public class RobotContainer {
    
 
 
-  Boolean hublockEnabled = false;
+  Boolean hublockEnabled = true;
 
   public boolean getHublockEnabled() {
     return hublockEnabled;
@@ -306,8 +306,11 @@ public class RobotContainer {
  
     // targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
 
-    targetLockTrigger.and(shootModeTrigger).whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
-    targetLockTrigger.and(shootModeTrigger.negate()).whileTrue(m_ShootOnMove.alongWith(m_PavShooter).alongWith(m_PavHood));
+    SmartDashboard.putBoolean("hub lock trigger", getHublockEnabled());
+    //hubLockStatic.whileTrue(m_HubLock);//.alongWith(m_PavShooter).alongWith(m_PavHood));
+    targetLockTrigger.whileTrue(m_ShootOnMove);//.alongWith(m_PavShooter).alongWith(m_PavHood));
+    // targetLockTrigger.whileTrue(m_PavShooter);
+    // targetLockTrigger.whileTrue(m_PavHood);
     targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
 
@@ -320,9 +323,9 @@ public class RobotContainer {
     shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
       .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
     
-    c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
-    c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
-    c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
+    // c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
+    // c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
+    // c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
     flywheelTrigger.whileTrue(shooter.moveFlywheelDashboardCommand())
       .onFalse(shooter.moveFlywheelCommand(0));
     flywheelTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
