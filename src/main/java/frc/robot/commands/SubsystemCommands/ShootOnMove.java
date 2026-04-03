@@ -24,19 +24,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
-import frc.robot.subsystems.BackupToggle;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.PAVController;
 
-public class HubLock extends Command {
+public class ShootOnMove extends Command {
+
   private final Drivebase drivebase;
   private final Supplier<double[]> speedXY;
 
   private final Hood m_hood;
   private final Shooter m_shooter;
-  private final BackupToggle m_BackupToggle;
 
   private static TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
   private ProfiledPIDController thetaController = new ProfiledPIDController(
@@ -49,8 +48,7 @@ public class HubLock extends Command {
   private PAVController m_pav;
 
   /** Creates a new Drive. */
-  public HubLock(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter, PAVController pav, BackupToggle backupToggle) {
-  
+  public ShootOnMove(Drivebase drivebase, Supplier<double[]> speedXY, Hood hood, Shooter shooter, PAVController pav) {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 
@@ -58,28 +56,21 @@ public class HubLock extends Command {
     this.m_shooter = shooter;
 
     this.m_pav = pav;
-    this.m_BackupToggle = backupToggle;
 
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
+    SmartDashboard.putNumberArray("Shoot on the move PID constants", new Double[]{9.0, 2.0, 0.0});
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivebase);
-
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
-
-      finished = false;
-      if (!m_BackupToggle.getState()) {
-      thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
-      }
-   
+    finished = false;
+    thetaController.reset(drivebase.getShooterPose().getRotation().getRadians());
   }
 
   public Pose2d getGoalPose()
@@ -129,15 +120,15 @@ public class HubLock extends Command {
   private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
   public double updatingGoal = 0;
+
   @Override
   public void execute() {
-     if (!m_BackupToggle.getState()) {
      var xy = speedXY.get();
     double vx = drivebase.getCurrentSpeeds().vxMetersPerSecond;
     double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
 
 
-    var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
+    var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Shoot on the move PID constants", pidValues);
     if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))
     {
       pidValues = valuesFromSmartDashbord;
@@ -149,45 +140,57 @@ public class HubLock extends Command {
     }
 
     Pose2d robotPose = drivebase.getShooterPose();
+    double distance = getDistanceFromTarget(robotPose);
     goalPose = getGoalPose();
 
-    double goal = Math.atan((goalPose.getY() - robotPose.getY()) 
-                        /(goalPose.getX() - robotPose.getX()));
+    double shootSpeed = m_pav.getVelocity()*Math.cos(Units.degreesToRadians(m_pav.getAngle()));
+    double shotTime = distance / shootSpeed;
+
     
-     updatingGoal = goal;
+    Translation2d robotVel = new Translation2d(vx, vy);  
+    Translation2d displacement = robotVel.times(shotTime);
+    Translation2d adjustedGoal = goalPose.getTranslation().minus(displacement);
+
+    Translation2d robotToGoal = adjustedGoal.minus(robotPose.getTranslation());
+
+    Rotation2d targetAngle = robotToGoal.getAngle();
+
+
+    double shootOnMoveGoal = targetAngle.getRadians();
+    
+    updatingGoal = shootOnMoveGoal;
+    
 
 
     if (DriverStation.getAlliance().orElseThrow().equals(DriverStation.Alliance.Blue))
     {
-        goal -= (Math.PI/2);
+        shootOnMoveGoal -= (Math.PI/2);
         
     } else
     {
-        goal += (Math.PI/2);  
-
+        shootOnMoveGoal += (Math.PI/2);
     }
-    thetaController.setGoal(goal);
+
+    thetaController.setGoal(shootOnMoveGoal);
     
     SmartDashboard.putNumber("vy chassis speeds", vy);
     SmartDashboard.putNumber("vx chassis speeds", vx);
 
-    SmartDashboard.putNumber("hub lock goal: ", goal);
+    SmartDashboard.putNumber("shoot on the move goal", shootOnMoveGoal);
 
-   
-    SmartDashboard.putNumber("hub lock measered value: ", robotPose.getRotation().getRadians());
 
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
-    SmartDashboard.putNumber("hub lock pid output", thetaSpeed);
+    SmartDashboard.putNumber("shoot on the move pid output", thetaSpeed);
 
     if (Math.abs(thetaSpeed) < 0.15) //|| //The theta speed is under 0.04 meters per second
         //(goal - robotPose.getRotation().getRadians()) < 0.05) //The goal is within 0.05 radians of the goal
     {
       thetaSpeed = 0;
     }
-    SmartDashboard.putNumber("hub lock Theta speed", thetaSpeed);
+    SmartDashboard.putNumber("shoot on the move Theta speed", thetaSpeed);
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
-  }
+
     
   }
 
@@ -213,7 +216,4 @@ public class HubLock extends Command {
     {
         return Commands.runOnce(() -> finish());
     }
-
-  }
-
-
+}
