@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +24,7 @@ public class IntakeExtendo extends SubsystemBase {
     private PIDController pid = new PIDController(Constants.IntakeConstants.p, Constants.IntakeConstants.i, Constants.IntakeConstants.d);
     private double goal = 0.25;    
     private RelativeEncoder encoder; 
+    private DigitalInput limitSwitch;
                     
     public IntakeExtendo(){
         extendMotorRight = new SparkMax(Constants.IntakeConstants.extendMotorIDright, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
@@ -32,7 +34,7 @@ public class IntakeExtendo extends SubsystemBase {
                     
         extendMotorRight.configure(extendConfigRight, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         extendMotorLeft.configure(extendConfigLeft, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
+        limitSwitch = new DigitalInput(1);
         encoder = extendMotorLeft.getEncoder();     
         encoder.setPosition(0);
     }
@@ -149,7 +151,11 @@ public class IntakeExtendo extends SubsystemBase {
         SmartDashboard.putNumber("intake extension goal", goal);
         SmartDashboard.putNumber("intake extension current", getEncoderPosition());
         SmartDashboard.putNumber("intake encoder position", getEncoderPosition());
-    }
+
+        if (!limitSwitch.get()) {    
+            encoder.setPosition(Constants.IntakeConstants.extendedPosition);
+        }
+    }   
 
     public Command resetTopCommand() {
         return this.runOnce(() -> encoder.setPosition(0)).andThen(this.runOnce(() -> setGoal(0)));
