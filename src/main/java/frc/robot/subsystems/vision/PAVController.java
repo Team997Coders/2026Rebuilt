@@ -67,6 +67,6 @@ public class PAVController {
 
     public double getVelocity()
     {
-        return velocity - 0.15;
+        return velocity;
     }
 }

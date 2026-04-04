@@ -299,7 +299,7 @@ public class RobotContainer {
     Trigger flywheelTrigger = c_driveStick.y();
     Trigger purgeIndexerTrigger = c_driveStick.b();
     Trigger purgeIntakeTrigger = c_driveStick.a();
-    Trigger backupShootingTrigger = c_operator.x();
+    Trigger backupShootingTrigger = c_driveStick.x();
 
     Trigger hublockTrigger = new Trigger(() -> getHublockEnabled());
 
