@@ -151,20 +151,20 @@ public class ShootOnMove extends Command {
     double hoodAngle = 25;
     double shooterVel = 0;
     
-    for (int i = 0; i < 20; i++){
+    //for (int i = 0; i < 20; i++){
       shooterVel = m_pav.getVelocity();
       hoodAngle = m_pav.getAngle();
       shootSpeed = shooterVel*Math.sin(Units.degreesToRadians(hoodAngle));
       shotTime = distance / shootSpeed;
       Translation2d robotVel = new Translation2d(vx, vy);  
       Translation2d displacement = robotVel.times(shotTime);
-      Translation2d adjustedGoal = goalPose.getTranslation().plus(displacement);
+      Translation2d adjustedGoal = goalPose.getTranslation().minus(displacement);
       Translation2d robotToGoal = adjustedGoal.minus(robotPose.getTranslation());
       Rotation2d targetAngle = robotToGoal.getAngle();
       shootOnMoveGoal = targetAngle.getRadians();
 
       m_pav.update(robotToGoal.getDistance(robotPose.getTranslation()));
-    }
+    //}
 
     SmartDashboard.putNumber("estimated shot time", shotTime);
     
@@ -199,13 +199,14 @@ public class ShootOnMove extends Command {
     SmartDashboard.putNumber("shoot on the move Theta speed", thetaSpeed);
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
-    m_shooter.moveFlywheel(shooterVel);
+    m_shooter.moveFlywheel(shooterVel/Constants.ShooterConstants.flywheelRadius);
     m_hood.setGoalAngle(hoodAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_shooter.moveFlywheel(0);
   }
 
   // Returns true when the command should end.

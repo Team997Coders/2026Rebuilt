@@ -153,6 +153,10 @@ public class IntakeExtendo extends SubsystemBase {
         SmartDashboard.putNumber("intake encoder position", getEncoderPosition());
 
         if (!limitSwitch.get()) {    
+            if (encoder.getPosition() > Constants.IntakeConstants.extendedPosition + 2)
+            {
+                setGoal(Constants.IntakeConstants.extendedPosition);
+            }
             encoder.setPosition(Constants.IntakeConstants.extendedPosition);
         }
     }   

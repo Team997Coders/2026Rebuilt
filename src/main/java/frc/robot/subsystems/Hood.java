@@ -70,7 +70,12 @@ public class Hood extends SubsystemBase {
         SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
         if(!magnet.get()) {
+            if (getHoodAngle() > 30)
+            {
+                setGoalAngle(25);
+            }
             hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+            
         }
 
         SmartDashboard.putBoolean("magnet", magnet.get());

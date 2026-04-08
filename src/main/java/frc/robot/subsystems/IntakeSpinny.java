@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.TalonFXSimState.MotorType;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -14,15 +18,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class IntakeSpinny extends SubsystemBase {
-    private final SparkMax spinMotor;
+    private final TalonFX spinMotor;
+    private final TalonFXConfiguration flywheelConfig;
 
-    private final SparkMaxConfig spinConfig;
                     
     public IntakeSpinny(){
-        spinMotor = new SparkMax(Constants.IntakeConstants.spinMotorID, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-        spinConfig = new SparkMaxConfig();
+        spinMotor = new TalonFX(Constants.IntakeConstants.spinMotorID);
+        flywheelConfig = new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+        flywheelConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
+        flywheelConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.25;
                     
-        spinMotor.configure(spinConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
             
     public void spin(double voltage) {
@@ -32,7 +37,7 @@ public class IntakeSpinny extends SubsystemBase {
 
     public void output()
     {
-        spinMotor.set(-0.5);    
+        spinMotor.set(0.8);    
     }
 
     public Command intakeFuel()
@@ -47,6 +52,6 @@ public class IntakeSpinny extends SubsystemBase {
 
     public Command reverse()
     {
-        return this.runOnce(() -> spin(8));
+        return this.runOnce(() -> spin(-5));
     }
 }

@@ -13,7 +13,7 @@ public class IndexerCommand extends Command{
 
     private Indexer m_indexer;
     private Boolean finished = false;
-    private double IndexerSpeed = 0.8;
+    private double IndexerSpeed = 0.67;
 
     public IndexerCommand(Indexer indexer)
     {
