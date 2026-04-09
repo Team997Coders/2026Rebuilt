@@ -1,5 +1,6 @@
 package frc.robot.commands.SubsystemCommands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -33,7 +34,7 @@ public class PasShooter extends Command{
     public void execute()
     {
         double distance = m_hubLock.getDistance();
-        m_pav.update(distance);
+        m_pav.update(distance+Units.inchesToMeters(182.11));
         SmartDashboard.putNumber("distance from target", distance);
         m_shooter.moveFlywheel(m_pav.getVelocity() / Constants.ShooterConstants.flywheelRadius);
         SmartDashboard.putNumber("pav target velocity", m_pav.getVelocity());

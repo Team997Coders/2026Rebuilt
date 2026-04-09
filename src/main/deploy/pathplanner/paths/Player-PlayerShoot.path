@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.815495454833318,
-        "y": 0.47781990386509676
+        "x": 0.8659166922197808,
+        "y": 0.7736152016681971
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.2054921540656205,
-        "y": 1.1432097004279604
+        "x": 0.9484337349397589,
+        "y": 1.4123493975903614
       },
       "prevControl": {
-        "x": 0.9407236140823745,
-        "y": 0.961623768434013
+        "x": 0.7170277551978965,
+        "y": 1.3177382326059435
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -42,10 +56,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.130102354155994
+    "rotation": -64.44003482817604
   },
   "reversed": false,
-  "folder": "OutpostTrench",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

@@ -89,7 +89,7 @@ public class RobotContainer {
   private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
   private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
   private final Camera camera3 = new Camera("tangerine", new Transform3d(new Translation3d(Units.inchesToMeters(-4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(0,Units.degreesToRadians(-10),(Math.PI/2))));
-  private final Camera camera4 = new Camera("mango", new Transform3d(new Translation3d(Units.inchesToMeters(4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(Math.PI,Units.degreesToRadians(10),Math.PI/2)));
+  private final Camera camera4 = new Camera("mango", new Transform3d(new Translation3d(Units.inchesToMeters(4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(0,Units.degreesToRadians(10),Math.PI/2)));
 
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
@@ -314,8 +314,8 @@ public class RobotContainer {
     // targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavHood).alongWith(m_PavShooter));
 
     SmartDashboard.putBoolean("hub lock trigger", getHublockEnabled());
-    //hubLockStatic.whileTrue(m_HubLock);//.alongWith(m_PavShooter).alongWith(m_PavHood));
-    targetLockTrigger.whileTrue(m_ShootOnMove);//.alongWith(m_PavShooter).alongWith(m_PavHood));
+    targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
+    //targetLockTrigger.whileTrue(m_ShootOnMove);//.alongWith(m_PavShooter).alongWith(m_PavHood));
     // targetLockTrigger.whileTrue(m_PavShooter);
     // targetLockTrigger.whileTrue(m_PavHood);
     targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
