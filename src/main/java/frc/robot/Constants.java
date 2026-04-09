@@ -24,8 +24,8 @@ public final class Constants {
   public static final class LightsConstants {
     public static final int dio0Pin = 11;
     public static final int dio1Pin = 13;
-    public static final int dio2Pin = 15;
-    public static final int dio3Pin = 17;
+    public static final int dio2Pin = 17;
+    public static final int dio3Pin = 15;
   }
 
   public static final int gyroID = 46;

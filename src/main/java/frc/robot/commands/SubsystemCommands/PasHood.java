@@ -29,7 +29,7 @@ public class PasHood extends Command{
     @Override
     public void execute()
     {
-        m_hood.setGoalAngle(45);
+        m_hood.setGoalAngle(55);
     }
 
     @Override
