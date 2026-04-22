@@ -43,7 +43,7 @@ public class Climber extends SubsystemBase {
         //     resetEncoder();
         // }
 
-        SmartDashboard.putNumber("climber pos", encoder.getPosition());
+        //SmartDashboard.putNumber("climber pos", encoder.getPosition());
     
         //setClimberVolts(climbPid.calculate(getPosition(), goalPos));
 

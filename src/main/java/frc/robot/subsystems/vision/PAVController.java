@@ -14,7 +14,7 @@ public class PAVController {
 
     public void update(double distance)
     {
-        SmartDashboard.putNumber("Pav distance", distance);
+        //SmartDashboard.putNumber("Pav distance", distance);
         if (distance < 2.3)
         {
             targetAngle = 25;
@@ -39,9 +39,9 @@ public class PAVController {
         {
             targetAngle = 40;
         }
-        SmartDashboard.putNumber("pav angle", targetAngle);
+        //SmartDashboard.putNumber("pav angle", targetAngle);
         setTargetVelocity(distance);
-        SmartDashboard.putNumber("pav target velocity", velocity);
+        //SmartDashboard.putNumber("pav target velocity", velocity);
     }
 
     public void setTargetVelocity(double distance)
@@ -56,7 +56,7 @@ public class PAVController {
         }
         else //40
         {
-            velocity = 7.3463 + (.9521 + 0.08) * distance + 0.3;
+            velocity = 7.3463 + (.9521 + 0.08) * distance + 0.15;
         }
     }
 
@@ -67,6 +67,6 @@ public class PAVController {
 
     public double getVelocity()
     {
-        return velocity - 0.15;
+        return velocity;
     }
 }

@@ -85,7 +85,7 @@ public class IntakeExtendo extends SubsystemBase {
     }
             
     public void runExtendMotor(double voltage) {
-        SmartDashboard.putNumber("intake extendo voltage", voltage);
+        //SmartDashboard.putNumber("intake extendo voltage", voltage);
         if (Math.abs(goal - getEncoderPosition()) < tolerence) {
             extendMotorLeft.setVoltage(0);
         } else {
@@ -94,7 +94,7 @@ public class IntakeExtendo extends SubsystemBase {
     }
 
     public void runExtendMotorManual(double voltage) {
-        SmartDashboard.putNumber("intake extendo voltage", voltage);
+        //SmartDashboard.putNumber("intake extendo voltage", voltage);
         
         extendMotorLeft.setVoltage(voltage);
         
@@ -147,10 +147,10 @@ public class IntakeExtendo extends SubsystemBase {
         double pidOutput = pid.calculate(getEncoderPosition(), goal);
         runExtendMotor(pidOutput);
         //runExtendWithGravity();
-        SmartDashboard.putNumber("intake extension pid output", pidOutput);
-        SmartDashboard.putNumber("intake extension goal", goal);
-        SmartDashboard.putNumber("intake extension current", getEncoderPosition());
-        SmartDashboard.putNumber("intake encoder position", getEncoderPosition());
+        // SmartDashboard.putNumber("intake extension pid output", pidOutput);
+        // SmartDashboard.putNumber("intake extension goal", goal);
+        // SmartDashboard.putNumber("intake extension current", getEncoderPosition());
+        // SmartDashboard.putNumber("intake encoder position", getEncoderPosition());
 
         if (!limitSwitch.get()) {    
             if (encoder.getPosition() > Constants.IntakeConstants.extendedPosition + 2)

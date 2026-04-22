@@ -45,9 +45,9 @@ public class Shooter extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("shooter output", flywheel1.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotVel());
-        SmartDashboard.putNumber("shooter velocity tangential", getflywheelTanVel());
+        // SmartDashboard.putNumber("shooter output", flywheel1.getMotorVoltage().getValueAsDouble());
+        // SmartDashboard.putNumber("shooter velocity rotational", getFlywheelRotVel());
+        // SmartDashboard.putNumber("shooter velocity tangential", getflywheelTanVel());
     }
 
     /**
@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase {
 
        flywheel1.setVoltage(-shooterVolts);
 
-       SmartDashboard.putNumber("volts", shooterVolts);
+       //SmartDashboard.putNumber("volts", shooterVolts);
     }
     
     /**
@@ -91,14 +91,14 @@ public class Shooter extends SubsystemBase {
         double voltage = shooterPID.calculate(getFlywheelRotVel(), flywheelVel);
         double ff = shooterFF.calculate(flywheelVel);
        
-        SmartDashboard.putNumber("shooter pid calculated volts", voltage);
+        //SmartDashboard.putNumber("shooter pid calculated volts", voltage);
 
         voltage += ff;
 
 
-        SmartDashboard.putNumber("ff value", ff);
-        SmartDashboard.putNumber("actual set voltage", voltage);
-        SmartDashboard.putNumber("requested velocity", flywheelVel);
+        // SmartDashboard.putNumber("ff value", ff);
+        // SmartDashboard.putNumber("actual set voltage", voltage);
+        // SmartDashboard.putNumber("requested velocity", flywheelVel);
 
         setFlywheelVoltage(voltage);
     }

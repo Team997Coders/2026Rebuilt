@@ -13,17 +13,14 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.vision.PAVController;
 
-public class IndexerCommand extends Command{
+public class IndexerCommandAuto extends Command{
 
     private Indexer m_indexer;
     private Boolean finished = false;
-    private double IndexerSpeed = 0.67;
-    private DoubleSupplier m_speed;
 
-    public IndexerCommand(Indexer indexer, DoubleSupplier speed)
+    public IndexerCommandAuto(Indexer indexer)
     {
         m_indexer = indexer;
-        m_speed = speed;
 
         addRequirements(m_indexer);
     }
@@ -37,9 +34,8 @@ public class IndexerCommand extends Command{
     @Override
     public void execute()
     {
-        double speed = (m_speed.getAsDouble() - 0.5) * 2;
         //SmartDashboard.putNumber("trigger speed", speed);
-        m_indexer.setIndexerMotor(speed);
+        m_indexer.setIndexerMotor(0.67);
     }
 
     @Override

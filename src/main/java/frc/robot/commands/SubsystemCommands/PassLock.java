@@ -44,7 +44,7 @@ public class PassLock extends Command {
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
+    //SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivebase);
@@ -90,12 +90,12 @@ public class PassLock extends Command {
       
     }
     
-    SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
+    // SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
 
-    SmartDashboard.putNumber("measered value: ", robotPose.getRotation().getRadians());
+    // SmartDashboard.putNumber("measered value: ", robotPose.getRotation().getRadians());
 
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
-    SmartDashboard.putBoolean("at goal", thetaController.atGoal());
+    //SmartDashboard.putBoolean("at goal", thetaController.atGoal());
 
     if (Math.abs(thetaSpeed) < 0.1)
     {
@@ -103,9 +103,9 @@ public class PassLock extends Command {
     }
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
-    SmartDashboard.putNumber("x speed", -xy[1]);
-    SmartDashboard.putNumber("y speed", -xy[0]);
-    SmartDashboard.putNumber("theta speed", -thetaSpeed);
+    // SmartDashboard.putNumber("x speed", -xy[1]);
+    // SmartDashboard.putNumber("y speed", -xy[0]);
+    // SmartDashboard.putNumber("theta speed", -thetaSpeed);
   }
 
 

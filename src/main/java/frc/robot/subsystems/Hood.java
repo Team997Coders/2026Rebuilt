@@ -65,12 +65,12 @@ public class Hood extends SubsystemBase {
 
         setHoodMotorVoltage(PIDHoodController.calculate(getHoodAngle(), goalAngle));
         SmartDashboard.putNumber("Hood angle/pos", goalAngle);
-        SmartDashboard.putNumber("hood angle", getHoodAngle());
+        SmartDashboard.putNumber("hood angle/angle", getHoodAngle());
 
-        SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
+        //SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
         if(!magnet.get()) {
-            if (getHoodAngle() > 30)
+            if (getHoodAngle() < 22)
             {
                 setGoalAngle(25);
             }
@@ -78,7 +78,7 @@ public class Hood extends SubsystemBase {
             
         }
 
-        SmartDashboard.putBoolean("magnet", magnet.get());
+        //SmartDashboard.putBoolean("magnet", magnet.get());
     }
 
     //Hood

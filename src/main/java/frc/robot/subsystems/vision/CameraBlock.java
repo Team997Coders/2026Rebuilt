@@ -19,15 +19,15 @@ public class CameraBlock
 
     public void update(SwerveDrivePoseEstimator poseEstimator)
     {
-        SmartDashboard.putBoolean("update camera block", true);
-        SmartDashboard.putNumber("number of cameras", this.cameraList.size());
+        //SmartDashboard.putBoolean("update camera block", true);
+        //SmartDashboard.putNumber("number of cameras", this.cameraList.size());
         for (Camera camera: this.cameraList)
         {
-            SmartDashboard.putNumber("camera #", camera.getClass().hashCode());
-            //camera.update(poseEstimator);
-            SmartDashboard.putNumber("testing camera other method", camera.getYawClump());
-            SmartDashboard.putNumber("does this work for camera?", camera.update2(poseEstimator));
-            SmartDashboard.putBoolean("made it to the other side of the method!", true);
+            // SmartDashboard.putNumber("camera #", camera.getClass().hashCode());
+            camera.update(poseEstimator);
+            // SmartDashboard.putNumber("testing camera other method", camera.getYawClump());
+            // SmartDashboard.putNumber("does this work for camera?", camera.update2(poseEstimator));
+            // SmartDashboard.putBoolean("made it to the other side of the method!", true);
         }
     }
 

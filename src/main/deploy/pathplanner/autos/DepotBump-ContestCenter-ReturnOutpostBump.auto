@@ -67,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ContestCenter-ReturnDepotBump"
+                  "pathName": "ContestCenter-ReturnOutpostBump"
                 }
               },
               {
@@ -177,6 +177,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "DepotContest-PNW",
   "choreoAuto": false
 }

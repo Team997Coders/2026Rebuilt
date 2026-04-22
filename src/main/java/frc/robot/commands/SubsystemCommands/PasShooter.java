@@ -34,10 +34,10 @@ public class PasShooter extends Command{
     public void execute()
     {
         double distance = m_hubLock.getDistance();
-        m_pav.update(distance+Units.inchesToMeters(182.11));
-        SmartDashboard.putNumber("distance from target", distance);
-        m_shooter.moveFlywheel(m_pav.getVelocity() * 2 / Constants.ShooterConstants.flywheelRadius);
-        SmartDashboard.putNumber("pav target velocity", m_pav.getVelocity());
+        m_pav.update(distance+Units.inchesToMeters(182.11)+2.7);
+        //SmartDashboard.putNumber("distance from target", distance);
+        m_shooter.moveFlywheel(m_pav.getVelocity() / Constants.ShooterConstants.flywheelRadius);
+        //SmartDashboard.putNumber("pav target velocity", m_pav.getVelocity());
     }
 
     @Override

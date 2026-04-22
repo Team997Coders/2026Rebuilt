@@ -63,7 +63,7 @@ public class HubLock extends Command {
     thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
+    //SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivebase);
@@ -168,23 +168,23 @@ public class HubLock extends Command {
     }
     thetaController.setGoal(goal);
     
-    SmartDashboard.putNumber("vy chassis speeds", vy);
-    SmartDashboard.putNumber("vx chassis speeds", vx);
+    // SmartDashboard.putNumber("vy chassis speeds", vy);
+    // SmartDashboard.putNumber("vx chassis speeds", vx);
 
-    SmartDashboard.putNumber("hub lock goal: ", goal);
+    // SmartDashboard.putNumber("hub lock goal: ", goal);
 
    
-    SmartDashboard.putNumber("hub lock measered value: ", robotPose.getRotation().getRadians());
+    // SmartDashboard.putNumber("hub lock measered value: ", robotPose.getRotation().getRadians());
 
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
-    SmartDashboard.putNumber("hub lock pid output", thetaSpeed);
+    //SmartDashboard.putNumber("hub lock pid output", thetaSpeed);
 
     if (Math.abs(thetaSpeed) < 0.15) //|| //The theta speed is under 0.04 meters per second
         //(goal - robotPose.getRotation().getRadians()) < 0.05) //The goal is within 0.05 radians of the goal
     {
       thetaSpeed = 0;
     }
-    SmartDashboard.putNumber("hub lock Theta speed", thetaSpeed);
+    //SmartDashboard.putNumber("hub lock Theta speed", thetaSpeed);
 
     drivebase.defaultDrive(xy[1], xy[0], thetaSpeed);
   }

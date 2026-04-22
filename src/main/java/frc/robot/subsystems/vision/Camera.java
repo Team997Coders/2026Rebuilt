@@ -44,18 +44,18 @@ public class Camera
 
     public void update(SwerveDrivePoseEstimator poseEstimator)
     {
-        SmartDashboard.putBoolean("camera update", true);
+        //SmartDashboard.putBoolean("camera update", true);
         results = this.camera.getAllUnreadResults();
         if (!this.results.isEmpty())
         {
-            SmartDashboard.putBoolean("results is not empty", true);
+            //SmartDashboard.putBoolean("results is not empty", true);
             var result = results.get(results.size() - 1);
             if (result.hasTargets()) {
-                SmartDashboard.putBoolean("results has targets", true);
+                //SmartDashboard.putBoolean("results has targets", true);
                 Optional<EstimatedRobotPose> optionalPose = this.photonPoseEstimator.estimateAverageBestTargetsPose(result);
                 if (optionalPose.isPresent())
                 {
-                    SmartDashboard.putBoolean("results pose present", true);
+                    //SmartDashboard.putBoolean("results pose present", true);
                     EstimatedRobotPose estimatedRobotPose = optionalPose.orElseThrow();
                     poseEstimator.addVisionMeasurement(estimatedRobotPose.estimatedPose.toPose2d(), result.getTimestampSeconds());
                 }
@@ -119,18 +119,18 @@ public class Camera
     }
 
     public int update2(SwerveDrivePoseEstimator poseEstimator) {
-        SmartDashboard.putBoolean("camera update", true);
+        //SmartDashboard.putBoolean("camera update", true);
         results = this.camera.getAllUnreadResults();
         if (!this.results.isEmpty())
         {
-            SmartDashboard.putBoolean("results is not empty", true);
+            //SmartDashboard.putBoolean("results is not empty", true);
             var result = results.get(results.size() - 1);
             if (result.hasTargets()) {
-                SmartDashboard.putBoolean("results has targets", true);
+                //SmartDashboard.putBoolean("results has targets", true);
                 Optional<EstimatedRobotPose> optionalPose = this.photonPoseEstimator.estimateAverageBestTargetsPose(result);
                 if (optionalPose.isPresent())
                 {
-                    SmartDashboard.putBoolean("results pose present", true);
+                    //SmartDashboard.putBoolean("results pose present", true);
                     EstimatedRobotPose estimatedRobotPose = optionalPose.orElseThrow();
                     poseEstimator.addVisionMeasurement(estimatedRobotPose.estimatedPose.toPose2d(), result.getTimestampSeconds());
                 }
