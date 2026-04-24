@@ -44,7 +44,7 @@ public class objectDetectionPathfinding extends Command{
 
     
     );
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
     private Command autonomousCommand = new PathPlannerAuto("DepotTrench");
 
 }
