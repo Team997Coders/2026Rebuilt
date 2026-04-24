@@ -174,7 +174,6 @@ public class RobotContainer {
     autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
     SmartDashboard.putData("Auto Choser", autoChooser);
 
-    
 
     CanandEventLoop.getInstance();
   }

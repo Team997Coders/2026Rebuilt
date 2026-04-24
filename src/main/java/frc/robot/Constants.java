@@ -86,6 +86,10 @@ public final class Constants {
   public final static double defaultVolts = 6; //10;
   public final static double reverseVolts = -7;
   }
+   
+  public static final class ObjectDetectionConstants {
+    public static final double desiredDistance = 10;
+  }
 
   public static final class ClimberConstants {
     public static final int climberID = 62;
@@ -102,6 +106,7 @@ public final class Constants {
     public static final double loweredPos = 0;
   }
 
+ 
   public static final class AutoDriveConstants {
       public static final double distance = 1;
       public static final double conversionFactor = (Math.PI*Units.inchesToMeters(4.0)) / (1.0/6.75);

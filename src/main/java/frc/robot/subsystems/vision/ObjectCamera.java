@@ -112,6 +112,7 @@ public class ObjectCamera extends Camera
 
                 PhotonTrackedTarget target = targets.get(bestIndex);
                 return target.yaw;
+                
             }
 
         }
