@@ -35,6 +35,7 @@ import frc.robot.subsystems.objectDetectionPathfinding;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
+import frc.robot.subsystems.vision.ObjectCamera;
 import frc.robot.subsystems.vision.PAVController;
 
 import java.util.ArrayList;
@@ -95,14 +96,15 @@ public class RobotContainer {
   private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
   private final Camera camera3 = new Camera("tangerine", new Transform3d(new Translation3d(Units.inchesToMeters(-4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(0,Units.degreesToRadians(-10),(Math.PI/2))));
   private final Camera camera4 = new Camera("mango", new Transform3d(new Translation3d(Units.inchesToMeters(4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(Math.PI,Units.degreesToRadians(10),Math.PI/2)));
-
+  private final ObjectCamera colorCamera = new ObjectCamera("apple", new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)), new Rotation3d(0,Units.degreesToRadians(0),0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
   private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera, camera3, camera4));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-  private final objectDetectionPathfinding adaptAuto  = new objectDetectionPathfinding(drivebase);
+  private final clumpLock clumpLock = new clumpLock(drivebase, () -> getScaledXY(), colorCamera);
+  private final objectDetectionPathfinding adaptAuto  = new objectDetectionPathfinding(drivebase, clumpLock);
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
   //private final Climber climber = new Climber();

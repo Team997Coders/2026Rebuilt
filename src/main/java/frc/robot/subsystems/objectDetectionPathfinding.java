@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.clumpLock;
 import frc.robot.subsystems.Drivebase;
 
 public class objectDetectionPathfinding extends SubsystemBase{
@@ -24,12 +25,14 @@ public class objectDetectionPathfinding extends SubsystemBase{
     // Since we are using a holonomic drivetrain, the rotation component of this pose
 // represents the goal holonomic rotation
     private Drivebase m_drivebase;
+    private clumpLock m_clumpLock;
 
-    public objectDetectionPathfinding(Drivebase drivebase){
+    public objectDetectionPathfinding(Drivebase drivebase, clumpLock clumpLock){
         m_drivebase = drivebase;
+        m_clumpLock = clumpLock;
      }
 
-          private   Rotation2d currentRotation = m_drivebase.getPose().getRotation();
+        private Rotation2d currentRotation = m_drivebase.getPose().getRotation();
 
         private Pose2d targetPose = new Pose2d(m_drivebase.getPose().getX() + 
             Constants.ObjectDetectionConstants.desiredDistance*Math.cos(currentRotation.getRadians()), 
@@ -62,21 +65,14 @@ public class objectDetectionPathfinding extends SubsystemBase{
         private Command autonomousCommand = new PathPlannerAuto(Constants.ObjectDetectionConstants.startAuto);
         private Command auto2 = new PathPlannerAuto(Constants.ObjectDetectionConstants.endAuto);
 
-         private Command group3 = new SequentialCommandGroup(
-            autonomousCommand,
-            new WaitCommand(.5),
-            pathfindingCommand,
-            new WaitCommand(.5),
-            pathfindBack,
-            new WaitCommand(.5),
-            auto2
-        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
-    
+
     
    
     public Command coolCommand() {
         return new SequentialCommandGroup(
             autonomousCommand,
+            new WaitCommand(.5),
+            m_clumpLock,
             new WaitCommand(.5),
             pathfindingCommand,
             new WaitCommand(.5),
