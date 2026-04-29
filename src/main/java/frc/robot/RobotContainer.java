@@ -175,7 +175,7 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
     autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
-    autoChooser.addOption("objectAuto", adaptAuto.a());
+    autoChooser.addOption("objectAuto", adaptAuto.coolCommand());
 
     SmartDashboard.putData("Auto Choser", autoChooser);
     
