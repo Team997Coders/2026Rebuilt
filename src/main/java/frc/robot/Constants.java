@@ -5,6 +5,7 @@
 package frc.robot;
 
 import swervelib.SwerveModuleConfig;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -89,6 +90,11 @@ public final class Constants {
    
   public static final class ObjectDetectionConstants {
     public static final double desiredDistance = 10;
+    public static final String startAuto = "";
+    public static final String endAuto = "";
+    public static final double desiredX = 0;
+    public static final double desiredY = 0;
+    public static final Rotation2d desiredRotation = new Rotation2d(0);
   }
 
   public static final class ClimberConstants {

@@ -31,6 +31,7 @@ import frc.robot.subsystems.IntakeSpinny;
 import frc.robot.subsystems.Roller;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.objectDetectionPathfinding;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
@@ -85,7 +86,9 @@ public class RobotContainer {
   private  CommandXboxController c_operator = new CommandXboxController(1);
   
   // Pathplanner autoChooser
+
   private SendableChooser<Command> autoChooser;
+
 
   //Cameras - pineapple is front facing camera
   private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
@@ -99,7 +102,7 @@ public class RobotContainer {
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-
+  private final objectDetectionPathfinding adaptAuto  = new objectDetectionPathfinding(drivebase);
   private final PAVController pav = new PAVController();
   private final Indexer indexer = new Indexer();
   //private final Climber climber = new Climber();
@@ -172,8 +175,10 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
     autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
-    SmartDashboard.putData("Auto Choser", autoChooser);
+    autoChooser.addOption("objectAuto", adaptAuto.a());
 
+    SmartDashboard.putData("Auto Choser", autoChooser);
+    
 
     CanandEventLoop.getInstance();
   }

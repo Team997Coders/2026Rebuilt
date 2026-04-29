@@ -96,6 +96,7 @@ public class Lights extends SubsystemBase {
         return holdState(0);
     }
 
+    
     public Command statusIdleBlue() {
         return holdState(1);
     }
