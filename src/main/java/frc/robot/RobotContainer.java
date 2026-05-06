@@ -1,365 +1,144 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// Copyright (c) 2021-2026 Littleton Robotics
+// http://github.com/Mechanical-Advantage
+//
+// Use of this source code is governed by a BSD
+// license that can be found in the LICENSE file
+// at the root directory of this project.
 
 package frc.robot;
 
-import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.Drive;
-import frc.robot.commands.OdometryTest;
-import frc.robot.commands.SubsystemCommands.HubLock;
-import frc.robot.commands.SubsystemCommands.IndexerCommand;
-import frc.robot.commands.SubsystemCommands.IndexerCommandAuto;
-import frc.robot.commands.SubsystemCommands.IntakeFuel;
-import frc.robot.commands.SubsystemCommands.PasHood;
-import frc.robot.commands.SubsystemCommands.PasShooter;
-import frc.robot.commands.SubsystemCommands.PassLock;
-import frc.robot.commands.SubsystemCommands.PavHood;
-import frc.robot.commands.Unstick;
-import frc.robot.commands.PlayMusic;
-import frc.robot.commands.clumpLock;
-import frc.robot.commands.goToLocation;
-import frc.robot.commands.objectLock;
-import frc.robot.commands.SubsystemCommands.PavShooter;
-import frc.robot.commands.SubsystemCommands.RollerCommand;
-import frc.robot.subsystems.BackupToggle;
-import frc.robot.commands.SubsystemCommands.ShootOnMove;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivebase;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.IntakeExtendo;
-import frc.robot.subsystems.IntakeSpinny;
-import frc.robot.subsystems.Roller;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Lights;
-import frc.robot.subsystems.vision.Camera;
-import frc.robot.subsystems.vision.CameraBlock;
-import frc.robot.subsystems.vision.PAVController;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.EventMarker;
-import com.reduxrobotics.canand.CanandEventLoop;
-import com.reduxrobotics.sensors.canandgyro.Canandgyro;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.Odometry;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIORedux;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOSpark;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
+  // Subsystems
+  private final Drive drive;
 
-  //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
-  private  XboxController driveStick = new XboxController(0);
-  private  CommandXboxController c_driveStick = new CommandXboxController(0);
-  private  CommandXboxController c_operator = new CommandXboxController(1);
-  
-  // Pathplanner autoChooser
-  private SendableChooser<Command> autoChooser;
+  // Controller
+  private final CommandXboxController controller = new CommandXboxController(0);
 
-  //Cameras - pineapple is front facing camera
-  private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
-  private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
-  private final Camera camera3 = new Camera("tangerine", new Transform3d(new Translation3d(Units.inchesToMeters(-4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(0,Units.degreesToRadians(-10),(Math.PI/2))));
-  private final Camera camera4 = new Camera("mango", new Transform3d(new Translation3d(Units.inchesToMeters(4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(0,Units.degreesToRadians(10),-Math.PI/2)));
+  // Dashboard inputs
+  private final LoggedDashboardChooser<Command> autoChooser;
 
-
-  //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera, camera3, camera4));
-  private final CameraBlock cameraBlock = new CameraBlock(cameraList);
-
-  private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
-
-  private final PAVController pav = new PAVController();
-  private final Indexer indexer = new Indexer();
-  //private final Climber climber = new Climber();
-  private final Shooter shooter = new Shooter();
-  private final Roller roller = new Roller();
-  private final Hood hood = new Hood();
-  private final Lights lights = new Lights();
-  
-  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
-
-  private final Unstick unstick = new Unstick(indexer);
-  
-  public final IntakeExtendo m_intakeExtendo = new IntakeExtendo();
-  public final IntakeSpinny m_intakeSpinny = new IntakeSpinny();
-
-
-  private BackupToggle m_backupToggle = new BackupToggle();
-  
-  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter, pav, m_backupToggle);
-  private ShootOnMove m_ShootOnMove = new ShootOnMove(drivebase, () -> getScaledXY(), hood, shooter, pav);
-  private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav, m_backupToggle);
-  private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav, m_backupToggle);
-  private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer, () -> driveStick.getRightTriggerAxis());
-  private IndexerCommandAuto m_IndexerCommandAuto = new IndexerCommandAuto(indexer);
-  private RollerCommand m_RollerCommand = new RollerCommand(roller);
-  private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intakeSpinny);
-  private Trigger passing = new Trigger(() -> passToAlliance());
-  private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
-  private PasHood m_PasHood = new PasHood(hood);
-  private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    drivebase.setDefaultCommand(
-        new Drive(
-             drivebase,
-           () -> getScaledXY(),
-           () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
+    switch (Constants.currentMode) {
+      case REAL:
+        // Real robot, instantiate hardware IO implementations
+        drive =
+            new Drive(
+                new GyroIORedux(),
+                new ModuleIOSpark(0),
+                new ModuleIOSpark(1),
+                new ModuleIOSpark(2),
+                new ModuleIOSpark(3));
+        break;
 
-    NamedCommands.registerCommand("extend intake", m_intakeExtendo.extendIntake());
-    NamedCommands.registerCommand("return intake", m_intakeExtendo.returnIntake());
-    NamedCommands.registerCommand("intake", m_IntakeFuel);
-    NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
+      case SIM:
+        // Sim robot, instantiate physics sim IO implementations
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim());
+        break;
 
-    NamedCommands.registerCommand("index", m_IndexerCommandAuto);
-    NamedCommands.registerCommand("stop index", m_IndexerCommandAuto.finishCommand());
-    NamedCommands.registerCommand("roller", m_RollerCommand);
-    NamedCommands.registerCommand("stop roller", m_RollerCommand.finishCommand());
-    NamedCommands.registerCommand("shoot", m_PavShooter);
-    NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());
-    NamedCommands.registerCommand("hub lock", m_HubLock);
-    NamedCommands.registerCommand("stop hub lock", m_HubLock.finishCommand());
-    NamedCommands.registerCommand("hood", m_PavHood);
-    NamedCommands.registerCommand("stop hood", m_PavHood.finishCommand());
+      default:
+        // Replayed robot, disable IO implementations
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+        break;
+    }
 
-    // NamedCommands.registerCommand("raise climber", climber.raise());
-    // NamedCommands.registerCommand("lower climber", climber.lower());
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // new EventTrigger("shoot").whileTrue(m_PavShooter);
-    // new EventTrigger("index").whileTrue(m_IndexerCommand);
-    // new EventTrigger("extend intake").whileTrue(m_intake.extendIntake());
-    // new EventTrigger("hood").whileTrue(m_PavHood);
-    // new EventTrigger("move roller").whileTrue(m_RollerCommand);
-    // new EventTrigger("intake fuel").whileTrue(m_IntakeFuel);
-    
-    configureBindings();
-    lights.setDefaultCommand(lights.statusByRobotState(this::onBlueAlliance, DriverStation::isDisabled));
-    resetGyro();
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser = AutoBuilder.buildAutoChooser("moveForward");
-    autoChooser.addOption("odometry test", new OdometryTest(drivebase, 0, 0));
-    SmartDashboard.putData("Auto Choser", autoChooser);
-    
-
-    CanandEventLoop.getInstance();
-  }
-
-  private boolean passToAlliance()
-  {
-    return (DriverStation.getAlliance().orElseThrow().equals(Alliance.Blue) && drivebase.getPose().getX() > 4.611624) || 
-           (DriverStation.getAlliance().orElseThrow().equals(Alliance.Red) && drivebase.getPose().getX() < 11.901424);
+    // Configure the button bindings
+    configureButtonBindings();
   }
 
   /**
-   * {@link edu.wpi.first.math.MathUtil}
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private double deadband(double input, double deadband) {
-    if (Math.abs(input) < deadband) {
-      return 0;
-    } else {
-      return input;
-    }
-  }
+  private void configureButtonBindings() {
+    // Default command, normal field-relative drive
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()));
 
-  private double[] getXY() {
-    double[] xy = new double[2];
-    xy[0] = -deadband(driveStick.getLeftX(), DriveConstants.deadband);
-    xy[1] = -deadband(driveStick.getLeftY(), DriveConstants.deadband);
-    return xy;
-  }
+    // Lock to 0° when A button is held
+    controller
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> Rotation2d.kZero));
 
-  private double[] getScaledXY() {
-    double[] xy = getXY();
+    // Switch to X pattern when X button is pressed
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Convert to Polar coordinates
-    double r = Math.sqrt(xy[0] * xy[0] + xy[1] * xy[1]);
-    double theta = Math.atan2(xy[1], xy[0]);
-
-    // Square radius and scale by max velocity
-    r = r * r * drivebase.getMaxVelocity();
-
-    // Convert to Cartesian coordinates
-    xy[0] = r * Math.cos(theta);
-    xy[1] = r * Math.sin(theta);
-
-    return xy;
-  }
-
-  private double squared(double input) {
-    return Math.copySign(input * input, input);
-  }
-
-  public void updateDashboard() {
-    // SmartDashboard.putNumber("Scaled_X", getScaledXY()[0]);
-    // SmartDashboard.putNumber("Scaled_Y", getScaledXY()[1]);
-    // SmartDashboard.putNumber("Rotation", scaleRotationAxis(driveStick.getRawAxis(4)));
-
-    // SmartDashboard.putData("command scheduler", CommandScheduler.getInstance());
-
-    //  SmartDashboard.putNumber("hub lock difference (shoot on move vs. static)", m_HubLock.updatingGoal - m_ShootOnMove.updatingGoal);
-  }
-
-  @SuppressWarnings("unused")
-  private double cube(double input) {
-    return Math.copySign(input * input * input, input);
-  }
-
-  @SuppressWarnings("unused")
-  private double scaleTranslationAxis(double input) {
-    return deadband(-squared(input), DriveConstants.deadband) * drivebase.getMaxVelocity();
-  }
-
-  private double scaleRotationAxis(double input) {
-    return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngleVelocity() * -0.6;
-  }
-
-  public void resetGyro() {
-    gyro.setYaw(0);
-  }
-
-  public double getGyroYaw() {
-    return -gyro.getYaw();
-  }
-
-  public boolean onBlueAlliance() {
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent()) {
-      return alliance.get() == Alliance.Blue;
-    }
-    return false;
-  }
-
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be
-   * created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
-   
-
-
-  Boolean hublockEnabled = true;
-
-  public boolean getHublockEnabled() {
-    return hublockEnabled;
-  }
-  
-  private void toggleHublock () {
-    hublockEnabled = !hublockEnabled;
-  }
-
-  Command toggleHublockCommand = Commands.runOnce(() -> toggleHublock());
-
-  private void configureBindings() {
-    //c_driveStick.leftBumper().onTrue(drivebase.setObjectLockDriveTrueCommand()).onFalse(drivebase.setObjectLockDriveFalseCommand());
-    Trigger intakeTrigger = c_driveStick.rightBumper();
-    Trigger targetLockTrigger = c_driveStick.leftTrigger().and(passing.negate());
-    Trigger passingTrigger = c_driveStick.leftTrigger().and(passing);
-    Trigger shootTrigger = c_driveStick.rightTrigger();
-    Trigger flywheelTrigger = c_driveStick.y();
-    Trigger purgeIndexerTrigger = c_driveStick.b();
-    Trigger purgeIntakeTrigger = c_driveStick.a();
-    Trigger backupShootingTrigger = c_operator.x();
-
-    Trigger hublockTrigger = new Trigger(() -> getHublockEnabled());
-
-    Trigger shootModeTrigger = c_operator.rightBumper();
-
-    shootModeTrigger.onTrue(toggleHublockCommand);
-
-    c_driveStick.x().onTrue(this.drivebase.runOnce(() -> resetGyro()));
-
-    intakeTrigger.whileTrue(m_intakeSpinny.intakeFuel()).onFalse(m_intakeSpinny.stopIntake());
-    intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
- 
-    // targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavHood).alongWith(m_PavShooter));
-
-    SmartDashboard.putBoolean("hub lock trigger", getHublockEnabled());
-    targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavShooter).alongWith(m_PavHood));
-    //targetLockTrigger.whileTrue(m_ShootOnMove);//.alongWith(m_PavShooter).alongWith(m_PavHood));
-    // targetLockTrigger.whileTrue(m_PavShooter);
-    // targetLockTrigger.whileTrue(m_PavHood);
-    targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
-
-    passingTrigger.whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
-    passingTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, false)));
-
-    c_driveStick.leftBumper().onTrue(m_intakeExtendo.toggleIntakeCommand()).onFalse(m_intakeExtendo.resetToggleCommand());
-    shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
-    shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
-    
-    // c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
-    // c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
-    // c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
-    flywheelTrigger.whileTrue(shooter.moveFlywheelDashboardCommand())
-      .onFalse(shooter.moveFlywheelCommand(0));
-    flywheelTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
-
-    purgeIndexerTrigger.whileTrue(indexer.reverseIndexer())
-      .onFalse(indexer.stopIndexer());
-    purgeIndexerTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
-
-    purgeIntakeTrigger.whileTrue(m_intakeSpinny.reverse())
-      .onFalse(m_intakeSpinny.stopIntake());
-    purgeIntakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
-    c_driveStick.povUp().whileTrue(hood.hoodUp());
-    c_driveStick.povDown().whileTrue(hood.hoodDown()); 
-
-     backupShootingTrigger.onTrue(m_backupToggle.toggleShooterCommand());
-
-    // c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
-
-    // c_operator.y().onTrue(m_intakeExtendo.resetTopCommand());
-    // c_operator.b().onTrue(m_intakeExtendo.resetBottomCommand());
+    // Reset gyro to 0° when B button is pressed
+    controller
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
+                .ignoringDisable(true));
   }
 
   /**
@@ -368,7 +147,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-    
+    return autoChooser.get();
   }
 }
