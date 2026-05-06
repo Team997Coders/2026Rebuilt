@@ -92,48 +92,48 @@ public class RobotContainer {
 
 
   //Cameras - pineapple is front facing camera
-  private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
-  private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
-  private final Camera camera3 = new Camera("tangerine", new Transform3d(new Translation3d(Units.inchesToMeters(-4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(0,Units.degreesToRadians(-10),(Math.PI/2))));
-  private final Camera camera4 = new Camera("mango", new Transform3d(new Translation3d(Units.inchesToMeters(4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(Math.PI,Units.degreesToRadians(10),Math.PI/2)));
-  private final ObjectCamera colorCamera = new ObjectCamera("apple", new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)), new Rotation3d(0,Units.degreesToRadians(0),0)));
+  // private final Camera backCamera = new Camera("backberry", new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-2.5), Units.inchesToMeters(8)), new Rotation3d(0.0, Units.degreesToRadians(25), Math.PI)));
+  // private final Camera shooterCamera = new Camera("pineapple", new Transform3d(new Translation3d(Units.inchesToMeters(-11.5), Units.inchesToMeters(13.25), Units.inchesToMeters(8)), new Rotation3d(0, Units.degreesToRadians(25), Math.PI/2)));
+  // private final Camera camera3 = new Camera("tangerine", new Transform3d(new Translation3d(Units.inchesToMeters(-4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(0,Units.degreesToRadians(-10),(Math.PI/2))));
+  // private final Camera camera4 = new Camera("mango", new Transform3d(new Translation3d(Units.inchesToMeters(4.25), Units.inchesToMeters(13), Units.inchesToMeters(19)), new Rotation3d(Math.PI,Units.degreesToRadians(10),Math.PI/2)));
+  private final ObjectCamera colorCamera = new ObjectCamera("apple", new Transform3d(new Translation3d(Units.inchesToMeters(12), Units.inchesToMeters(0), Units.inchesToMeters(3)), new Rotation3d(0,0,0)));
 
   //Camera Block handles all cameras so we dont keep changing the amount of parameters of drivebase every time we add/remove a camera 
-  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(shooterCamera, backCamera, camera3, camera4));
+  private final ArrayList<Camera> cameraList = new ArrayList<Camera>(Arrays.asList(colorCamera));
   private final CameraBlock cameraBlock = new CameraBlock(cameraList);
 
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
   private final clumpLock clumpLock = new clumpLock(drivebase, () -> getScaledXY(), colorCamera);
   private final objectDetectionPathfinding adaptAuto  = new objectDetectionPathfinding(drivebase, clumpLock);
   private final PAVController pav = new PAVController();
-  private final Indexer indexer = new Indexer();
-  //private final Climber climber = new Climber();
-  private final Shooter shooter = new Shooter();
-  private final Roller roller = new Roller();
-  private final Hood hood = new Hood();
-  private final Lights lights = new Lights();
+  // private final Indexer indexer = new Indexer();
+  // //private final Climber climber = new Climber();
+  // private final Shooter shooter = new Shooter();
+  // private final Roller roller = new Roller();
+  // private final Hood hood = new Hood();
+  // private final Lights lights = new Lights();
   
-  private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
+  // private Trigger unstickTrigger = new Trigger(() -> indexer.unstickFuel()) ;
 
-  private final Unstick unstick = new Unstick(indexer);
+  // private final Unstick unstick = new Unstick(indexer);
   
-  public final IntakeExtendo m_intakeExtendo = new IntakeExtendo();
-  public final IntakeSpinny m_intakeSpinny = new IntakeSpinny();
+  // public final IntakeExtendo m_intakeExtendo = new IntakeExtendo();
+  // public final IntakeSpinny m_intakeSpinny = new IntakeSpinny();
 
 
   private BackupToggle m_backupToggle = new BackupToggle();
   
-  private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter, pav, m_backupToggle);
-  private ShootOnMove m_ShootOnMove = new ShootOnMove(drivebase, () -> getScaledXY(), hood, shooter, pav);
-  private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav, m_backupToggle);
-  private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav, m_backupToggle);
-  private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
-  private RollerCommand m_RollerCommand = new RollerCommand(roller);
-  private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intakeSpinny);
+  // private HubLock m_HubLock = new HubLock(drivebase, () -> getScaledXY(), hood, shooter, pav, m_backupToggle);
+  // private ShootOnMove m_ShootOnMove = new ShootOnMove(drivebase, () -> getScaledXY(), hood, shooter, pav);
+  // private PavShooter m_PavShooter = new PavShooter(shooter, m_HubLock, pav, m_backupToggle);
+  // private PavHood m_PavHood = new PavHood(hood, m_HubLock, pav, m_backupToggle);
+  // private IndexerCommand m_IndexerCommand = new IndexerCommand(indexer);
+  // private RollerCommand m_RollerCommand = new RollerCommand(roller);
+  // private IntakeFuel m_IntakeFuel = new IntakeFuel(m_intakeSpinny);
   private Trigger passing = new Trigger(() -> passToAlliance());
   private PassLock m_PassLock = new PassLock(drivebase, () -> getScaledXY());
-  private PasHood m_PasHood = new PasHood(hood);
-  private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
+  // private PasHood m_PasHood = new PasHood(hood);
+  // private PasShooter m_PasShooter = new PasShooter(shooter, m_HubLock, pav);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -145,21 +145,21 @@ public class RobotContainer {
            () -> getScaledXY(),
            () -> scaleRotationAxis(-driveStick.getRawAxis(4))));
 
-    NamedCommands.registerCommand("extend intake", m_intakeExtendo.extendIntake());
-    NamedCommands.registerCommand("return intake", m_intakeExtendo.returnIntake());
-    NamedCommands.registerCommand("intake", m_IntakeFuel);
-    NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
+    // NamedCommands.registerCommand("extend intake", m_intakeExtendo.extendIntake());
+    // NamedCommands.registerCommand("return intake", m_intakeExtendo.returnIntake());
+    // NamedCommands.registerCommand("intake", m_IntakeFuel);
+    // NamedCommands.registerCommand("stop intake", m_IntakeFuel.finishCommand());
 
-    NamedCommands.registerCommand("index", m_IndexerCommand);
-    NamedCommands.registerCommand("stop index", m_IndexerCommand.finishCommand());
-    NamedCommands.registerCommand("roller", m_RollerCommand);
-    NamedCommands.registerCommand("stop roller", m_RollerCommand.finishCommand());
-    NamedCommands.registerCommand("shoot", m_PavShooter);
-    NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());
-    NamedCommands.registerCommand("hub lock", m_HubLock);
-    NamedCommands.registerCommand("stop hub lock", m_HubLock.finishCommand());
-    NamedCommands.registerCommand("hood", m_PavHood);
-    NamedCommands.registerCommand("stop hood", m_PavHood.finishCommand());
+    // NamedCommands.registerCommand("index", m_IndexerCommand);
+    // NamedCommands.registerCommand("stop index", m_IndexerCommand.finishCommand());
+    // NamedCommands.registerCommand("roller", m_RollerCommand);
+    // NamedCommands.registerCommand("stop roller", m_RollerCommand.finishCommand());
+    // NamedCommands.registerCommand("shoot", m_PavShooter);
+    // NamedCommands.registerCommand("stop shoot", m_PavShooter.finishCommand());
+    // NamedCommands.registerCommand("hub lock", m_HubLock);
+    // NamedCommands.registerCommand("stop hub lock", m_HubLock.finishCommand());
+    // NamedCommands.registerCommand("hood", m_PavHood);
+    // NamedCommands.registerCommand("stop hood", m_PavHood.finishCommand());
 
     // NamedCommands.registerCommand("raise climber", climber.raise());
     // NamedCommands.registerCommand("lower climber", climber.lower());
@@ -172,7 +172,7 @@ public class RobotContainer {
     // new EventTrigger("intake fuel").whileTrue(m_IntakeFuel);
     
     configureBindings();
-    lights.setDefaultCommand(lights.statusByRobotState(this::onBlueAlliance, DriverStation::isDisabled));
+    // lights.setDefaultCommand(lights.statusByRobotState(this::onBlueAlliance, DriverStation::isDisabled));
     resetGyro();
 
     autoChooser = AutoBuilder.buildAutoChooser("moveForward");
@@ -237,7 +237,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("command scheduler", CommandScheduler.getInstance());
 
-     SmartDashboard.putNumber("hub lock difference (shoot on move vs. static)", m_HubLock.updatingGoal - m_ShootOnMove.updatingGoal);
+    //  SmartDashboard.putNumber("hub lock difference (shoot on move vs. static)", m_HubLock.updatingGoal - m_ShootOnMove.updatingGoal);
   }
 
   @SuppressWarnings("unused")
@@ -316,50 +316,50 @@ public class RobotContainer {
 
     shootModeTrigger.onTrue(toggleHublockCommand);
 
-    intakeTrigger.whileTrue(m_intakeSpinny.intakeFuel()).onFalse(m_intakeSpinny.stopIntake());
-    intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
+    // intakeTrigger.whileTrue(m_intakeSpinny.intakeFuel()).onFalse(m_intakeSpinny.stopIntake());
+    // intakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, true)))
+    //   .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.INTAKING, false)));
  
     // targetLockTrigger.whileTrue(m_HubLock.alongWith(m_PavHood).alongWith(m_PavShooter));
 
     SmartDashboard.putBoolean("hub lock trigger", getHublockEnabled());
     //hubLockStatic.whileTrue(m_HubLock);//.alongWith(m_PavShooter).alongWith(m_PavHood));
-    targetLockTrigger.whileTrue(m_ShootOnMove);//.alongWith(m_PavShooter).alongWith(m_PavHood));
-    // targetLockTrigger.whileTrue(m_PavShooter);
-    // targetLockTrigger.whileTrue(m_PavHood);
-    targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
+    // targetLockTrigger.whileTrue(m_ShootOnMove);//.alongWith(m_PavShooter).alongWith(m_PavHood));
+    // // targetLockTrigger.whileTrue(m_PavShooter);
+    // // targetLockTrigger.whileTrue(m_PavHood);
+    // targetLockTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, true)))
+    //   .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.TARGET_LOCKED, false)));
 
-    passingTrigger.whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
-    passingTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, false)));
+    // passingTrigger.whileTrue(m_PassLock.alongWith(m_PasShooter).alongWith(m_PasHood));
+    // passingTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, true)))
+    //   .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PASSING, false)));
 
-    c_driveStick.leftBumper().onTrue(m_intakeExtendo.toggleIntakeCommand()).onFalse(m_intakeExtendo.resetToggleCommand());
-    shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
-    shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
+    // c_driveStick.leftBumper().onTrue(m_intakeExtendo.toggleIntakeCommand()).onFalse(m_intakeExtendo.resetToggleCommand());
+    // shootTrigger.whileTrue(m_IndexerCommand.alongWith(m_RollerCommand));
+    // shootTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
+    //   .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
     
     // c_driveStick.povRight().whileTrue(climber.climberVoltsCommand(-12));
     // c_driveStick.povLeft().whileTrue(climber.climberVoltsCommand(12));
     // c_driveStick.povLeft().or(c_driveStick.povRight()).whileFalse(climber.climberVoltsCommand(0));
-    flywheelTrigger.whileTrue(shooter.moveFlywheelDashboardCommand())
-      .onFalse(shooter.moveFlywheelCommand(0));
-    flywheelTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
+    // flywheelTrigger.whileTrue(shooter.moveFlywheelDashboardCommand())
+    //   .onFalse(shooter.moveFlywheelCommand(0));
+    // flywheelTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, true)))
+    //   .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.SHOOT, false)));
 
-    purgeIndexerTrigger.whileTrue(indexer.reverseIndexer())
-      .onFalse(indexer.stopIndexer());
-    purgeIndexerTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
+    // purgeIndexerTrigger.whileTrue(indexer.reverseIndexer())
+    //   .onFalse(indexer.stopIndexer());
+    // purgeIndexerTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
+    //   .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
 
-    purgeIntakeTrigger.whileTrue(m_intakeSpinny.reverse())
-      .onFalse(m_intakeSpinny.stopIntake());
-    purgeIntakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
-      .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
-    c_driveStick.povUp().whileTrue(hood.hoodUp());
-    c_driveStick.povDown().whileTrue(hood.hoodDown()); 
+    // purgeIntakeTrigger.whileTrue(m_intakeSpinny.reverse())
+    //   .onFalse(m_intakeSpinny.stopIntake());
+    // purgeIntakeTrigger.onTrue(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, true)))
+    //   .onFalse(Commands.runOnce(() -> lights.setRequestActive(Lights.RequestedState.PURGE, false)));
+    // c_driveStick.povUp().whileTrue(hood.hoodUp());
+    // c_driveStick.povDown().whileTrue(hood.hoodDown()); 
 
-     backupShootingTrigger.onTrue(m_backupToggle.toggleShooterCommand());
+    //  backupShootingTrigger.onTrue(m_backupToggle.toggleShooterCommand());
 
     // c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
 
