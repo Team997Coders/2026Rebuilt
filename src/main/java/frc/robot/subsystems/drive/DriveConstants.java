@@ -7,12 +7,17 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Amps;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Current;
 
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = 4.8;
@@ -43,10 +48,29 @@ public class DriveConstants {
   public static final int frontRightDriveCanId = 5;
   public static final int backRightDriveCanId = 7;
 
+  public static final Slot0Configs driveGains =
+      new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124);
+  public static final Current kSlipCurrent = Amps.of(120.0);
+
   public static final int frontLeftTurnCanId = 2;
   public static final int backLeftTurnCanId = 4;
   public static final int frontRightTurnCanId = 6;
   public static final int backRightTurnCanId = 8;
+
+  public static final Slot0Configs turnMotorGains =
+      new Slot0Configs()
+          .withKP(100)
+          .withKI(0)
+          .withKD(0.5)
+          .withKS(0.1)
+          .withKV(1.91)
+          .withKA(0)
+          .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+  public static final int frontLeftEncoderCanId = 9;
+  public static final int backLeftEncoderCanId = 10;
+  public static final int frontRightEncoderCanId = 11;
+  public static final int backRightEncoderCanId = 12;
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 50;
