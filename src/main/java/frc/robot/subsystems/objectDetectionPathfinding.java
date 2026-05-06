@@ -61,6 +61,7 @@ public class objectDetectionPathfinding extends SubsystemBase{
             constraints,
             0.0
         );
+        
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
         private Command autonomousCommand = new PathPlannerAuto(Constants.ObjectDetectionConstants.startAuto);
         private Command auto2 = new PathPlannerAuto(Constants.ObjectDetectionConstants.endAuto);

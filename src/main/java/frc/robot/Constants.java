@@ -89,11 +89,11 @@ public final class Constants {
   }
    
   public static final class ObjectDetectionConstants {
-    public static final double desiredDistance = 10;
-    public static final String startAuto = "";
-    public static final String endAuto = "";
-    public static final double desiredX = 0;
-    public static final double desiredY = 0;
+    public static final double desiredDistance = 1;
+    public static final String startAuto = "ObjectDetectionForward";
+    public static final String endAuto = "ObjectDetectionBack";
+    public static final double desiredX = 4.13;
+    public static final double desiredY = 3.097;
     public static final Rotation2d desiredRotation = new Rotation2d(0);
   }
 
