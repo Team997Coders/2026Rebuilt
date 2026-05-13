@@ -9,9 +9,6 @@ package frc.robot.util;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.REVLibError;
-import com.revrobotics.spark.SparkBase;
-
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -39,8 +36,7 @@ public class KrakenUtil {
   }
 
   /** Processes a value from a Spark only if the value is valid. */
-  public static void ifOk(
-      TalonFX kraken, DoubleSupplier[] suppliers, Consumer<double[]> consumer) {
+  public static void ifOk(TalonFX kraken, DoubleSupplier[] suppliers, Consumer<double[]> consumer) {
     double[] values = new double[suppliers.length];
     for (int i = 0; i < suppliers.length; i++) {
       values[i] = suppliers[i].getAsDouble();

@@ -8,8 +8,6 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.REVLibError;
-import com.revrobotics.spark.SparkBase;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import java.util.ArrayList;

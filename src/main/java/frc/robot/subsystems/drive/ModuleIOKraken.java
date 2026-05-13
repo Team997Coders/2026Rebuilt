@@ -19,14 +19,12 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -53,7 +51,7 @@ public class ModuleIOKraken implements ModuleIO {
   private final Queue<Double> drivePositionQueue;
   private final Queue<Double> turnPositionQueue;
   private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
-  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);  
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
 
   // Connection debouncers
   private final Debouncer driveConnectedDebounce =
@@ -147,7 +145,8 @@ public class ModuleIOKraken implements ModuleIO {
     // Create odometry queues
     timestampQueue = KrakenOdometryThread.getInstance().makeTimestampQueue();
     drivePositionQueue =
-        KrakenOdometryThread.getInstance().registerSignal(driveKraken, drivePosition::getValueAsDouble);
+        KrakenOdometryThread.getInstance()
+            .registerSignal(driveKraken, drivePosition::getValueAsDouble);
     turnPositionQueue =
         KrakenOdometryThread.getInstance().registerSignal(turnKraken, turnEncoder::getPosition);
   }
@@ -158,14 +157,17 @@ public class ModuleIOKraken implements ModuleIO {
     driveVelocity.refresh();
     driveVoltage.refresh();
     driveCurrent.refresh();
-    
+
     turnVoltage.refresh();
     turnCurrent.refresh();
 
     // Update drive inputs
     krakenStickyFault = false;
     ifOk(driveKraken, drivePosition::getValueAsDouble, (value) -> inputs.drivePositionRad = value);
-    ifOk(driveKraken, driveVelocity::getValueAsDouble, (value) -> inputs.driveVelocityRadPerSec = value);
+    ifOk(
+        driveKraken,
+        driveVelocity::getValueAsDouble,
+        (value) -> inputs.driveVelocityRadPerSec = value);
     ifOk(
         driveKraken,
         new DoubleSupplier[] {driveCurrent::getValueAsDouble, driveVoltage::getValueAsDouble},
@@ -211,9 +213,9 @@ public class ModuleIOKraken implements ModuleIO {
     turnKraken.setVoltage(output);
   }
 
-  //TODO: change out our motor controller for the FOC vector magic (+15% power and acceleration)
-  //velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
-  //positionTorqueCurrentRequest.withPosition(rotation.getRotations());
+  // TODO: change out our motor controller for the FOC vector magic (+15% power and acceleration)
+  // velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
+  // positionTorqueCurrentRequest.withPosition(rotation.getRotations());
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
     driveKraken.setControl(velocityVoltageRequest.withVelocity(velocityRadPerSec));

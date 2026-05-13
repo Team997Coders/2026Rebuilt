@@ -41,6 +41,7 @@ public class DriveConstants {
 
   // Device CAN IDs
   public static final int pigeonCanId = 9;
+  //TODO: find actual gyro can ID it is NOT 9
   public static final int reduxCanId = 9;
 
   public static final int frontLeftDriveCanId = 1;
