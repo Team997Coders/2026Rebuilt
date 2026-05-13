@@ -8,24 +8,25 @@
 package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
-import static frc.robot.util.PhoenixUtil.*;
-import static frc.robot.util.SparkUtil.*;
+import static frc.robot.util.KrakenUtil.*;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
-import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
+
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -40,16 +41,19 @@ public class ModuleIOKraken implements ModuleIO {
   private final TalonFX driveKraken;
   private final TalonFX turnKraken;
   private final StatusSignal<Angle> drivePosition;
+  private final StatusSignal<AngularVelocity> driveVelocity;
+  private final StatusSignal<Voltage> driveVoltage;
+  private final StatusSignal<Current> driveCurrent;
+  private final StatusSignal<Voltage> turnVoltage;
+  private final StatusSignal<Current> turnCurrent;
   private final Canandmag turnEncoder;
-
-  // Closed loop controllers
-  private final SparkClosedLoopController driveController;
-  private final SparkClosedLoopController turnController;
 
   // Queue inputs from odometry thread
   private final Queue<Double> timestampQueue;
   private final Queue<Double> drivePositionQueue;
   private final Queue<Double> turnPositionQueue;
+  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);  
 
   // Connection debouncers
   private final Debouncer driveConnectedDebounce =
@@ -134,42 +138,54 @@ public class ModuleIOKraken implements ModuleIO {
             });
 
     drivePosition = driveKraken.getPosition();
+    driveVelocity = driveKraken.getVelocity();
+    driveVoltage = driveKraken.getMotorVoltage();
+    driveCurrent = driveKraken.getStatorCurrent();
+    turnVoltage = driveKraken.getMotorVoltage();
+    turnCurrent = driveKraken.getStatorCurrent();
 
     // Create odometry queues
-    timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
-    drivePositionQueue = PhoenixOdometryThread.getInstance().registerSignal(drivePosition.clone());
+    timestampQueue = KrakenOdometryThread.getInstance().makeTimestampQueue();
     drivePositionQueue =
-        SparkOdometryThread.getInstance().registerSignal(driveKraken, driveEncoder::getPosition);
+        KrakenOdometryThread.getInstance().registerSignal(driveKraken, drivePosition::getValueAsDouble);
     turnPositionQueue =
-        SparkOdometryThread.getInstance().registerSignal(turnSpark, turnEncoder::getPosition);
+        KrakenOdometryThread.getInstance().registerSignal(turnKraken, turnEncoder::getPosition);
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
+    drivePosition.refresh();
+    driveVelocity.refresh();
+    driveVoltage.refresh();
+    driveCurrent.refresh();
+    
+    turnVoltage.refresh();
+    turnCurrent.refresh();
+
     // Update drive inputs
-    sparkStickyFault = false;
-    ifOk(driveSpark, driveEncoder::getPosition, (value) -> inputs.drivePositionRad = value);
-    ifOk(driveSpark, driveEncoder::getVelocity, (value) -> inputs.driveVelocityRadPerSec = value);
+    krakenStickyFault = false;
+    ifOk(driveKraken, drivePosition::getValueAsDouble, (value) -> inputs.drivePositionRad = value);
+    ifOk(driveKraken, driveVelocity::getValueAsDouble, (value) -> inputs.driveVelocityRadPerSec = value);
     ifOk(
-        driveSpark,
-        new DoubleSupplier[] {driveSpark::getAppliedOutput, driveSpark::getBusVoltage},
+        driveKraken,
+        new DoubleSupplier[] {driveCurrent::getValueAsDouble, driveVoltage::getValueAsDouble},
         (values) -> inputs.driveAppliedVolts = values[0] * values[1]);
-    ifOk(driveSpark, driveSpark::getOutputCurrent, (value) -> inputs.driveCurrentAmps = value);
-    inputs.driveConnected = driveConnectedDebounce.calculate(!sparkStickyFault);
+    ifOk(driveKraken, driveCurrent::getValueAsDouble, (value) -> inputs.driveCurrentAmps = value);
+    inputs.driveConnected = driveConnectedDebounce.calculate(!krakenStickyFault);
 
     // Update turn inputs
-    sparkStickyFault = false;
+    krakenStickyFault = false;
     ifOk(
-        turnSpark,
+        turnKraken,
         turnEncoder::getPosition,
         (value) -> inputs.turnPosition = new Rotation2d(value).minus(zeroRotation));
-    ifOk(turnSpark, turnEncoder::getVelocity, (value) -> inputs.turnVelocityRadPerSec = value);
+    ifOk(turnKraken, turnEncoder::getVelocity, (value) -> inputs.turnVelocityRadPerSec = value);
     ifOk(
-        turnSpark,
-        new DoubleSupplier[] {turnSpark::getAppliedOutput, turnSpark::getBusVoltage},
+        turnKraken,
+        new DoubleSupplier[] {turnCurrent::getValueAsDouble, turnVoltage::getValueAsDouble},
         (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
-    ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
-    inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
+    ifOk(turnKraken, turnCurrent::getValueAsDouble, (value) -> inputs.turnCurrentAmps = value);
+    inputs.turnConnected = turnConnectedDebounce.calculate(!krakenStickyFault);
 
     // Update odometry inputs
     inputs.odometryTimestamps =
@@ -187,30 +203,24 @@ public class ModuleIOKraken implements ModuleIO {
 
   @Override
   public void setDriveOpenLoop(double output) {
-    driveSpark.setVoltage(output);
+    driveKraken.setVoltage(output);
   }
 
   @Override
   public void setTurnOpenLoop(double output) {
-    turnSpark.setVoltage(output);
+    turnKraken.setVoltage(output);
   }
 
+  //TODO: change out our motor controller for the FOC vector magic (+15% power and acceleration)
+  //velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
+  //positionTorqueCurrentRequest.withPosition(rotation.getRotations());
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
-    double ffVolts = driveKs * Math.signum(velocityRadPerSec) + driveKv * velocityRadPerSec;
-    driveController.setSetpoint(
-        velocityRadPerSec,
-        ControlType.kVelocity,
-        ClosedLoopSlot.kSlot0,
-        ffVolts,
-        ArbFFUnits.kVoltage);
+    driveKraken.setControl(velocityVoltageRequest.withVelocity(velocityRadPerSec));
   }
 
   @Override
   public void setTurnPosition(Rotation2d rotation) {
-    double setpoint =
-        MathUtil.inputModulus(
-            rotation.plus(zeroRotation).getRadians(), turnPIDMinInput, turnPIDMaxInput);
-    turnController.setSetpoint(setpoint, ControlType.kPosition);
+    turnKraken.setControl(positionVoltageRequest.withPosition(rotation.getRotations()));
   }
 }

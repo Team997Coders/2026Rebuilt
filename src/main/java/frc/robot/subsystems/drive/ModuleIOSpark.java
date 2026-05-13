@@ -163,7 +163,7 @@ public class ModuleIOSpark implements ModuleIO {
                 turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // Create odometry queues
-    timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
+    timestampQueue = KrakenOdometryThread.getInstance().makeTimestampQueue();
     drivePositionQueue =
         SparkOdometryThread.getInstance().registerSignal(driveSpark, driveEncoder::getPosition);
     turnPositionQueue =

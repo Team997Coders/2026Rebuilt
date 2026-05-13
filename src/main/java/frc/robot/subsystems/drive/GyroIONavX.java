@@ -22,8 +22,8 @@ public class GyroIONavX implements GyroIO {
   private final Queue<Double> yawTimestampQueue;
 
   public GyroIONavX() {
-    yawTimestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
-    yawPositionQueue = SparkOdometryThread.getInstance().registerSignal(navX::getAngle);
+    yawTimestampQueue = KrakenOdometryThread.getInstance().makeTimestampQueue();
+    yawPositionQueue = KrakenOdometryThread.getInstance().registerSignal(navX::getAngle);
   }
 
   @Override
