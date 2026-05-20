@@ -9,6 +9,7 @@ package frc.robot.util;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -31,6 +32,7 @@ public class KrakenUtil {
     if (kraken.getClosedLoopError().getStatus().isOK()) {
       consumer.accept(value);
     } else {
+      SmartDashboard.putNumber("kraken error value", kraken.getClosedLoopError().getStatus().value);
       krakenStickyFault = true;
     }
   }
@@ -40,7 +42,7 @@ public class KrakenUtil {
     double[] values = new double[suppliers.length];
     for (int i = 0; i < suppliers.length; i++) {
       values[i] = suppliers[i].getAsDouble();
-      if (kraken.getClosedLoopError().getStatus().isOK()) {
+      if (!kraken.getClosedLoopError().getStatus().isOK()) {
         krakenStickyFault = true;
         return;
       }

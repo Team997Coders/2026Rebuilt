@@ -10,6 +10,7 @@ package frc.robot.subsystems.drive;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 import static frc.robot.util.KrakenUtil.*;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -25,6 +26,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -89,7 +91,10 @@ public class ModuleIOKraken implements ModuleIO {
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    driveKraken.getConfigurator().apply(driveConfig, 0.25);
+    StatusCode configure = driveKraken.getConfigurator().apply(driveConfig, 0.25);
+    if (!configure.isOK()) {
+      SmartDashboard.putNumber("drive motor configuration error", configure.value);
+    }
     driveKraken.setPosition(0.0, 0.25);
 
     turnKraken =
@@ -107,14 +112,15 @@ public class ModuleIOKraken implements ModuleIO {
     turnConfig.Slot0 = DriveConstants.turnMotorGains;
     turnConfig.Feedback.FeedbackRemoteSensorID =
         switch (module) {
-          case 0 -> frontLeftTurnCanId;
-          case 1 -> frontRightTurnCanId;
-          case 2 -> backLeftTurnCanId;
-          case 3 -> backRightTurnCanId;
+          case 0 -> frontLeftEncoderCanId;
+          case 1 -> frontRightEncoderCanId;
+          case 2 -> backLeftEncoderCanId;
+          case 3 -> backRightEncoderCanId;
           default -> 0;
         };
-    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     turnConfig.Feedback.RotorToSensorRatio = DriveConstants.turnMotorReduction;
+    turnConfig.Feedback.SensorToMechanismRatio = DriveConstants.turnMotorReduction;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100.0 / DriveConstants.turnMotorReduction;
     turnConfig.MotionMagic.MotionMagicAcceleration =
         turnConfig.MotionMagic.MotionMagicCruiseVelocity / 0.100;
@@ -123,17 +129,26 @@ public class ModuleIOKraken implements ModuleIO {
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     turnConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    turnKraken.getConfigurator().apply(turnConfig, 0.25);
+    configure = turnKraken.getConfigurator().apply(turnConfig, 0.25);
+    if (!configure.isOK()) {
+      SmartDashboard.putNumber("turn motor configuration error", configure.value);
+    }
 
     turnEncoder =
         new Canandmag(
             switch (module) {
-              case 0 -> frontLeftTurnCanId;
-              case 1 -> frontRightTurnCanId;
-              case 2 -> backLeftTurnCanId;
-              case 3 -> backRightTurnCanId;
+              case 0 -> frontLeftEncoderCanId;
+              case 1 -> frontRightEncoderCanId;
+              case 2 -> backLeftEncoderCanId;
+              case 3 -> backRightEncoderCanId;
               default -> 0;
             });
+
+    turnEncoder.setAbsPosition(0);
+    configure = turnKraken.setPosition(turnEncoder.getAbsPosition());
+    if (!configure.isOK()) {
+      SmartDashboard.putNumber("set turn angle error", configure.value);
+    }
 
     drivePosition = driveKraken.getPosition();
     driveVelocity = driveKraken.getVelocity();
@@ -180,7 +195,7 @@ public class ModuleIOKraken implements ModuleIO {
     ifOk(
         turnKraken,
         turnEncoder::getPosition,
-        (value) -> inputs.turnPosition = new Rotation2d(value).minus(zeroRotation));
+        (value) -> inputs.turnPosition = new Rotation2d(value * 2 * Math.PI).minus(zeroRotation));
     ifOk(turnKraken, turnEncoder::getVelocity, (value) -> inputs.turnVelocityRadPerSec = value);
     ifOk(
         turnKraken,
@@ -188,6 +203,8 @@ public class ModuleIOKraken implements ModuleIO {
         (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
     ifOk(turnKraken, turnCurrent::getValueAsDouble, (value) -> inputs.turnCurrentAmps = value);
     inputs.turnConnected = turnConnectedDebounce.calculate(!krakenStickyFault);
+
+    SmartDashboard.putNumber("swerve current angle", turnKraken.getPosition().getValueAsDouble());
 
     // Update odometry inputs
     inputs.odometryTimestamps =
@@ -223,6 +240,8 @@ public class ModuleIOKraken implements ModuleIO {
 
   @Override
   public void setTurnPosition(Rotation2d rotation) {
+    SmartDashboard.putNumber("swerve target angle", rotation.getDegrees());
+
     turnKraken.setControl(positionVoltageRequest.withPosition(rotation.getRotations()));
   }
 }

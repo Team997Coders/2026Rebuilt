@@ -41,22 +41,21 @@ public class DriveConstants {
 
   // Device CAN IDs
   public static final int pigeonCanId = 9;
-  //TODO: find actual gyro can ID it is NOT 9
-  public static final int reduxCanId = 9;
+  public static final int reduxCanId = 25;
 
-  public static final int frontLeftDriveCanId = 1;
+  public static final int frontLeftDriveCanId = 5;
   public static final int backLeftDriveCanId = 3;
-  public static final int frontRightDriveCanId = 5;
-  public static final int backRightDriveCanId = 7;
+  public static final int frontRightDriveCanId = 7;
+  public static final int backRightDriveCanId = 1;
 
   public static final Slot0Configs driveGains =
       new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124);
   public static final Current kSlipCurrent = Amps.of(120.0);
 
-  public static final int frontLeftTurnCanId = 2;
+  public static final int frontLeftTurnCanId = 6;
   public static final int backLeftTurnCanId = 4;
-  public static final int frontRightTurnCanId = 6;
-  public static final int backRightTurnCanId = 8;
+  public static final int frontRightTurnCanId = 8;
+  public static final int backRightTurnCanId = 2;
 
   public static final Slot0Configs turnMotorGains =
       new Slot0Configs()
@@ -68,10 +67,10 @@ public class DriveConstants {
           .withKA(0)
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
-  public static final int frontLeftEncoderCanId = 9;
-  public static final int backLeftEncoderCanId = 10;
-  public static final int frontRightEncoderCanId = 11;
-  public static final int backRightEncoderCanId = 12;
+  public static final int frontLeftEncoderCanId = 24;
+  public static final int backLeftEncoderCanId = 22;
+  public static final int frontRightEncoderCanId = 23;
+  public static final int backRightEncoderCanId = 21;
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 50;
