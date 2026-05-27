@@ -22,53 +22,53 @@ import frc.robot.subsystems.Drivebase;
 
 public class objectDetectionPathfinding extends SubsystemBase{
     
-    // Since we are using a holonomic drivetrain, the rotation component of this pose
-// represents the goal holonomic rotation
+
     private Drivebase m_drivebase;
     private clumpLock m_clumpLock;
 
     public objectDetectionPathfinding(Drivebase drivebase, clumpLock clumpLock){
         m_drivebase = drivebase;
         m_clumpLock = clumpLock;
-     }
+    }
 
-        private Rotation2d currentRotation = m_drivebase.getPose().getRotation();
+    private Rotation2d currentRotation = m_drivebase.getPose().getRotation();
 
-        private Pose2d targetPose = new Pose2d(m_drivebase.getPose().getX() + 
-            Constants.ObjectDetectionConstants.desiredDistance*Math.cos(currentRotation.getRadians()), 
-            m_drivebase.getPose().getY() + Constants.ObjectDetectionConstants.desiredDistance*Math.sin(currentRotation.getRadians()), 
-            currentRotation);
+    /* Set target pose for adaptivee path: goes a desired distance in the direction of the largest clump,
+     as determined by objectLock */
+    private Pose2d targetPose = new Pose2d(m_drivebase.getPose().getX() + 
+        Constants.ObjectDetectionConstants.desiredDistance*Math.cos(currentRotation.getRadians()), 
+        m_drivebase.getPose().getY() + Constants.ObjectDetectionConstants.desiredDistance*Math.sin(currentRotation.getRadians()), 
+        currentRotation);
 
-        private Pose2d target2 = new Pose2d(Constants.ObjectDetectionConstants.desiredX, Constants.ObjectDetectionConstants.desiredY,
-            Constants.ObjectDetectionConstants.desiredRotation);
+    // Pose the robot travels to after object detection
+    private Pose2d target2 = new Pose2d(Constants.ObjectDetectionConstants.desiredX, 
+        Constants.ObjectDetectionConstants.desiredY,
+        Constants.ObjectDetectionConstants.desiredRotation);
   
-        // Create the constraints to use while pathfinding
-        private PathConstraints constraints = new PathConstraints(
-            3.0, 5.0,
-            Units.degreesToRadians(540), Units.degreesToRadians(720));
+    // Create the constraints to use while pathfinding
+    private PathConstraints constraints = new PathConstraints(
+        3.0, 5.0,
+        Units.degreesToRadians(540), Units.degreesToRadians(720));
 
-         // Since AutoBuilder is configured, we can use it to build pathfinding commands
-        private Command pathfindingCommand = AutoBuilder.pathfindToPose(
-            targetPose,
-            constraints,
-            0.0
+    // Build an auto with determined pose
+    private Command pathfindingCommand = AutoBuilder.pathfindToPose(
+        targetPose,
+        constraints,
+        0.0
+    );
 
-    
-        );
+    // Pathfind to desired static position 
+    private Command pathfindBack = AutoBuilder.pathfindToPose(
+        target2,
+        constraints,
+        0.0
+    );
 
-        private Command pathfindBack = AutoBuilder.pathfindToPose(
-            target2,
-            constraints,
-            0.0
-        );
-        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-        private Command autonomousCommand = new PathPlannerAuto(Constants.ObjectDetectionConstants.startAuto);
-        private Command auto2 = new PathPlannerAuto(Constants.ObjectDetectionConstants.endAuto);
+    // Paths made in Pathplanner to start and end sequence
+    private Command autonomousCommand = new PathPlannerAuto(Constants.ObjectDetectionConstants.startAuto);
+    private Command auto2 = new PathPlannerAuto(Constants.ObjectDetectionConstants.endAuto);
 
-
-    
-   
+    // Put it all together into an auto that can be chosen in AutoChooser
     public Command coolCommand() {
         return new SequentialCommandGroup(
             autonomousCommand,
@@ -81,7 +81,6 @@ public class objectDetectionPathfinding extends SubsystemBase{
             new WaitCommand(.5),
             auto2
         ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
-        }
-        
+    }        
     
-    }
+}
