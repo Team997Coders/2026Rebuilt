@@ -69,14 +69,14 @@ public class Hood extends SubsystemBase {
 
         //SmartDashboard.putNumber("hood pid outpud", PIDHoodController.calculate(getHoodAngle(), goalAngle));
 
-        if(!magnet.get()) {
-            if (getHoodAngle() < 22)
-            {
-                setGoalAngle(25);
-            }
-            hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
+        // if(!magnet.get()) {
+        //     if (getHoodAngle() < 22)
+        //     {
+        //         setGoalAngle(25);
+        //     }
+        //     hoodRelativeEncoder.setPosition(25.0*Constants.ShooterConstants.hoodGearRatio/360);
             
-        }
+        // }
 
         //SmartDashboard.putBoolean("magnet", magnet.get());
     }
@@ -89,6 +89,11 @@ public class Hood extends SubsystemBase {
 
     public double getHoodAngle () { //degrees
         return hoodRelativeEncoder.getPosition()*360/Constants.ShooterConstants.hoodGearRatio;
+    }
+
+    public void setHoodAngle (double angle) { //degrees
+        hoodRelativeEncoder.setPosition(angle/360*Constants.ShooterConstants.hoodGearRatio);
+        setGoalAngle(angle);
     }
 
     public void setHoodMotorVoltage(double volts) {
@@ -127,5 +132,9 @@ public class Hood extends SubsystemBase {
 
     public Command hoodBackup() {
         return this.runOnce(() -> setGoalAngle(25));
+    }
+
+    public Command hoodResetCommand(double angle) {
+        return this.runOnce(() -> setHoodAngle(angle));
     }
 }
