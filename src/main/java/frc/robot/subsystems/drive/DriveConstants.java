@@ -35,7 +35,7 @@ public class DriveConstants {
 
   // Zeroed rotation values for each module, see setup instructions
   public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.0);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(-1.2152962792023996);
   public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.0);
   public static final Rotation2d backRightZeroRotation = new Rotation2d(0.0);
 
@@ -68,9 +68,9 @@ public class DriveConstants {
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
   public static final int frontLeftEncoderCanId = 24;
-  public static final int backLeftEncoderCanId = 22;
-  public static final int frontRightEncoderCanId = 23;
-  public static final int backRightEncoderCanId = 21;
+  public static final int frontRightEncoderCanId = 21; // should be
+  public static final int backLeftEncoderCanId = 23; // should be 23;
+  public static final int backRightEncoderCanId = 22; // should be 21;
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 50;

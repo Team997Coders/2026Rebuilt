@@ -127,7 +127,7 @@ public class ModuleIOKraken implements ModuleIO {
     turnConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * DriveConstants.turnMotorReduction;
     turnConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-    turnConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     configure = turnKraken.getConfigurator().apply(turnConfig, 0.25);
     if (!configure.isOK()) {
