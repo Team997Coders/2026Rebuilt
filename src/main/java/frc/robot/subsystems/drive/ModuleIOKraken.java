@@ -144,7 +144,7 @@ public class ModuleIOKraken implements ModuleIO {
               default -> 0;
             });
 
-    turnEncoder.setAbsPosition(0);
+    // turnEncoder.setAbsPosition(0);
     configure = turnKraken.setPosition(turnEncoder.getAbsPosition());
     if (!configure.isOK()) {
       SmartDashboard.putNumber("set turn angle error", configure.value);
@@ -235,7 +235,7 @@ public class ModuleIOKraken implements ModuleIO {
   // positionTorqueCurrentRequest.withPosition(rotation.getRotations());
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
-    driveKraken.setControl(velocityVoltageRequest.withVelocity(velocityRadPerSec));
+    driveKraken.setControl(velocityVoltageRequest.withVelocity(-velocityRadPerSec));
   }
 
   @Override
