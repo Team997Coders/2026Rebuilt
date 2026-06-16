@@ -11,6 +11,12 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 
+import choreo.auto.*;
+import choreo.trajectory.*;
+import choreo.*;
+import choreo.Choreo;
+import choreo.util.*; 
+
 import swervelib.SwerveModule;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -230,6 +236,13 @@ public class Drivebase extends SubsystemBase {
       positions[i] = modules[i].getPosition();
     }
     return positions;
+  }
+// used to help stay on path when following choreo trajectories
+  public void followTrajectory(double speedX, double speedY, double omega, double x, double y) {
+    Pose2d pose = getPose();
+
+    ChassisSpeeds speed = new ChassisSpeeds(
+    );
   }
 
   @Override
