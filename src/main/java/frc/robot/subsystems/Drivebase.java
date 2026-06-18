@@ -237,7 +237,7 @@ public class Drivebase extends SubsystemBase {
     }
     return positions;
   }
-// used to help stay on path when following choreo trajectories
+// used to help keep robot on path when following choreo trajectories
   public void followTrajectory(double speedX, double speedY, double omega, double x, double y) {
     Pose2d pose = getPose();
 
