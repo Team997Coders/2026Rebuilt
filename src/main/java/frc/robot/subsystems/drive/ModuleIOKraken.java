@@ -178,7 +178,10 @@ public class ModuleIOKraken implements ModuleIO {
 
     // Update drive inputs
     krakenStickyFault = false;
-    ifOk(driveKraken, drivePosition::getValueAsDouble, (value) -> inputs.drivePositionRad = value);
+    ifOk(
+        driveKraken,
+        drivePosition::getValueAsDouble,
+        (value) -> inputs.drivePositionRad = value * 2.0 * Math.PI);
     ifOk(
         driveKraken,
         driveVelocity::getValueAsDouble,
@@ -210,10 +213,10 @@ public class ModuleIOKraken implements ModuleIO {
     inputs.odometryTimestamps =
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryDrivePositionsRad =
-        drivePositionQueue.stream().mapToDouble((Double value) -> value).toArray();
+        drivePositionQueue.stream().mapToDouble((Double value) -> -value * 2.0 * Math.PI).toArray();
     inputs.odometryTurnPositions =
         turnPositionQueue.stream()
-            .map((Double value) -> new Rotation2d(value).minus(zeroRotation))
+            .map((Double value) -> new Rotation2d(value * 2 * Math.PI).minus(zeroRotation))
             .toArray(Rotation2d[]::new);
     timestampQueue.clear();
     drivePositionQueue.clear();

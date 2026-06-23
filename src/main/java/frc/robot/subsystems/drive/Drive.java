@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -67,6 +68,8 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
+
+  private Field2d field = new Field2d();
 
   public Drive(
       GyroIO gyroIO,
@@ -148,6 +151,8 @@ public class Drive extends SubsystemBase {
             builder.addDoubleProperty("Robot Angle", () -> getRotation().getRadians(), null);
           }
         });
+
+    SmartDashboard.putData("Field", field);
   }
 
   @Override
@@ -183,9 +188,13 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
 
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-        modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+        SwerveModulePosition rawPosition = modules[moduleIndex].getOdometryPositions()[i];
 
-        // Correctly uses lastModulePositions which hasn't been overwritten yet for future samples
+        // Deep copy the snapshot position to isolate it from thread modifications
+        modulePositions[moduleIndex] =
+            new SwerveModulePosition(rawPosition.distanceMeters, rawPosition.angle);
+
+        // Calculate deltas safely using the immutable values from the last sample step
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
                 modulePositions[moduleIndex].distanceMeters
@@ -201,12 +210,22 @@ public class Drive extends SubsystemBase {
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
 
-      // Apply update
+      // Apply update using isolated positions
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      field.setRobotPose(getPose());
+      SmartDashboard.putNumber(
+          "poseEstimator Debug: raw gyro rotation", rawGyroRotation.getDegrees());
+      SmartDashboard.putNumber(
+          "poseEstimator Debug: module0 distance", modulePositions[0].distanceMeters);
+      SmartDashboard.putNumber(
+          "poseEstimator Debug: module0 angle", modulePositions[0].angle.getDegrees());
 
-      // Update history reference ONLY for the next sample/loop iteration safely
+      // Deep copy snapshot to lastModulePositions so next loop step doesn't reference
+      // cross-contaminate
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-        lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+        lastModulePositions[moduleIndex] =
+            new SwerveModulePosition(
+                modulePositions[moduleIndex].distanceMeters, modulePositions[moduleIndex].angle);
       }
     }
 
