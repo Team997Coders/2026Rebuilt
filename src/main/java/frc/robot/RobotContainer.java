@@ -64,8 +64,10 @@ public class RobotContainer {
         vision =
            new Vision(
            drive::addVisionMeasurement,
-           new VisionIOPhotonVision(camera0Name, robotToCamera0),
-           new VisionIOPhotonVision(camera1Name, robotToCamera1));
+           new VisionIOPhotonVision(pi5shootCamName, pi5shootCamTransform),
+           new VisionIOPhotonVision(pi5backCamName, pi5backCamTransform),
+           new VisionIOPhotonVision(Opi5shootCamName, Opi5shootCamTransform),
+           new VisionIOPhotonVision(Opi5sideCamName, Opi5sideCamTransform));
 
         break;
 
@@ -82,8 +84,10 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+                new VisionIOPhotonVisionSim(pi5shootCamName, pi5shootCamTransform, drive::getPose),
+                new VisionIOPhotonVisionSim(pi5backCamName, pi5backCamTransform, drive::getPose),
+                new VisionIOPhotonVisionSim(Opi5shootCamName, Opi5shootCamTransform, drive::getPose),
+                new VisionIOPhotonVisionSim(Opi5sideCamName, Opi5sideCamTransform, drive::getPose));
 
         break;
 
@@ -97,7 +101,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(drive::addVisionMeasurement, 
+            new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
 
         break;
     }
