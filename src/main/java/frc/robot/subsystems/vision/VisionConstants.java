@@ -26,6 +26,7 @@ public class VisionConstants {
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
+  //TODO: check camera transorms cause they are very scuffed and different in lots of places
   public static Transform3d pi5shootCamTransform =
       new Transform3d(Units.inchesToMeters(-12), Units.inchesToMeters(13), Units.inchesToMeters(19), new Rotation3d(0.0, Units.degreesToRadians(10), Math.PI/2));
   public static Transform3d pi5backCamTransform =
