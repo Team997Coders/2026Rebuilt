@@ -57,4 +57,12 @@ public class VisionConstants {
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
+
+  public static final double XY_STD_DEV_COEFF = 0.25;
+  public static final double ROT_STD_DEV_COEFF = 0.25;
+
+  public static final double MIN_ACCEPTED_NUM_TAGS = 1;
+  public static final double MAX_AMBIGUITY = 0.2;
+  public static final double MAX_OUTSIDE_OF_FIELD_TOLERANCE = 0.1;
+  public static final double MAX_ROBOT_Z_TOLERANCE = 0.5;
 }

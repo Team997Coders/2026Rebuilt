@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -17,6 +18,16 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final boolean TUNING_MODE = true;
+
+  public static boolean isTuningMode() {
+        return !DriverStation.isFMSAttached() && TUNING_MODE;
+    }
+
+  //TODO: stop me making up numbers
+  public static final double ROBOT_MASS_KG = 110;
+  public static final double BUMPER_LENGTH_X_METERS = 0.66;
+  public static final double BUMPER_LENGTH_Y_METERS = 0.9;
 
   public static enum Mode {
     /** Running on a real robot. */
