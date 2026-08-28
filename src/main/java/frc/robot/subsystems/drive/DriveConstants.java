@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Current;
+import frc.robot.generated.TunerConstants;
 
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = 4.8;
@@ -135,11 +136,11 @@ public class DriveConstants {
   public static final double WHEEL_COF = 1.0;
 
   public static Translation2d[] getModuleTranslations() {
-        return new Translation2d[] {
-            new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-            new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-            new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-            new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY),
-        };
-    }
+    return new Translation2d[] {
+      new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
+      new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
+      new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
+      new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY),
+    };
+  }
 }

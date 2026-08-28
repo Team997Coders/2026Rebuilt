@@ -15,55 +15,51 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public class SpIndexerIOTalonFX implements SpIndexerIO {
-    private final TalonFX spinMotor1 = new TalonFX(SPIN_MOTOR_ID);
+  private final TalonFX spinMotor1 = new TalonFX(SPIN_MOTOR_ID);
 
-    private final StatusSignal<AngularVelocity> spinVelocity = spinMotor1.getVelocity();
-    private final StatusSignal<Voltage> spinVoltage = spinMotor1.getMotorVoltage();
-    private final StatusSignal<Current> spinSupplyCurrent = spinMotor1.getSupplyCurrent();
-    private final StatusSignal<Current> spinStatorCurrent = spinMotor1.getStatorCurrent();
-    private final StatusSignal<Temperature> spinTemp = spinMotor1.getDeviceTemp();
+  private final StatusSignal<AngularVelocity> spinVelocity = spinMotor1.getVelocity();
+  private final StatusSignal<Voltage> spinVoltage = spinMotor1.getMotorVoltage();
+  private final StatusSignal<Current> spinSupplyCurrent = spinMotor1.getSupplyCurrent();
+  private final StatusSignal<Current> spinStatorCurrent = spinMotor1.getStatorCurrent();
+  private final StatusSignal<Temperature> spinTemp = spinMotor1.getDeviceTemp();
 
-    private final VoltageOut spinVoltageCtrlReq = new VoltageOut(0).withEnableFOC(true);
+  private final VoltageOut spinVoltageCtrlReq = new VoltageOut(0).withEnableFOC(true);
 
-    public SpIndexerIOTalonFX() {
-        TalonFXConfiguration config = new TalonFXConfiguration();
-        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        config.Feedback.SensorToMechanismRatio = SPIN_GEAR_RATIO;
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 60.0;
-        config.CurrentLimits.SupplyCurrentLowerLimit = 30.0;
-        config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.StatorCurrentLimit = 60.0;
+  public SpIndexerIOTalonFX() {
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.Feedback.SensorToMechanismRatio = SPIN_GEAR_RATIO;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimit = 60.0;
+    config.CurrentLimits.SupplyCurrentLowerLimit = 30.0;
+    config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = 60.0;
 
-        spinMotor1.getConfigurator().apply(config);
+    spinMotor1.getConfigurator().apply(config);
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
-                50.0,
-                spinVelocity,
-                spinVoltage,
-                spinSupplyCurrent,
-                spinStatorCurrent,
-                spinTemp);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, spinVelocity, spinVoltage, spinSupplyCurrent, spinStatorCurrent, spinTemp);
 
-        spinMotor1.optimizeBusUtilization();
-    }
+    spinMotor1.optimizeBusUtilization();
+  }
 
-    @Override
-    public void updateInputs(SpindexerIOInputs inputs) {
-        inputs.spinMotorConnected = BaseStatusSignal.refreshAll(
-                        spinVelocity, spinVoltage, spinSupplyCurrent, spinStatorCurrent, spinTemp)
-                .isOK();
-        inputs.spinVelocityRPS = spinVelocity.getValueAsDouble();
-        inputs.spinAppliedVolts = spinVoltage.getValueAsDouble();
-        inputs.spinSupplyCurrentAmps = spinSupplyCurrent.getValueAsDouble();
-        inputs.spinStatorCurrentAmps = spinStatorCurrent.getValueAsDouble();
-        inputs.spinTempCelsius = spinTemp.getValueAsDouble();
-    }
+  @Override
+  public void updateInputs(SpIndexerIOInputs inputs) {
+    inputs.spinMotorConnected =
+        BaseStatusSignal.refreshAll(
+                spinVelocity, spinVoltage, spinSupplyCurrent, spinStatorCurrent, spinTemp)
+            .isOK();
+    inputs.spinVelocityRPS = spinVelocity.getValueAsDouble();
+    inputs.spinAppliedVolts = spinVoltage.getValueAsDouble();
+    inputs.spinSupplyCurrentAmps = spinSupplyCurrent.getValueAsDouble();
+    inputs.spinStatorCurrentAmps = spinStatorCurrent.getValueAsDouble();
+    inputs.spinTempCelsius = spinTemp.getValueAsDouble();
+  }
 
-    @Override
-    public void setMotorVoltages(double spinVolts) {
-        spinMotor1.setControl(spinVoltageCtrlReq.withOutput(spinVolts));
-    }
+  @Override
+  public void setMotorVoltages(double spinVolts) {
+    spinMotor1.setControl(spinVoltageCtrlReq.withOutput(spinVolts));
+  }
 }

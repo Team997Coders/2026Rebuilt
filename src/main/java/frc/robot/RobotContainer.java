@@ -29,7 +29,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -62,12 +61,12 @@ public class RobotContainer {
                 new ModuleIOKraken(2),
                 new ModuleIOKraken(3));
         vision =
-           new Vision(
-           drive::addVisionMeasurement,
-           new VisionIOPhotonVision(pi5shootCamName, pi5shootCamTransform),
-           new VisionIOPhotonVision(pi5backCamName, pi5backCamTransform),
-           new VisionIOPhotonVision(Opi5shootCamName, Opi5shootCamTransform),
-           new VisionIOPhotonVision(Opi5sideCamName, Opi5sideCamTransform));
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(pi5shootCamName, pi5shootCamTransform),
+                new VisionIOPhotonVision(pi5backCamName, pi5backCamTransform),
+                new VisionIOPhotonVision(Opi5shootCamName, Opi5shootCamTransform),
+                new VisionIOPhotonVision(Opi5sideCamName, Opi5sideCamTransform));
 
         break;
 
@@ -86,7 +85,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(pi5shootCamName, pi5shootCamTransform, drive::getPose),
                 new VisionIOPhotonVisionSim(pi5backCamName, pi5backCamTransform, drive::getPose),
-                new VisionIOPhotonVisionSim(Opi5shootCamName, Opi5shootCamTransform, drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    Opi5shootCamName, Opi5shootCamTransform, drive::getPose),
                 new VisionIOPhotonVisionSim(Opi5sideCamName, Opi5sideCamTransform, drive::getPose));
 
         break;
@@ -101,8 +101,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        vision = new Vision(drive::addVisionMeasurement, 
-            new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {});
 
         break;
     }
