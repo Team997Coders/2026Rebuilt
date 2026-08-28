@@ -59,8 +59,7 @@ public class SpIndexer extends SubsystemBase {
     setMotorSpeeds(0.0);
   }
 
-  public Command runCommand(
-      DoubleSupplier spinPercent, DoubleSupplier feederPercent, DoubleSupplier feeder2Percent) {
+  public Command runCommand(DoubleSupplier spinPercent) {
     return runEnd(() -> setMotorSpeeds(spinPercent.getAsDouble()), this::stop)
         .withName("SpindexerRunCommand");
   }

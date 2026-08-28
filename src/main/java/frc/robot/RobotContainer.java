@@ -13,12 +13,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.SpIndexer.SpIndexer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIORedux;
@@ -39,8 +41,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
-  private final Vision vision;
+  final Drive drive;
+  final Vision vision;
+
+  final RobotState robotState = RobotState.getInstance();
+
+  final SpIndexer spIndexer;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -68,6 +74,8 @@ public class RobotContainer {
                 new VisionIOPhotonVision(Opi5shootCamName, Opi5shootCamTransform),
                 new VisionIOPhotonVision(Opi5sideCamName, Opi5sideCamTransform));
 
+        spIndexer = SpIndexer.createReal();
+
         break;
 
       case SIM:
@@ -89,6 +97,8 @@ public class RobotContainer {
                     Opi5shootCamName, Opi5shootCamTransform, drive::getPose),
                 new VisionIOPhotonVisionSim(Opi5sideCamName, Opi5sideCamTransform, drive::getPose));
 
+        spIndexer = SpIndexer.createSim();
+
         break;
 
       default:
@@ -108,6 +118,8 @@ public class RobotContainer {
                 new VisionIO() {},
                 new VisionIO() {},
                 new VisionIO() {});
+
+        spIndexer = SpIndexer.createDummy();
 
         break;
     }
@@ -150,22 +162,12 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> Rotation2d.kZero));
-
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    //controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when pov up is pressed
     controller
-        .b()
+        .povUp()
         .onTrue(
             Commands.runOnce(
                     () ->

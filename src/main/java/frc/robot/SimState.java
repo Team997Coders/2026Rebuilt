@@ -65,8 +65,6 @@ public class SimState {
   private double intakeVoltage = 0.0;
 
   private double spinVoltage = 0.0;
-  private double feeder1Voltage = 0.0;
-  private double feeder2Voltage = 0.0;
 
   private double shooterRPM = 0.0;
 
