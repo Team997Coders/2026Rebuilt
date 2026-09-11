@@ -7,8 +7,6 @@ package frc.robot.commands.SubsystemCommands;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.DARE;
