@@ -302,6 +302,7 @@ public class RobotContainer {
     Trigger purgeIndexerTrigger = c_driveStick.b();
     Trigger purgeIntakeTrigger = c_driveStick.a();
     Trigger backupShootingTrigger = c_operator.x();
+    Trigger hoodResetTrigger = c_driveStick.povLeft();
 
     Trigger hublockTrigger = new Trigger(() -> getHublockEnabled());
 
@@ -355,6 +356,7 @@ public class RobotContainer {
     c_driveStick.povDown().whileTrue(hood.hoodDown()); 
 
      backupShootingTrigger.onTrue(m_backupToggle.toggleShooterCommand());
+     hoodResetTrigger.onTrue(hood.hoodResetCommand(25));
 
     // c_operator.a().onTrue(m_IndexerCommand.toggleSpeed());
 
